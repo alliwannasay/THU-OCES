@@ -1,0 +1,72 @@
+[
+{
+"model": "web.BBSCourse",
+  "pk":1,
+"fields": {
+    "C_Name":"三年级男生功夫扇",
+"C_SeqNum":"2016-2017-1-10721341-2"
+}},
+{
+"model": "web.BBSCourse",
+  "pk":2,
+"fields": {
+    "C_Name":"计算机与网络体系结构(1)",
+"C_SeqNum":"2016-2017-1-34100294-0"
+}},
+{
+"model": "web.BBSCourse",
+  "pk":3,
+"fields": {
+    "C_Name":"软件工程（3）",
+"C_SeqNum":"2016-2017-1-34100325-0"
+}},
+{
+"model": "web.BBSCourse",
+  "pk":4,
+"fields": {
+    "C_Name":"计算机与网络体系结构（2）",
+"C_SeqNum":"2016-2017-1-34100344-0"
+}},
+{
+"model": "web.BBSCourse",
+  "pk":5,
+"fields": {
+    "C_Name":"软件理论基础(2):函数式语言程序设计",
+"C_SeqNum":"2016-2017-1-34100352-0"
+}},
+{
+"model": "web.BBSCourse",
+  "pk":6,
+"fields": {
+    "C_Name":"环境保护与可持续发展",
+"C_SeqNum":"2016-2017-1-00050071-90"
+}},
+{
+"model": "web.BBSCourse",
+  "pk":7,
+"fields": {
+    "C_Name":"大学生音乐知识与欣赏",
+"C_SeqNum":"2016-2017-1-00780091-90"
+}},
+{
+"model": "web.BBSCourse",
+  "pk":8,
+"fields": {
+    "C_Name":"多元文化中的音乐现象",
+"C_SeqNum":"2016-2017-1-00781882-90"
+}},
+{
+"model": "web.BBSCourse",
+  "pk":9,
+"fields": {
+    "C_Name":"外国工艺美术史",
+"C_SeqNum":"2016-2017-1-00800042-90"
+}},
+{
+"model": "web.BBSCourse",
+  "pk":10,
+"fields": {
+    "C_Name":"三年级男生网球",
+"C_SeqNum":"2016-2017-1-10721041-12"
+}}
+]

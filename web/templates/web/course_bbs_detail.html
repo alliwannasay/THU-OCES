@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{%block css%} <link rel="stylesheet" href="{{BASE_DIR}}/static/postpost.css" />
+<link rel="stylesheet" href="{{BASE_DIR}}/static/postpostplus.css" />
+<link rel="stylesheet" href="{{BASE_DIR}}/static/detail.css" /> {% endblock %}
+
+{% block sub-title %}
+<h2>{{ user.U_name }}您选的{{ course.C_Name }}课程，帖子详情</h2>
+{% endblock %}
+
+{% block title %}学堂Plus{% endblock %}
+
+{% block content %}
+{#    <div class="button1 return">#}
+{#        <a href="/course/{{ course.id }}/">返回</a>#}
+{##}
+{#    </div>#}
+    <input type=button class="button1 return" value="返回" onclick="javascript:window.location.href='/course/{{ course.id }}/'">
+
+<div class="container">
+    <div class="post">
+        <div class="profile">
+            <div>
+            <img class="image" src="{{BASE_DIR}}/media/{{bigpost.P_User.U_Image}}" width="100px" height="100px" />
+            </div>
+            <div class="info">昵称：{{ bigpost.P_User.U_name}}</div>
+            <div class="info">称号：{{ bigpost.P_User.U_Honor}}</div>
+        </div>
+        <li class="postcon">
+            <div class="inner">
+            <div class="name">
+                {{ bigpost.P_Title }}
+            </div>
+            <div class="content" id="content_{{ bigpost.id }}">{{ bigpost.P_Content}}</div>
+            </div>
+        <div class="cate">
+            {% if bigpost.P_Type == 0 %}
+                <div class="cat info">类别：普通贴</div>
+            {% elif bigpost.P_Type == 1%}
+                <div class="cat info">类别：提问贴</div>
+            {% elif bigpost.P_Type == 2%}
+                <div class="cat info">类别：笔记贴</div>
+            {% endif %}
+            <div class="good info">点赞数：<span id="likeid">{{ bigpost.P_LikeNum}}</span></div>
+            {% if islike %}
+            <input id="{{ bigpost.id }}" type="button" class="btn btn-default likeBtn blue mybutton" value="取消" onclick="javascript:likebtn(this)">
+            {% else %}
+            <input id="{{ bigpost.id }}" type="button" class="btn btn-default likeBtn blue mybutton" value="点赞" onclick="javascript:likebtn(this)">
+            {% endif %}
+            </div>
+        </li>
+        </div>
+     
+
+{% for post in childrenposts %}
+    <div class="post">
+         <div class="profile">
+            <div>
+            <img class="image" src="{{BASE_DIR}}/media/{{post.P_User.U_Image}}"/>
+            </div>
+            <div class="info">昵称：{{ post.P_User.U_name}}</div>
+            <div class="info">称号：{{ post.P_User.U_Honor}}</div>
+        </div>
+        <li class="postcon">
+        <div class="inner">
+            <div class="name">{{ post.P_Title }}</div>
+            <div class="content" id="content_{{ post.id }}">{{ post.P_Content}}</div>
+        </div>
+        <div class="cate">
+            {% if post.P_Type == 0 %}
+                <div class="cat info">类别：普通贴</div>
+            {% elif post.P_Type == 1%}
+                <div class="cat info">类别：提问贴</div>
+            {% elif post.P_Type == 2%}
+                <div class="cat info">类别：笔记贴</div>
+            {% endif %}
+            {% if post.P_User == user and bigpost.P_BestChild != post%}
+            <button id="{{ post.id }}" class="button2" data-toggle="modal" data-target="#myModal" onclick="javascript:deletepost(this)">删除</button>
+            {% endif %}
+
+            {% if bigpost.P_Type == 1 and bigpost.P_User == user and bigpost.P_BestChild != post%}
+                <input id="{{ post.id }}d" type="button" class="btn btn-default likeBtn blue mybutton" value="采纳" onclick="javescript:goodpost(this)">
+            {% endif %}
+            {% if bigpost.P_Type == 1 and bigpost.P_User == user and bigpost.P_BestChild == post %}
+                <input id="{{ post.id }}d" type="button" class="btn btn-default likeBtn blue mybutton" value="取消" onclick="javescript:goodpost(this)">
+            {% endif %}
+        </div>
+    </li>
+        </div>
+{% empty %}
+
+{% endfor %}
+
+</div>
+
+{% if user.user.is_authenticated and not user.UForbidden%}
+        <div id="form_div_of_register">
+
+<div class="reply">
+	<hr>
+	<form method="POST" class="post-form" action=".">
+		{% csrf_token %}
+            <div class="messagebox">
+                <textarea class="input" id="id_PContent" type="text" placeholder="Content" name="P_Content" value="{{ P_Content }}"></textarea>
+            </div>
+            <button id="happyBtn0" class="button1" type="submit" class="save btn btn-default blue mybutton">回复</button>
+            <label class="button2" for="fileImage">上传图片</label>
+            <input id="fileImage" type="file" style="position:absolute;clip:rect(0 0 0 0);"/>
+            <button class="button2"><a href="/course/{{ course.id }}/">返回</a></button>
+	</form>
+</div>
+
+    </div>
+{% endif %}
+
+
+    <!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close"
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+               确认
+            </h4>
+         </div>
+         <div class="modal-body">
+
+              确定删除该帖吗？
+
+         </div>
+         <div class="modal-footer">
+
+
+            <a id="deleteid" href="/" style="color:#000000">确认删除</a>
+             <a  href="/" style="color:#000000">取消</a>
+{#            <button type="button" class="btn btn-default"#}
+{#               data-dismiss="modal">取消#}
+{#            </button>#}
+         </div>
+      </div><!-- /.modal-content -->
+</div><!-- /.modal -->
+</div>
+
+
+    <script type="text/javascript">
+    function likebtn(obj) {
+        console.log(obj)
+        $.ajax
+        ({
+            url: '/like_post_deal/',
+            type: 'POST',
+            data: {'postID': obj.id},
+            success: function(data) {
+
+                if (obj.value == '取消') {
+                obj.value = '点赞';
+                    likedom = document.getElementById("likeid")
+                    likedom.innerHTML = (parseInt(likedom.innerHTML) - 1).toString();
+                }
+                else {
+                    obj.value = '取消';
+                    likedom = document.getElementById("likeid")
+                    likedom.innerHTML = (parseInt(likedom.innerHTML) + 1).toString();
+                }
+            }
+        })
+    }
+
+    function deletepost(obj){
+        idstr = obj.id
+        deletedom = document.getElementById("deleteid")
+        cid = {{ course.id }}
+        bid = {{ bigpost.id }}
+        restr = "/course/"+cid+"/delete_post/"+idstr+"/parentpost/"+bid+"/"
+        deletedom.setAttribute("href",restr)
+    }
+
+    function goodpost(obj) {
+        idstr = obj.id.substring(0,obj.id.length-1)
+        console.log(idstr)
+        bid = {{ bigpost.id }}
+        cid = {{ course.id }}
+        restr="/good/"+cid+"/"+bid+"/"
+        $.ajax
+        ({
+            url: restr,
+            type: 'POST',
+            data: {'postID': idstr,'parentID':bid},
+            success: function() {
+                if (obj.value == '取消') {
+                    obj.value = '采纳';
+                }
+                else {
+                    obj.value = '采纳';
+                }
+                window.location.href="/course/"+cid+"/post/"+bid+"/"
+            }
+        })
+        //window.location.href="/course/"+cid+"/post/"+bid+"/"
+    }
+
+    function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+    $(function () {
+        $('#fileImage').bind("change", function() {
+            if ($(this).prop('files')[0].type.indexOf("image") <= -1) {
+                alert("请选择图片！");
+                return;
+            }
+            var formdata = new FormData()
+            formdata.append("file",$(this).prop('files')[0])
+            console.log($(this).prop('files')[0]);
+            $.ajax({
+                url: "/ajax_append_image/",
+                type: "POST",
+                data: formdata,
+                processData: false,
+                contentType: false,
+                success: function(data, textStatus) {
+                    $("#id_PContent").val($("#id_PContent").val() + "__url_start__" + data + "__url_end__")
+                    alert("上传成功")
+                }
+            });
+        })
+    });
+
+    $(function () {
+        var s = '{{ bigpost.P_Content|safe }}'
+        p = s.match(/__url_start__(\S*?)__url_end__/)
+        while (!(p === null)) {
+            s = s.replace(p[0], "<img src='{{BASE_DIR}}/media/" + p[1] + "' />")
+            p = s.match(/__url_start__(\S*?)__url_end__/)
+            }
+        $('#content_{{ bigpost.id }}').html(s)
+        {% for post in childrenposts  %}
+            var s = '{{ post.P_Content|safe }}'
+            p = s.match(/__url_start__(\S*?)__url_end__/)
+            while (!(p === null)) {
+                s = s.replace(p[0], "<img src='{{BASE_DIR}}/media/" + p[1] + "' />")
+                p = s.match(/__url_start__(\S*?)__url_end__/)
+            }
+        $('#content_{{ post.id }}').html(s)
+        {% endfor %}
+    });
+    </script>
+
+</ul>
+
+{% endblock %}
+
+

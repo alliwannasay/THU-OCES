@@ -1,0 +1,46 @@
+[
+{
+"model": "web.BBSUser",
+  "pk":1,
+"fields": {
+    "U_studentid":"2014013458",
+"U_password":"2333",
+"U_name":null,
+"U_RealName":"张智晴",
+"U_Major":"软件学院",
+"U_Description":null,
+"U_Image":"13944118.jpeg",
+"U_Identity":1,
+"U_Level":128,
+"U_GPB":2530,
+"U_FollowUserNum":0,
+"U_FollowPostNum":0,
+"U_PostNum":0,
+"U_QuestionNum":0,
+"U_AnswerNum":0,
+"user":2,
+"U_Honor":"超絶かわいい"
+}},
+{
+"model": "web.BBSUser",
+  "pk":2,
+"fields": {
+    "U_studentid":"2014013449",
+"U_password":"2333",
+"U_name":null,
+"U_RealName":"杨松臻",
+"U_Major":"软件学院",
+"U_Description":null,
+"U_Image":"ham002009.png",
+"U_Identity":1,
+"U_Level":33,
+"U_GPB":-580,
+"U_FollowUserNum":0,
+"U_FollowPostNum":0,
+"U_PostNum":0,
+"U_QuestionNum":0,
+"U_AnswerNum":0,
+"user":3,
+"U_Honor":"咕咕咕"
+}}
+]
