@@ -226,6 +226,15 @@ def course_post_detail(request,courseid,postid):
     context['courses'] = courses
     return render(request,'web/course_bbs_detail.html',context)
 
+def get_label(user):
+    myuser = BBSUser.objects.get(user=user)
+    relas = UserFollowLabel.objects.filter(UserID=myuser);
+    labels = []
+    for rela in relas:
+        labels.append(rela.LabelID)
+    return labels
+
+
 def user_self_info(request, param, action):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
@@ -234,7 +243,18 @@ def user_self_info(request, param, action):
     courses = get_courses(request.user)
     #userme = BBSUser.objects.get(user=request.user)
     #courses = get_courses(request.user)
-    return render(request,'web/user_self_info.html',{'user':visitedUser, 'courses':courses})
+    labels = get_label(request.user)
+    labelname = ''
+    for label in labels:
+        labelname += str(label)
+        labelname += ','
+    labelname = labelname[:-1]
+    
+    if request.method == 'POST':
+        ischange = request.POST.get('changelabel', None)
+        print(ischange == None)
+    
+    return render(request,'web/user_self_info.html',{'user':visitedUser, 'courses':courses, 'label':labelname })
 
 @csrf_exempt
 def like_post_deal(request):

@@ -74,3 +74,15 @@ class UserHasCourse(models.Model):
 class UserHasNode(models.Model):
     UserID = models.ForeignKey(BBSUser)
     PostID = models.ForeignKey(BBSPost)
+    
+    
+class CourseLabel(models.Model):
+    L_Name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.L_Name
+    
+class UserFollowLabel(models.Model):
+    UserID = models.ForeignKey(BBSUser)
+    LabelID = models.ForeignKey(CourseLabel)
+

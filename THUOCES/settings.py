@@ -79,7 +79,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'USER' : 'root',
-        'PASSWORD' : 'root',
+        'PASSWORD' : 'password',
         'NAME': 'xuetangplus_db2',
     }
 }
