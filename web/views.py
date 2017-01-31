@@ -253,8 +253,48 @@ def user_self_info(request, param, action):
     if request.method == 'POST':
         ischange = request.POST.get('changelabel', None)
         print(ischange == None)
+        if not ischange == None:
+            return HttpResponseRedirect("/change_label/" + str(param) + "/")
     
     return render(request,'web/user_self_info.html',{'user':visitedUser, 'courses':courses, 'label':labelname })
+
+def user_change_label(request, param):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    visitedUser = User.objects.get(username=param)
+    visitedUser = BBSUser.objects.get(user=visitedUser)
+    courses = get_courses(request.user)
+    
+    labels = get_label(request.user)
+    labelnames = []
+    for label in labels:
+        labelnames.append(str(label))
+        
+    labelnames_un = []
+    
+    labels = CourseLabel.objects.all()
+    for label in labels:
+        if not (label.L_Name in labelnames):
+            labelnames_un.append(label.L_Name)
+    if request.method == 'POST':
+        #print("post")
+        isdelete = request.POST.get('delete', None)
+        isadd = request.POST.get('add', None)
+        if not isdelete == None:
+            #print("delete")
+            #print(request.POST.get('labels_followed', None))
+            la = CourseLabel.objects.get(L_Name = request.POST.get('labels_followed', None))
+            UserFollowLabel.objects.get(UserID = visitedUser, LabelID = la).delete()
+        elif not isadd == None:
+            #print("add")
+            #print(request.POST.get('labels_unfollowed', None))
+            la = CourseLabel.objects.get(L_Name = request.POST.get('labels_unfollowed', None))
+            UserFollowLabel.objects.create(UserID = visitedUser, LabelID = la)
+        
+        return HttpResponseRedirect("/change_label/" + str(param) + "/")
+    
+    return render(request,'web/user_change_label.html',
+                  {'user':visitedUser, 'courses':courses, 'labels_followed': labelnames, 'labels_unfollowed': labelnames_un})
 
 @csrf_exempt
 def like_post_deal(request):

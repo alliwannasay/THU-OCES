@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{%block css%}
+<link rel="stylesheet" href="{{BASE_DIR}}/static/user.css" />{% endblock %}
+{% block sub-title %}
+<h2>编辑兴趣标签</h2>
+{% endblock %}
+
+
+{% block title %}学堂Plus{% endblock %}
+
+
+{% block content %}
+
+    <li class="sss">
+      <div class="info">
+	  
+		<form method = "post">
+			{% csrf_token %}
+			<p>删除标签：</p>
+			<select name="labels_followed">
+			    {% for label in labels_followed %}
+				<option value={{ label }}>{{ label }}</option>
+                {% endfor %}
+			</select>
+			
+			<input type = "submit" name = "delete" value ="删除">
+			
+			<br>
+			
+			<p>添加标签：</p>
+			<select name="labels_unfollowed">
+			    {% for label in labels_unfollowed %}
+				<option value={{ label }}>{{ label }}</option>
+                {% endfor %}
+			</select>			
+			
+			<input type = "submit" name = "add" value ="添加">			
+
+
+      </div>
+
+
+    </li>
+	       
+
+{% endblock %}
