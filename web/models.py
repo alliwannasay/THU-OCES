@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.template.defaultfilters import default
+from _overlapped import NULL
 
 
 class BBSUser(models.Model):
@@ -70,6 +72,7 @@ class UserFollowPost(models.Model):
 class UserHasCourse(models.Model):
     UserID = models.ForeignKey(BBSUser)
     CourseID = models.ForeignKey(BBSCourse)
+    Score = models.IntegerField(default = -1)
 
 class UserHasNode(models.Model):
     UserID = models.ForeignKey(BBSUser)

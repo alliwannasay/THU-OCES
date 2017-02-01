@@ -252,9 +252,15 @@ def user_self_info(request, param, action):
     
     if request.method == 'POST':
         ischange = request.POST.get('changelabel', None)
-        print(ischange == None)
+        issetting = request.POST.get('setting', None)
+        ismyclass = request.POST.get('myclass',None)
+        #print(ischange == None)
         if not ischange == None:
             return HttpResponseRedirect("/change_label/" + str(param) + "/")
+        elif not issetting == None:
+            return HttpResponse("<h1>Settings</h1>")
+        elif not ismyclass == None:
+            return HttpResponseRedirect("/my_class/" + str(param) + "/")
     
     return render(request,'web/user_self_info.html',{'user':visitedUser, 'courses':courses, 'label':labelname })
 
@@ -295,6 +301,83 @@ def user_change_label(request, param):
     
     return render(request,'web/user_change_label.html',
                   {'user':visitedUser, 'courses':courses, 'labels_followed': labelnames, 'labels_unfollowed': labelnames_un})
+
+def my_class(request, param):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    visitedUser = User.objects.get(username=param)
+    visitedUser = BBSUser.objects.get(user=visitedUser)
+    courses = get_courses(request.user)
+    
+    course_with_score = UserHasCourse.objects.filter(UserID = visitedUser)
+    courses_eva = []
+    courses_uneva = []
+    
+    for course in course_with_score:
+        if course.Score == -1:
+            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva']
+            courses_uneva.append(li)
+        else:
+            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva',course.Score]
+            courses_eva.append(li)
+            
+    if request.method == 'POST':
+        for course in courses:
+            if not request.POST.get(course.C_Name, None) == None:
+                return HttpResponse(course.C_Name+' 课程详细信息界面')
+        for course in courses_uneva:
+            if not request.POST.get(course[1], None) == None:
+                courseid = BBSCourse.objects.get(C_Name = course[0]).id
+                return HttpResponseRedirect("/course_evaluation/" + str(param) + "/" + str(courseid) + '/')    
+    
+    return render(request, 'web/my_class.html',
+                  {'user':visitedUser, 'courses':courses, 
+                   'courses_eva': courses_eva, 'courses_uneva': courses_uneva})
+    
+def course_evaluation(request, param, courseid):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    courses = get_courses(request.user)
+    course = BBSCourse.objects.get(id=courseid)
+    if course not in courses:
+        return HttpResponseRedirect('/')
+    myuser = BBSUser.objects.get(user=request.user)
+    
+    
+    if request.method == "POST":
+        if not request.POST.get('eva', None) == None:
+            print("POST eva")
+            
+            title = request.POST['P_Title'] if request.POST['P_Title'] else ""
+            content = request.POST['P_Content'] if request.POST['P_Content'] else ""
+            wantedvalue = 0
+            realtype = 0 #增加帖子类型后可在此修改
+            Score = int(request.POST.get('Score', None))
+            if not title:
+                return render(request,'web/course_evaluation.html',{'user':myuser, 'error':'请输入评论题目，并修正评分','P_Title':title,'P_Content':content,'course':course, 'courses':courses})
+            if not content:
+                return render(request,'web/course_evaluation.html',{'user':myuser, 'error':'请输入评论详情，并修正评分','P_Title':title,'P_Content':content,'course':course, 'courses':courses})
+            
+            UHC = UserHasCourse.objects.get(UserID = myuser, CourseID = course)
+            UHC.Score = Score
+            UHC.save()
+            
+            title = '【课程评价】' + title + '【评分：' + str(Score) + '.0/5.0】'
+    
+            post = BBSPost()
+            post.P_User = myuser
+            post.P_Title = title
+            post.P_Content = content
+            post.P_Course = course
+            post.P_Type = realtype
+            post.P_Wanted = wantedvalue
+            post.save()
+            myuser.U_GPB += gpb_amount['post']
+            raiseLevel(myuser)
+            myuser.save()
+            return HttpResponseRedirect('/my_class/' + myuser.U_studentid + '/')
+
+    return render(request, 'web/course_evaluation.html', {'user':myuser,'course':course, 'courses':courses})
 
 @csrf_exempt
 def like_post_deal(request):

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{%block css%}
+<link rel="stylesheet" href="{{BASE_DIR}}/static/user.css" />{% endblock %}
+{% block sub-title %}
+<h2>我的课程</h2>
+{% endblock %}
+
+
+{% block title %}学堂Plus{% endblock %}
+
+
+{% block content %}
+
+    <li class="sss">
+      <div class="info">
+	  
+		<form method = "post">
+			{% csrf_token %}
+			<p>未评价课程</p>
+			<table border="1">
+			<tr>
+			<th>名称</th>
+			<th>我的评价</th>
+			{% for course in courses_uneva %}
+			<tr>
+			<td><input type = "submit" name = {{course.0}} value = {{course.0}}></td>
+			<td><input type = "submit" name = {{course.1}} value = "我要评价"></td>
+			</tr>
+			{% endfor %}
+			</table>
+			
+			<br><br><br>
+			
+			<p>已评价课程</p>
+			<table border="1">
+			<tr>
+			<th>名称</th>
+			<th>我的评价</th>
+			{% for course in courses_eva %}
+			<tr>
+			<td><input type = "submit" name = {{course.0}} value = {{course.0}}></td>
+			<td>{{course.2}}.0/5.0</td>
+			</tr>
+			{% endfor %}
+			</table>
+
+
+
+      </div>
+
+
+    </li>
+	       
+
+{% endblock %}

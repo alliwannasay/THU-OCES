@@ -16,5 +16,8 @@ urlpatterns = [
     url(r'^ajax_change_nickname/$', views.ajax_change_nickname),
     url(r'^ajax_append_image/$', views.ajax_append_image),
     url(r'^ajax_change_image/$', views.ajax_change_image),
-    url(r'^change_label/(\w+)/$', views.user_change_label)
+    url(r'^change_label/(\w+)/$', views.user_change_label),
+    url(r'^my_class/(\w+)/$', views.my_class),
+    url(r'^course_evaluation/(\w+)/(\d+)/', views.course_evaluation)
+    
 ]
