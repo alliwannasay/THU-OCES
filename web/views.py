@@ -75,11 +75,34 @@ def get_courses(user):
         courses.append(rela.CourseID)
     return courses
 
+def get_dislike_courses(myuser):
+    disRelas = UserDislikeCourse.objects.filter(UserID=myuser)
+    courses = []
+    for rela in disRelas:
+        courses.append(rela.CourseID)
+    return courses
+
+def get_recommended_courses(myuser,mycourses):
+    allcourses = BBSCourse.objects.all()
+    dcourses = get_dislike_courses(myuser)
+    remainCourses = []
+    for course in allcourses:
+        if course in mycourses:
+            continue
+        if course in dcourses:
+            continue
+        remainCourses.append(course)
+    return remainCourses
+
+
 def bbs_list(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
     courses = get_courses(request.user)
-    return render(request, 'index.html',{'courses':courses})
+    myuser = BBSUser.objects.get(user=request.user)
+    recCourses = get_recommended_courses(myuser,courses)
+    labelstr = get_label_str(request.user)
+    return render(request, 'index.html',{'courses':courses,'recCourses':recCourses,'user':myuser,'label':labelstr})
 
 
 def validate_user_bymyself(request,studentid,password):
@@ -131,11 +154,12 @@ def course_post_list(request,courseid):
     context = {}
     mycourse = BBSCourse.objects.get(id=courseid)
     hasnotes = 0
+    isHaving = 1
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
     courses = get_courses(request.user)
     if mycourse not in courses:
-        return HttpResponseRedirect('/')
+        isHaving = 0
 
     myuser = BBSUser.objects.get(user=request.user)
     posts = BBSPost.objects.filter(P_Course=mycourse, P_Parent=None)
@@ -164,6 +188,7 @@ def course_post_list(request,courseid):
 
     context['courses'] = courses
     context['hasnotes'] = hasnotes
+    context['isHaving'] = isHaving
     return render(request,'web/course_bbs_list.html',context)
 
 def course_post_detail(request,courseid,postid):
@@ -226,6 +251,24 @@ def course_post_detail(request,courseid,postid):
     context['courses'] = courses
     return render(request,'web/course_bbs_detail.html',context)
 
+def get_label(user):
+    myuser = BBSUser.objects.get(user=user)
+    relas = UserFollowLabel.objects.filter(UserID=myuser);
+    labels = []
+    for rela in relas:
+        labels.append(rela.LabelID)
+    return labels
+
+def get_label_str(user):
+    labels = get_label(user)
+    labelname = ''
+    for label in labels:
+        labelname += str(label)
+        labelname += ','
+    labelname = labelname[:-1]
+    return labelname
+
+
 def user_self_info(request, param, action):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
@@ -234,7 +277,140 @@ def user_self_info(request, param, action):
     courses = get_courses(request.user)
     #userme = BBSUser.objects.get(user=request.user)
     #courses = get_courses(request.user)
-    return render(request,'web/user_self_info.html',{'user':visitedUser, 'courses':courses})
+    labelname = get_label_str(request.user)
+    
+    if request.method == 'POST':
+        ischange = request.POST.get('changelabel', None)
+        issetting = request.POST.get('setting', None)
+        ismyclass = request.POST.get('myclass',None)
+        #print(ischange == None)
+        if not ischange == None:
+            return HttpResponseRedirect("/change_label/" + str(param) + "/")
+        elif not issetting == None:
+            return HttpResponse("<h1>Settings</h1>")
+        elif not ismyclass == None:
+            return HttpResponseRedirect("/my_class/" + str(param) + "/")
+    
+    return render(request,'web/user_self_info.html',{'user':visitedUser, 'courses':courses, 'label':labelname })
+
+def user_change_label(request, param):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    visitedUser = User.objects.get(username=param)
+    visitedUser = BBSUser.objects.get(user=visitedUser)
+    courses = get_courses(request.user)
+    
+    labels = get_label(request.user)
+    labelnames = []
+    for label in labels:
+        labelnames.append(str(label))
+        
+    labelnames_un = []
+    
+    labels = CourseLabel.objects.all()
+    for label in labels:
+        if not (label.L_Name in labelnames):
+            labelnames_un.append(label.L_Name)
+    if request.method == 'POST':
+        #print("post")
+        isdelete = request.POST.get('delete', None)
+        isadd = request.POST.get('add', None)
+        if not isdelete == None:
+            #print("delete")
+            #print(request.POST.get('labels_followed', None))
+            la = CourseLabel.objects.get(L_Name = request.POST.get('labels_followed', None))
+            UserFollowLabel.objects.get(UserID = visitedUser, LabelID = la).delete()
+        elif not isadd == None:
+            #print("add")
+            #print(request.POST.get('labels_unfollowed', None))
+            la = CourseLabel.objects.get(L_Name = request.POST.get('labels_unfollowed', None))
+            UserFollowLabel.objects.create(UserID = visitedUser, LabelID = la)
+        
+        return HttpResponseRedirect("/change_label/" + str(param) + "/")
+    
+    return render(request,'web/user_change_label.html',
+                  {'user':visitedUser, 'courses':courses, 'labels_followed': labelnames, 'labels_unfollowed': labelnames_un})
+
+def my_class(request, param):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    visitedUser = User.objects.get(username=param)
+    visitedUser = BBSUser.objects.get(user=visitedUser)
+    courses = get_courses(request.user)
+    
+    course_with_score = UserHasCourse.objects.filter(UserID = visitedUser)
+    courses_eva = []
+    courses_uneva = []
+    
+    for course in course_with_score:
+        if course.Score == -1:
+            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva']
+            courses_uneva.append(li)
+        else:
+            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva',course.Score]
+            courses_eva.append(li)
+            
+    if request.method == 'POST':
+        for course in courses:
+            if not request.POST.get(course.C_Name, None) == None:
+                return HttpResponse(course.C_Name+' 课程详细信息界面')
+        for course in courses_uneva:
+            if not request.POST.get(course[1], None) == None:
+                courseid = BBSCourse.objects.get(C_Name = course[0]).id
+                return HttpResponseRedirect("/course_evaluation/" + str(param) + "/" + str(courseid) + '/')    
+    
+    return render(request, 'web/my_class.html',
+                  {'user':visitedUser, 'courses':courses, 
+                   'courses_eva': courses_eva, 'courses_uneva': courses_uneva})
+    
+def course_evaluation(request, param, courseid):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    courses = get_courses(request.user)
+    course = BBSCourse.objects.get(id=courseid)
+    if course not in courses:
+        return HttpResponseRedirect('/')
+    myuser = BBSUser.objects.get(user=request.user)
+    
+    
+    if request.method == "POST":
+        if not request.POST.get('eva', None) == None:
+            print("POST eva")
+            
+            title = request.POST['P_Title'] if request.POST['P_Title'] else ""
+            content = request.POST['P_Content'] if request.POST['P_Content'] else ""
+            wantedvalue = 0
+            realtype = 0 #增加帖子类型后可在此修改
+            Score = int(request.POST.get('Score', None))
+            if not title:
+                return render(request,'web/course_evaluation.html',{'user':myuser, 'error':'请输入评论题目，并修正评分','P_Title':title,'P_Content':content,'course':course, 'courses':courses})
+            if not content:
+                return render(request,'web/course_evaluation.html',{'user':myuser, 'error':'请输入评论详情，并修正评分','P_Title':title,'P_Content':content,'course':course, 'courses':courses})
+            
+            UHC = UserHasCourse.objects.get(UserID = myuser, CourseID = course)
+            UHC.Score = Score
+            UHC.save()
+
+            course.C_Ranknum += 1
+            course.C_Rank = (course.C_Rank*(course.C_Ranknum-1)+Score)/course.C_Ranknum
+            course.save()
+            
+            title = '【课程评价】' + title + '【评分：' + str(Score) + '.0/5.0】'
+    
+            post = BBSPost()
+            post.P_User = myuser
+            post.P_Title = title
+            post.P_Content = content
+            post.P_Course = course
+            post.P_Type = realtype
+            post.P_Wanted = wantedvalue
+            post.save()
+            myuser.U_GPB += gpb_amount['post']
+            raiseLevel(myuser)
+            myuser.save()
+            return HttpResponseRedirect('/my_class/' + myuser.U_studentid + '/')
+
+    return render(request, 'web/course_evaluation.html', {'user':myuser,'course':course, 'courses':courses})
 
 @csrf_exempt
 def like_post_deal(request):
@@ -403,3 +579,12 @@ def ajax_change_nickname(request):
     bbsuser.U_name = request.POST['newNick']
     bbsuser.save()
     return  HttpResponse("修改成功")
+
+
+@csrf_exempt
+def dislike_course(request):
+    myuser = BBSUser.objects.get(user=request.user)
+    dcourse = BBSCourse.objects.get(id=int(request.POST['courseID']))
+    newrela = UserDislikeCourse(UserID=myuser,CourseID=dcourse)
+    newrela.save()
+    return HttpResponseRedirect("/")

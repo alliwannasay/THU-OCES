@@ -134,6 +134,25 @@
     transition: background-color .18s cubic-bezier(0.6,0,.1,1),box-shadow .18s cubic-bezier(0.6,0,.1,1);
 }
 
+.widebutton2{
+    position: absolute;
+    background-color: transparent;
+    color: #5A5A5A;
+    border-radius: 2px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1.3em;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 9px;
+    border: none;
+    float: left;
+    width: 50px;
+    margin-top:-20px;
+    top: 50%;
+    transition: background-color .18s cubic-bezier(0.6,0,.1,1),box-shadow .18s cubic-bezier(0.6,0,.1,1);
+}
+
 a{
     color: #5A5A5A;
 }
@@ -144,6 +163,10 @@ a:hover,a:focus{
 }
 
 .button2:hover{
+    box-shadow: 0 2px 5px rgba(0,0,0,0.42);
+}
+
+.widebutton2:hover{
     box-shadow: 0 2px 5px rgba(0,0,0,0.42);
 }
 

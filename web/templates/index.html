@@ -1,18 +1,71 @@
 {% extends "base.html" %}
-{%block css%} <link rel="stylesheet" href="{{BASE_DIR}}/static/index.css" /> {% endblock %}
+
+{%block css%} <link rel="stylesheet" href="{{BASE_DIR}}/static/button.css" />
+<link rel="stylesheet" href="{{BASE_DIR}}/static/list.css" />{% endblock %}
 
 {% block sub-title %}
-<h2>清华在线评课系统</h2>
+<h2>清华大学在线评课系统</h2>
+
 {% endblock %}
-{% block title %}清华在线评课系统{% endblock %}
+
+{% block title %}学堂Plus{% endblock %}
 {% block content %}
-    <h2>
-        <p>在这里有来自全校不同专业不同年级的同学</p>
-        <p>欢迎在这里畅所欲言</p>
-        <p>仍在开发，敬请期待</p>
-    </h2>
 
-    <ul>
+        <li class="list">
+<h3>我的标签</h3>
+<ol>
+<li>
+        <div class="dis">
+            <div class="inner">
+                我关注的标签：{{ label }}
+            </div>
+        </div>
+        <button id="{{ post.id }}" class="button2" data-toggle="modal" data-target="#myModal" onclick="javascript:window.location.href='/change_label/{{ user.U_studentid }}'">修改</button>
 
-</ul>
+</li>
+</ol>
+</li>
+
+
+<li class="list">
+<h3>好课推荐</h3>
+<ol>
+{% for recCourse in recCourses %}
+    <li>
+        <div class="icon" title="No unread posts"><div></div></div>
+        <div class="dis">
+            <div class="inner">
+            <a href="/course/{{ recCourse.id }}/">{{ recCourse.C_Name }}</a>
+        </div>
+        </div>
+
+        <div class="stat">
+            <div class="good info">评分：{{ recCourse.C_Rank }}</div>
+        </div>
+        <input id="{{ recCourse.id }}" type="button" class="btn btn-default likeBtn blue mybutton" value="不感兴趣" onclick="javascript:dislikeCourse(this)">
+    </li>
+{% empty %}
+    <li>抱歉，目前还没有推荐课程。</li>
+{% endfor %}
+    </ol>
+    </li>
+
+
+    <script type="text/javascript">
+
+    function dislikeCourse(obj) {
+
+        $.ajax
+        ({
+            url: '/dislike_course/',
+            type: 'POST',
+            data: {'courseID': obj.id},
+            success: function(data) {
+                window.location.href="/"
+            }
+
+        })
+    }
+
+    </script>
 {% endblock %}

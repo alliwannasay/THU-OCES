@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.template.defaultfilters import default
+# from _overlapped import NULL
 
 
 class BBSUser(models.Model):
@@ -29,6 +31,8 @@ class BBSUser(models.Model):
 class BBSCourse(models.Model):
     C_Name = models.CharField(max_length=100)
     C_SeqNum = models.CharField(blank=True,max_length=50)
+    C_Ranknum = models.IntegerField(default=0)
+    C_Rank = models.FloatField(default=0)
 
     def __str__(self):
         return self.C_Name
@@ -70,7 +74,26 @@ class UserFollowPost(models.Model):
 class UserHasCourse(models.Model):
     UserID = models.ForeignKey(BBSUser)
     CourseID = models.ForeignKey(BBSCourse)
+    Score = models.IntegerField(default = -1)
 
 class UserHasNode(models.Model):
     UserID = models.ForeignKey(BBSUser)
     PostID = models.ForeignKey(BBSPost)
+    
+    
+class CourseLabel(models.Model):
+    L_Name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.L_Name
+    
+class UserFollowLabel(models.Model):
+    UserID = models.ForeignKey(BBSUser)
+    LabelID = models.ForeignKey(CourseLabel)
+
+class UserDislikeCourse(models.Model):
+    UserID = models.ForeignKey(BBSUser)
+    CourseID = models.ForeignKey(BBSCourse)
+
+
+

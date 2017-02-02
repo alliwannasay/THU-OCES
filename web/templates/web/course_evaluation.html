@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{%block css%} <link rel="stylesheet" href="{{BASE_DIR}}/static/postpost.css" />
+<link rel="stylesheet" href="{{BASE_DIR}}/static/postpostplus.css" /> {% endblock %}
+
+{% block sub-title %}
+<h2>{{ course.C_Name }}:课程评价</h2>
+{% endblock %}
+
+
+{% block title %}学堂Plus{% endblock %}
+{% block content %}
+
+    <div class="form">
+    <div class="outbox ">
+        {% if error %}
+            <div class="mention" role="alert">
+                    <p>{{ error }}</p>
+            </div>
+        {% endif %}
+        <form class="form-base" id="newform" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="messagebox">
+                <input type="text" id="id_title" placeholder="Title" name="P_Title" value="{{ P_Title }}">
+
+                <textarea class="input" id="id_content" type="text" placeholder="Content" name="P_Content" value="{{ P_Content }}"></textarea>
+
+            </div>
+			
+			<div>
+				<p>打分:
+					<select name="Score">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+						<option value="4">4</option>
+						<option value="5">5</option>
+					</select>
+				</p>
+			</div>
+
+            <input id="happyBtn0" class="button1" type = "submit" name = "eva" value="提交评价"
+
+            <button class="button2"><a href="/my_class/{{ user.U_studentid }}/">返回</a></button>
+        </form>
+    </div>
+    </div>
+
+{% endblock %}

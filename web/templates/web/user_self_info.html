@@ -8,6 +8,8 @@
 
 
 {% block title %}学堂Plus{% endblock %}
+
+
 {% block content %}
 
     <li class="sss">
@@ -37,10 +39,20 @@
         <div class="xinxizixiang">称号：{{ user.U_Honor}}</div>
         <div class="xinxizixiang">GP币：{{ user.U_GPB }}</div>
         <div class="xinxizixiang">签名：{{ user.U_Description }}</div>
+		<div class="xinxizixiang">关注的标签：{{ label }}
+			<form method = "post">
+				{% csrf_token %}
+				<input type = "submit" name = "changelabel" value = "修改标签">
+				<br>
+				<input type = "submit" name = "myclass" value = "我的课程">
+				<br>
+				<input type = "submit" name = "setting" value = "设置">
+			</form>
+		</div>
       </div>
 
     </li>
-        
+	       
 
     <script type="text/javascript">
     function getCookie(name) {
@@ -111,4 +123,5 @@
     });
 
     </script>
+    
 {% endblock %}

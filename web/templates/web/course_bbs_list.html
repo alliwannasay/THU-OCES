@@ -5,13 +5,14 @@
 
 {% block sub-title %}
 <h2>{{ course.C_Name }}课程讨论区</h2>
+    {% if isHaving == 1 %}
 <a class="fatie" href="/post/{{ course.id }}">发帖</a>
+    {% endif %}
 
 {% endblock %}
 
 {% block title %}学堂Plus{% endblock %}
 {% block content %}
-
 
 
 <li class="list">
@@ -23,19 +24,7 @@
         <div class="dis">
             <div class="inner">
             <a href="/course/{{ course.id }}/post/{{ post.id }}">{{ post.P_Title }}</a>
-            <div class="name">
-                {% if post.P_Type == 2%}
-                    {% if post.P_Level == 2%}
-                        (UR笔记)
-                    {% endif %}
-                    {% if post.P_Level == 1%}
-                        (SR笔记)
-                    {% endif %}
-                    {% if post.P_Level == 0%}
-                        (R笔记)
-                    {% endif %}
-                {% endif %}
-            </div>
+
             
         </div>
         </div>
