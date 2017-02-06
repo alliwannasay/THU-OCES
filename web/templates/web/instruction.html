@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{%block css%} <link rel="stylesheet" href="{{BASE_DIR}}/static/button.css" />
+<link rel="stylesheet" href="{{BASE_DIR}}/static/list.css" />{% endblock %}
+
+{% block sub-title %}
+<h2>介绍</h2>
+
+{% endblock %}
+
+{% block title %}学堂Plus{% endblock %}
+{% block content %}
+
+<h3>
+此处要放<br>
+介绍鼓励机制，提示大家分享对于这个平台的重要性。
+</h3>
+
+
+<form method = "post">
+	{% csrf_token %}
+	<input type="submit" name = "next" value = "继续">
+</form>
+
+
+{% endblock %}

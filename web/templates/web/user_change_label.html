@@ -36,12 +36,33 @@
 			</select>			
 			
 			<input type = "submit" name = "add" value ="添加">			
-
-
+		</form>
+		
+		
+		
+		{% if user.U_NewUser == 1 %}
+			</h3><br>您可以在这里设置您的兴趣标签，编辑完成后请点击继续。（以后可进行修改）<h3>
+			<form method = "post">
+				{% csrf_token %}
+				<input type = "submit" name = "next" value ="继续" onclick="disp_alert()">
+			<form>
+			
+		{% else %}
+		
+		{% endif %}
+		
       </div>
 
 
     </li>
+	
+	
+	
+	<script type="text/javascript">
+		function disp_alert(){
+			alert("新手引导完成，即将进入主界面")
+		}
+	</script>
 	       
 
 {% endblock %}

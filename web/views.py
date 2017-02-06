@@ -143,11 +143,25 @@ def login(request):
 
         user = validate_user_bymyself(request,studentid=studentidin, password=passwordin)
         if user is not None:
-            return HttpResponseRedirect('/')
+            if user.U_NewUser == 1:
+                return HttpResponseRedirect("/instruction/")
+            else:
+                return HttpResponseRedirect('/')
         else:
             return render(request, "web/login.html", {'error': "学号或密码不正确"})
     else:
         return render(request, "web/login.html")
+
+def instruction(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    courses = get_courses(request.user)
+    myuser = BBSUser.objects.get(user=request.user)
+    param = myuser.U_studentid
+    if request.method == 'POST':
+        return HttpResponseRedirect("/my_class/" + str(param) + "/")
+    
+    return render(request, 'web/instruction.html',{'courses':courses,'user':myuser,})
 
 
 def course_post_list(request,courseid):
@@ -315,7 +329,12 @@ def user_change_label(request, param):
         #print("post")
         isdelete = request.POST.get('delete', None)
         isadd = request.POST.get('add', None)
-        if not isdelete == None:
+        isnext = request.POST.get('next', None)
+        if not isnext == None:
+            visitedUser.U_NewUser = 0
+            visitedUser.save()
+            return HttpResponseRedirect('/')
+        elif not isdelete == None:
             #print("delete")
             #print(request.POST.get('labels_followed', None))
             la = CourseLabel.objects.get(L_Name = request.POST.get('labels_followed', None))
@@ -408,7 +427,10 @@ def course_evaluation(request, param, courseid):
             myuser.U_GPB += gpb_amount['post']
             raiseLevel(myuser)
             myuser.save()
-            return HttpResponseRedirect('/my_class/' + myuser.U_studentid + '/')
+            if myuser.U_NewUser == 1:
+                return HttpResponseRedirect("/change_label/" + myuser.U_studentid + "/")
+            else:
+                return HttpResponseRedirect('/my_class/' + myuser.U_studentid + '/')
 
     return render(request, 'web/course_evaluation.html', {'user':myuser,'course':course, 'courses':courses})
 
