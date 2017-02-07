@@ -45,6 +45,16 @@
             <a class="navbar-brand" href="/logout/">登出</a>
         </div>
 
+        <form class="navbar-form navbar-right" role="search" action="/search_course/" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search" name="searchContent">
+                </div>
+                <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+            </form>
+
     </nav>
     {% endblock %}
     </div>

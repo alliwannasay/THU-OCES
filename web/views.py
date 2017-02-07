@@ -23,6 +23,7 @@ from .forms import *
 import requests
 import random
 import requests
+from django.db.models import Q
 
 # Create your views here.
 
@@ -610,3 +611,82 @@ def dislike_course(request):
     newrela = UserDislikeCourse(UserID=myuser,CourseID=dcourse)
     newrela.save()
     return HttpResponseRedirect("/")
+
+def search_course(request):
+    courses = get_courses(request.user)
+    myuser = BBSUser.objects.get(user=request.user)
+    coursesall = BBSCourse.objects.all()
+    if request.method == 'POST':
+        searchContent = request.POST["searchContent"]
+        print(searchContent)
+        # coursesres = BBSCourse.objects.all().filter(Q(C_Name=searchContent)|Q(C_SeqNum=searchContent))
+        coursesres = search_course_by_name(coursesall,searchContent)
+        print(coursesres)
+    return render(request, 'web/search_result.html', {'user': myuser, 'search_courses': coursesres, 'courses': courses})
+
+def search_course_by_name(coursesall,searchcontent):
+    result = []
+    rescourse = []
+    for course in coursesall:
+        occur_num = kmp_practice(course.C_Name+course.C_SeqNum,searchcontent)
+        if occur_num != 0:
+            result.append((occur_num,course.id))
+    result = sorted(result)
+    for res in result:
+        thisid = res[1]
+        thiscourse = BBSCourse.objects.get(id=thisid)
+        rescourse.append(thiscourse)
+    rescourse.reverse()
+    return rescourse
+
+
+def kmp_next(base,next):
+  i=0
+  j=-1
+  next[0]=-1
+  while base[i]!='\0':
+    if j==-1 or base[i]==base[j]:
+      i=i+1
+      j=j+1
+      if base[i]==base[j]:
+        next[i]=next[j]
+      else:
+        next[i]=j
+    else:
+      j=next[j]
+  return 0
+
+
+def kmp(b,base,pos,next):
+  i=pos-1
+  j=0
+  while b[i]!='\0' and base[j]!='\0':
+    if b[i]==base[j]:
+      i=i+1
+      j=j+1
+    else:
+      j=next[j]
+      if j==-1:
+        i=i+1
+        j=j+1
+  if base[j]=='\0':
+    return i-j+1
+  else:
+    return -1
+
+
+def kmp_practice(b,base):
+  next=[-1]*1000
+  occur_num = 0
+  pos=0
+  base = base + '\0'
+  b = b + '\0'
+  kmp_next(base,next)
+  while 1:
+    pos=kmp(b,base,pos+1,next)
+    if pos==-1:
+      return occur_num
+    occur_num += 1
+  return occur_num
+
+

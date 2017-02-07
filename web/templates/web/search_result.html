@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{%block css%} <link rel="stylesheet" href="{{BASE_DIR}}/static/button.css" />
+<link rel="stylesheet" href="{{BASE_DIR}}/static/list.css" />{% endblock %}
+
+{% block sub-title %}
+<h2>清华大学在线评课系统</h2>
+
+{% endblock %}
+
+{% block title %}学堂Plus{% endblock %}
+{% block content %}
+
+
+<li class="list">
+<h3>搜索结果</h3>
+<ol>
+{% for recCourse in search_courses %}
+    <li>
+        <div class="icon" title="No unread posts"><div></div></div>
+        <div class="dis">
+            <div class="inner">
+            <a href="/course/{{ recCourse.id }}/">{{ recCourse.C_Name }}</a>
+        </div>
+        </div>
+
+        <div class="stat">
+            <div class="good info">评分：{{ recCourse.C_Rank }}</div>
+        </div>
+
+    </li>
+{% empty %}
+    <li>抱歉，没有搜索到课程。</li>
+{% endfor %}
+    </ol>
+    </li>
+
+
+
+{% endblock %}
