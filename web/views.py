@@ -24,6 +24,8 @@ import requests
 import random
 import requests
 from django.db.models import Q
+import importlib
+import sys
 
 # Create your views here.
 
@@ -43,8 +45,12 @@ type_dic = {
     '大讨论区':4,
 }
 
-
-
+def readFile():
+    importlib.reload(sys)
+    f = open("info.txt", 'r', encoding='gbk')
+    lines = f.readlines()
+    print(lines[len(lines) - 1])
+    f.close()
 
 def raiseLevel(myuser):
     curlevel = myuser.U_Level
@@ -103,6 +109,7 @@ def bbs_list(request):
     myuser = BBSUser.objects.get(user=request.user)
     recCourses = get_recommended_courses(myuser,courses)
     labelstr = get_label_str(request.user)
+    readFile()
     return render(request, 'index.html',{'courses':courses,'recCourses':recCourses,'user':myuser,'label':labelstr})
 
 
@@ -141,15 +148,19 @@ def login(request):
         elif not passwordin:
             return render(request, "web/login.html", {'error': "请输入密码"})
 
-
-        user = validate_user_bymyself(request,studentid=studentidin, password=passwordin)
+        user = auth.authenticate(username=studentidin, password=passwordin)
         if user is not None:
-            if user.U_NewUser == 1:
-                return HttpResponseRedirect("/instruction/")
-            else:
-                return HttpResponseRedirect('/')
+            auth.login(request, user)
+            return HttpResponseRedirect('/')
         else:
-            return render(request, "web/login.html", {'error': "学号或密码不正确"})
+            user = validate_user_bymyself(request,studentid=studentidin, password=passwordin)
+            if user is not None:
+                if user.U_NewUser == 1:
+                    return HttpResponseRedirect("/instruction/")
+                else:
+                    return HttpResponseRedirect('/')
+            else:
+                return render(request, "web/login.html", {'error': "学号或密码不正确"})
     else:
         return render(request, "web/login.html")
 
