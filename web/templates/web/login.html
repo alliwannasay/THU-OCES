@@ -1,44 +1,40 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Bootstrap core CSS -->
+        <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="{{BASE_DIR}}/static/signin.css" />
+    </head>
 
-{% block title %}登录{% endblock %}
+    <body>
+        <div class="form" >
+            <div class="register">
+                {% if error %}
+                    <div class="mention" role="alert">
+                        <p>{{ error }}</p>
+                    </div>
+                {% endif %}
+                <form class="form-signin" action="/login/" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="stid">
+                        <dt>
+                        <input class="form-control" type="text" placeholder="学号" id="id_studentid" maxlength="11" name="studentid" required autofocus>
+                        </dt>
+                    </div>
 
-{%block css%} <link rel="stylesheet" href="{{BASE_DIR}}/static/login.css" /> {% endblock %}
+                    <div class="pass">
+                        <dt>
+                        <input class="form-control" type="password" placeholder="校园网密码" id="id_password" name="password" required>
+                        </dt>
+                    </div>
 
-{% block sub-title %}
-<h2>用户登录</h2>
-{% endblock %}
-
-{% block content %}
-    <div class="form">
-        <div class="register">
-            {% if error %}
-                <div class="mention" role="alert">
-                    <p>{{ error }}</p>
-                </div>
-            {% endif %}
-            <form class="" action="/login/" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="stid">
-                    <dd>
-                    <span for="id_studentid">学号:</span>
-                    </dd>
-                    <dt>
-                    <input type="text" placeholder="请填写学号" id="id_studentid" maxlength="11" name="studentid" value="{{ studentid }}">
-                    </dt>
-                </div>
-
-                <div class="pass">
-                    <dd>
-                    <span for="id_password">密码:</span>
-                    </dd>
-                    <dt>
-                    <input type="password" placeholder="请填写密码" id="id_password" name="password">
-                    </dt>
-                </div>
-
-                <button type="submit" class="button1" value="登录">登录</button>
-            </form>
+                    <button type="submit" class="btn btn-lg btn-primary btn-block" value="登录" style="background-color: #5a1bc4; border-color: #5a1bc4">登录</button>
+                </form>
+            </div>
         </div>
-    </div>
+    </body>
+</html>
 
-{% endblock %}

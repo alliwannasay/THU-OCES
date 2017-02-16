@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {%block css%}
-<link rel="stylesheet" href="{{BASE_DIR}}/static/user.css" />{% endblock %}
+{% endblock %}
 {% block sub-title %}
 <h2>{{ user.U_RealName }}您的信息</h2>
 {% endblock %}
@@ -11,11 +11,36 @@
 
 
 {% block content %}
-
-    <li class="sss">
+    <div style="background-color: #cacdfa">
+        <div style="padding: 15px; text-align: center">个人帐户</div>
+    </div>
+    <div class="info" style="padding: 20px">
+        <div>
+            <img src="{{ BASE_DIR }}/media/{{ user.U_Image }}" width="60px" height="60px"/>
+            <span style="padding-left:20px; padding-bottom:40px">{{ request.user.username }}</span>
+            <span style="padding-left:100px; padding-bottom:40px">Lv. 2</span>
+        </div>
+    </div>
+    <div class="row" style="padding: 20px">
+            <div class="list-group">
+                <a href="" class="list-group-item">我的收藏</a>
+                <a href="" class="list-group-item">我的积分</a>
+                <a href="" class="list-group-item">兴趣标签</a>
+                <a href="" class="list-group-item">分享给朋友</a>
+                <a href="" class="list-group-item">关于</a>
+            </div>
+    </div>
+    <button href="/logout" class="btn btn-lg btn-primary btn-block" value = "继续" style="background-color: #5a1bc4; border-color:#5a1bc4; color: white;">退出登录</button>
+    <!--<li class="sss">
       <div class="info">
         <div>
-        <img src="{{ BASE_DIR }}/media/{{ user.U_Image }}" width="200px" height="200px" />
+        <img src="{{ BASE_DIR }}/media/{{ user.U_Image }}" width="60px" height="60px" />
+        </div>
+        <div class="row">
+            <div class="list-group">
+                <a href="" class="list-group-item">asdasdas</a>
+
+            </div>
         </div>
         {% if request.user == user.user %}
             <label class="button2" for="changeImage">上传头像</label>
@@ -51,7 +76,7 @@
 		</div>
       </div>
 
-    </li>
+    </li>-->
 	       
 
     <script type="text/javascript">

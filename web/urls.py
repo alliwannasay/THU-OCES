@@ -20,7 +20,6 @@ urlpatterns = [
     url(r'^my_class/(\w+)/$', views.my_class),
     url(r'^course_evaluation/(\w+)/(\d+)/', views.course_evaluation),
     url(r'^dislike_course/$', views.dislike_course),
-    url(r'^instruction/$',views.instruction),
-    url(r'^search_course/$',views.search_course)
+    url(r'^instruction/$',views.instruction)
     
 ]
