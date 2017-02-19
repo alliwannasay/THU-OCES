@@ -11,44 +11,105 @@
 {% block title %}学堂Plus{% endblock %}
 {% block content %}
 
-        <li class="list">
-<h3>我的标签</h3>
+
+
+    <li class="list">
+<h3>热门课程</h3>
 <ol>
-<li>
-        <div class="dis">
-            <div class="inner">
-                我关注的标签：{{ label }}
-            </div>
-        </div>
-        <button id="{{ post.id }}" class="button2" data-toggle="modal" data-target="#myModal" onclick="javascript:window.location.href='/change_label/{{ user.U_studentid }}'">修改</button>
-
-</li>
-</ol>
-</li>
-
-
-<li class="list">
-<h3>好课推荐</h3>
-<ol>
-{% for recCourse in recCourses %}
+{% for hotc in hotBind %}
+    {% for  hott in hotc %}
+        {% if forloop.first %}
     <li>
         <div class="icon" title="No unread posts"><div></div></div>
         <div class="dis">
             <div class="inner">
-            <a href="/course/{{ recCourse.id }}/">{{ recCourse.C_Name }}</a>
+            <a href="/course/{{ hott.id }}/">{{ hott.C_Name }}</a>
         </div>
         </div>
 
         <div class="stat">
-            <div class="good info">评分：{{ recCourse.C_Rank }}</div>
+            <div class="good info">评分：{{ hott.C_Rank }}</div>
         </div>
-        <input id="{{ recCourse.id }}" type="button" class="btn btn-default likeBtn blue mybutton" value="不感兴趣" onclick="javascript:dislikeCourse(this)">
+        <input id="{{ hott.id }}" type="button" class="btn btn-default likeBtn blue mybutton" value="不感兴趣" onclick="javascript:dislikeCourse(this)">
     </li>
+        {%endif%}
+
+        {% if forloop.last %}
+            <li>
+
+        <div class="stat">
+            <div class="good info">短评：{{ hott }}</div>
+        </div>
+
+    </li>
+        {%endif%}
 {% empty %}
     <li>抱歉，目前还没有推荐课程。</li>
 {% endfor %}
+{% endfor %}
     </ol>
     </li>
+
+    <li class="list">
+<h3>推荐课程</h3>
+<ol>
+{% for recc in recBind %}
+    {% for  rect in recc %}
+        {% if forloop.first %}
+    <li>
+        <div class="icon" title="No unread posts"><div></div></div>
+        <div class="dis">
+            <div class="inner">
+            <a href="/course/{{ rect.id }}/">{{ rect.C_Name }}</a>
+        </div>
+        </div>
+
+        <div class="stat">
+            <div class="good info">评分：{{ rect.C_Rank }}</div>
+        </div>
+        <input id="{{ rect.id }}" type="button" class="btn btn-default likeBtn blue mybutton" value="不感兴趣" onclick="javascript:dislikeCourse(this)">
+    </li>
+        {%endif%}
+
+        {% if forloop.last %}
+            <li>
+
+        <div class="stat">
+            <div class="good info">短评：{{ rect }}</div>
+        </div>
+
+    </li>
+        {%endif%}
+{% empty %}
+    <li>抱歉，目前还没有推荐课程。</li>
+{% endfor %}
+{% endfor %}
+    </ol>
+    </li>
+
+
+{#<li class="list">#}
+{#<h3>好课推荐</h3>#}
+{#<ol>#}
+{#{% for recCourse in recCourses %}#}
+{#    <li>#}
+{#        <div class="icon" title="No unread posts"><div></div></div>#}
+{#        <div class="dis">#}
+{#            <div class="inner">#}
+{#            <a href="/course/{{ recCourse.id }}/">{{ recCourse.C_Name }}</a>#}
+{#        </div>#}
+{#        </div>#}
+{##}
+{#        <div class="stat">#}
+{#            <div class="good info">评分：{{ recCourse.C_Rank }}</div>#}
+{#        </div>#}
+{#        <input id="{{ recCourse.id }}" type="button" class="btn btn-default likeBtn blue mybutton" value="不感兴趣" onclick="javascript:dislikeCourse(this)">#}
+{#    </li>#}
+{#{% empty %}#}
+{#    <li>抱歉，目前还没有推荐课程。</li>#}
+{#{% endfor %}#}
+{#    </ol>#}
+{#    </li>#}
 
 
     <script type="text/javascript">

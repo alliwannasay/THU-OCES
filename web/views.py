@@ -101,6 +101,34 @@ def get_recommended_courses(myuser,mycourses):
         remainCourses.append(course)
     return remainCourses
 
+def get_hot_courses(myuser):
+    allcourses = BBSCourse.objects.all()
+    allcourses = allcourses.order_by('-C_Ranknum')
+    dcourses = get_dislike_courses(myuser)
+    remainCourses = []
+    for course in allcourses:
+        if course in dcourses:
+            continue
+        remainCourses.append(course)
+    remainCourses.reverse()
+    return remainCourses[0:9]
+
+def get_best_comment(course):
+    posts = BBSPost.objects.filter(P_Course=course)
+    posts = posts.order_by('-P_LikeNum')
+    if len(posts) == 0:
+        return "无短评"
+    bestpost = posts[0]
+    return bestpost.P_Content
+
+def bind_course_comment(courses):
+    bindresult = []
+    for i in range(0,len(courses)):
+        comment = get_best_comment(courses[i])
+        bindresult.append((courses[i],comment))
+    bindresult.reverse()
+    return bindresult
+
 
 def bbs_list(request):
     if not request.user.is_authenticated():
@@ -108,9 +136,12 @@ def bbs_list(request):
     courses = get_courses(request.user)
     myuser = BBSUser.objects.get(user=request.user)
     recCourses = get_recommended_courses(myuser,courses)
+    hotCourses = get_hot_courses(myuser)
+    recBind = bind_course_comment(recCourses)
+    hotBind = bind_course_comment(hotCourses)
     labelstr = get_label_str(request.user)
     readFile()
-    return render(request, 'index.html',{'courses':courses,'recCourses':recCourses,'user':myuser,'label':labelstr})
+    return render(request, 'index.html',{'courses':courses,'hotBind':hotBind,'recBind':recBind,'user':myuser,'label':labelstr})
 
 
 def validate_user_bymyself(request,studentid,password):
@@ -171,7 +202,7 @@ def instruction(request):
     myuser = BBSUser.objects.get(user=request.user)
     param = myuser.U_studentid
     if request.method == 'POST':
-        return HttpResponseRedirect("/my_class/" + str(param) + "/")
+        return HttpResponseRedirect("/change_label/" + str(param) + "/")
     
     return render(request, 'web/instruction.html',{'courses':courses,'user':myuser,})
 
@@ -384,7 +415,7 @@ def my_class(request, param):
     if request.method == 'POST':
         for course in courses:
             if not request.POST.get(course.C_Name, None) == None:
-                return HttpResponse(course.C_Name+' 课程详细信息界面')
+                return HttpResponseRedirect('/course/'+str(course.id)+'/')
         for course in courses_uneva:
             if not request.POST.get(course[1], None) == None:
                 courseid = BBSCourse.objects.get(C_Name = course[0]).id

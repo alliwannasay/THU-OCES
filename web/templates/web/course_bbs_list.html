@@ -14,6 +14,10 @@
 {% block title %}学堂Plus{% endblock %}
 {% block content %}
 
+<h2>{{ course.C_Name }}课程讨论区</h2>
+    {% if isHaving == 1 %}
+<a class="fatie" href="/post/{{ course.id }}">发帖</a>
+    {% endif %}
 
 <li class="list">
 <h3>帖子列表</h3>
