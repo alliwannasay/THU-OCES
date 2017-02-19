@@ -76,6 +76,7 @@ class UserHasCourse(models.Model):
     UserID = models.ForeignKey(BBSUser)
     CourseID = models.ForeignKey(BBSCourse)
     Score = models.IntegerField(default = -1)
+    Term = models.CharField(max_length=15)
 
 class UserHasNode(models.Model):
     UserID = models.ForeignKey(BBSUser)
