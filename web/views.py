@@ -182,7 +182,7 @@ def login(request):
         user = auth.authenticate(username=studentidin, password=passwordin)
         if user is not None:
             auth.login(request, user)
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect('/instruction')
         else:
             user = validate_user_bymyself(request,studentid=studentidin, password=passwordin)
             if user is not None:
