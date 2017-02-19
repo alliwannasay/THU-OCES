@@ -258,7 +258,7 @@ CREATE TABLE `django_migrations` (
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -267,7 +267,7 @@ CREATE TABLE `django_migrations` (
 
 LOCK TABLES `django_migrations` WRITE;
 /*!40000 ALTER TABLE `django_migrations` DISABLE KEYS */;
-INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2016-12-07 17:02:48.014286'),(2,'auth','0001_initial','2016-12-07 17:02:48.343245'),(3,'admin','0001_initial','2016-12-07 17:02:48.411307'),(4,'admin','0002_logentry_remove_auto_add','2016-12-07 17:02:48.463123'),(5,'contenttypes','0002_remove_content_type_name','2016-12-07 17:02:48.524554'),(6,'auth','0002_alter_permission_name_max_length','2016-12-07 17:02:48.553527'),(7,'auth','0003_alter_user_email_max_length','2016-12-07 17:02:48.580665'),(8,'auth','0004_alter_user_username_opts','2016-12-07 17:02:48.591998'),(9,'auth','0005_alter_user_last_login_null','2016-12-07 17:02:48.619268'),(10,'auth','0006_require_contenttypes_0002','2016-12-07 17:02:48.620609'),(11,'auth','0007_alter_validators_add_error_messages','2016-12-07 17:02:48.628850'),(12,'auth','0008_alter_user_username_max_length','2016-12-07 17:02:48.655515'),(13,'sessions','0001_initial','2016-12-07 17:02:48.695686'),(14,'web','0001_initial','2016-12-07 17:02:49.173922'),(15,'web','0002_bbspost_p_wanted','2016-12-17 16:10:50.284015'),(16,'web','0003_auto_20161218_0159','2016-12-17 17:59:19.877144'),(17,'web','0004_bbsuser_u_honor','2016-12-18 16:55:36.828832'),(18,'web','0005_userhasnode','2016-12-27 08:19:57.250653'),(19,'web','0006_bbspost_p_level','2016-12-27 11:32:52.808829'),(20,'web','0007_courselabel_userfollowlabel','2017-02-01 09:44:53.217237'),(21,'web','0008_userhascourse_score','2017-02-01 09:44:53.295510'),(22,'web','0009_auto_20170201_1018','2017-02-01 09:44:53.467876'),(23,'web','0010_auto_20170202_2114','2017-02-02 13:14:38.468425'),(24,'web','0011_userdislikecourse','2017-02-02 13:26:31.262422'),(25,'web','0012_bbsuser_u_newuser','2017-02-07 11:55:16.158947');
+INSERT INTO `django_migrations` VALUES (1,'contenttypes','0001_initial','2016-12-07 17:02:48.014286'),(2,'auth','0001_initial','2016-12-07 17:02:48.343245'),(3,'admin','0001_initial','2016-12-07 17:02:48.411307'),(4,'admin','0002_logentry_remove_auto_add','2016-12-07 17:02:48.463123'),(5,'contenttypes','0002_remove_content_type_name','2016-12-07 17:02:48.524554'),(6,'auth','0002_alter_permission_name_max_length','2016-12-07 17:02:48.553527'),(7,'auth','0003_alter_user_email_max_length','2016-12-07 17:02:48.580665'),(8,'auth','0004_alter_user_username_opts','2016-12-07 17:02:48.591998'),(9,'auth','0005_alter_user_last_login_null','2016-12-07 17:02:48.619268'),(10,'auth','0006_require_contenttypes_0002','2016-12-07 17:02:48.620609'),(11,'auth','0007_alter_validators_add_error_messages','2016-12-07 17:02:48.628850'),(12,'auth','0008_alter_user_username_max_length','2016-12-07 17:02:48.655515'),(13,'sessions','0001_initial','2016-12-07 17:02:48.695686'),(14,'web','0001_initial','2016-12-07 17:02:49.173922'),(15,'web','0002_bbspost_p_wanted','2016-12-17 16:10:50.284015'),(16,'web','0003_auto_20161218_0159','2016-12-17 17:59:19.877144'),(17,'web','0004_bbsuser_u_honor','2016-12-18 16:55:36.828832'),(18,'web','0005_userhasnode','2016-12-27 08:19:57.250653'),(19,'web','0006_bbspost_p_level','2016-12-27 11:32:52.808829'),(20,'web','0007_courselabel_userfollowlabel','2017-02-01 09:44:53.217237'),(21,'web','0008_userhascourse_score','2017-02-01 09:44:53.295510'),(22,'web','0009_auto_20170201_1018','2017-02-01 09:44:53.467876'),(23,'web','0010_auto_20170202_2114','2017-02-02 13:14:38.468425'),(24,'web','0011_userdislikecourse','2017-02-02 13:26:31.262422'),(25,'web','0012_bbsuser_u_newuser','2017-02-07 11:55:16.158947'),(26,'web','0013_bbscourse_c_term','2017-02-19 05:55:44.375320'),(27,'web','0014_auto_20170218_1407','2017-02-19 05:55:44.395114'),(28,'web','0015_auto_20170218_1503','2017-02-19 05:55:44.667814'),(29,'web','0016_auto_20170218_1505','2017-02-19 05:55:44.687482');
 /*!40000 ALTER TABLE `django_migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -563,6 +563,7 @@ CREATE TABLE `web_userhascourse` (
   `CourseID_id` int(11) NOT NULL,
   `UserID_id` int(11) NOT NULL,
   `Score` int(11) NOT NULL,
+  `Term` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   KEY `web_userhascourse_CourseID_id_506aadc7_fk_web_bbscourse_id` (`CourseID_id`),
   KEY `web_userhascourse_UserID_id_49e5c833_fk_web_bbsuser_id` (`UserID_id`),
@@ -577,7 +578,7 @@ CREATE TABLE `web_userhascourse` (
 
 LOCK TABLES `web_userhascourse` WRITE;
 /*!40000 ALTER TABLE `web_userhascourse` DISABLE KEYS */;
-INSERT INTO `web_userhascourse` VALUES (49,20,10,0),(50,12,10,0),(51,21,10,0),(52,15,10,0),(53,16,10,0),(54,17,10,0),(55,18,10,0),(56,19,10,0),(57,22,11,0),(58,23,11,0),(59,24,11,0),(60,16,11,0),(61,17,11,0),(62,18,11,0),(63,19,11,0),(66,13,12,3),(67,20,12,5);
+INSERT INTO `web_userhascourse` VALUES (49,20,10,0,'2001-2002-1'),(50,12,10,0,'2001-2002-1'),(51,21,10,0,'2001-2002-1'),(52,15,10,0,'2001-2002-1'),(53,16,10,0,'2001-2002-1'),(54,17,10,0,'2001-2002-1'),(55,18,10,0,'2001-2002-1'),(56,19,10,0,'2001-2002-1'),(57,22,11,0,'2001-2002-1'),(58,23,11,0,'2001-2002-1'),(59,24,11,0,'2001-2002-1'),(60,16,11,0,'2001-2002-1'),(61,17,11,0,'2001-2002-1'),(62,18,11,0,'2001-2002-1'),(63,19,11,0,'2001-2002-1'),(66,13,12,3,'2001-2002-1'),(67,20,12,5,'2001-2002-1');
 /*!40000 ALTER TABLE `web_userhascourse` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -646,4 +647,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-02-19 13:54:29
+-- Dump completed on 2017-02-19 13:57:11

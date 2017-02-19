@@ -33,16 +33,33 @@
 			</table>
 			
 			<br><br><br>
-			
-			<p>已评价课程</p>
+
+			<p>已评分课程</p>
 			<table border="1">
 			<tr>
 			<th>名称</th>
-			<th>我的评价</th>
+			<th>我的评分</th>
+            <th>我的评价</th>
 			{% for course in courses_eva %}
 			<tr>
 			<td><input type = "submit" name = {{course.0}} value = {{course.0}}></td>
 			<td>{{course.2}}.0/5.0</td>
+            <td>{{course.3}}</td>
+			</tr>
+			{% endfor %}
+			</table>
+
+            <br><br><br>
+
+			<p>已评价课程</p>
+			<table border="1">
+			<tr>
+			<th>名称</th>
+            <th>我的评价</th>
+			{% for course in courses_com %}
+			<tr>
+			<td><input type = "submit" name = {{course.0}} value = {{course.0}}></td>
+            <td>{{course.2}}</td>
 			</tr>
 			{% endfor %}
 			</table>
