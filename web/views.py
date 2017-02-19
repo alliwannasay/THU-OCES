@@ -129,6 +129,12 @@ def bind_course_comment(courses):
     bindresult.reverse()
     return bindresult
 
+def get_my_comment(myuser,course):
+    myposts = BBSPost.objects.filter(P_Course=course,P_User=myuser)
+    if len(myposts) == 0:
+        return "尚未点评"
+    return myposts[0].P_Content
+
 
 def bbs_list(request):
     if not request.user.is_authenticated():
@@ -403,14 +409,23 @@ def my_class(request, param):
     course_with_score = UserHasCourse.objects.filter(UserID = visitedUser)
     courses_eva = []
     courses_uneva = []
+    courses_com = []
+    myuser = BBSUser.objects.get(user=request.user)
     
     for course in course_with_score:
+        mycomment = get_my_comment(myuser, course.CourseID)
         if course.Score == -1:
-            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva']
+            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva',mycomment]
             courses_uneva.append(li)
         else:
-            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva',course.Score]
+            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva',course.Score,mycomment]
             courses_eva.append(li)
+
+    for course in course_with_score:
+        mycomment = get_my_comment(myuser, course.CourseID)
+        if mycomment != "尚未评价":
+            li = [course.CourseID.C_Name, course.CourseID.C_Name + 'eva', mycomment]
+            courses_com.append(li)
             
     if request.method == 'POST':
         for course in courses:
@@ -423,7 +438,7 @@ def my_class(request, param):
     
     return render(request, 'web/my_class.html',
                   {'user':visitedUser, 'courses':courses, 
-                   'courses_eva': courses_eva, 'courses_uneva': courses_uneva})
+                   'courses_eva': courses_eva, 'courses_uneva': courses_uneva, 'courses_com':courses_com})
     
 def course_evaluation(request, param, courseid):
     if not request.user.is_authenticated():
