@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^course/(\d+)/post/(\d+)/$',views.course_post_detail),
     url(r'^me/(\w+)/(\w*)$',views.user_self_info,name='me'),
     url(r'^like_post_deal/$', views.like_post_deal),
+    url(r'^like_course/$',views.like_course),
     url(r'^course/(\d+)/delete_post/(\d+)/parentpost/(\d+)/$', views.delete_post),
     url(r'^course/(\d+)/delete_post/(\d+)/$', views.delete_bigpost),
     url(r'^post/(\d+)/$',views.post_course_post,name='newpost'),

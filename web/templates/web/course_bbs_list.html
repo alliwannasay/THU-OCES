@@ -14,10 +14,25 @@
 {% block title %}学堂Plus{% endblock %}
 {% block content %}
 
-<h2>{{ course.C_Name }}课程讨论区</h2>
+<h2>{{ course.C_Name }} </h2>
+    <h2>评分人数：{{ course.C_Ranknum }}</h2>
+    <h2>评分：{{ course.C_Rank }}</h2>
+{#    <button id="likecou" class="button2" data-toggle="modal" data-target="#myModal" onclick="javascript:likecourse(this)">删除</button>#}
+
+            {% if isLike %}
+            <input id="likecou" type="button" class="btn btn-default likeBtn blue mybutton" value="已收藏" onclick="javascript:likecourse(this)">
+            {% else %}
+            <input id="likecou" type="button" class="btn btn-default likeBtn blue mybutton" value="收藏" onclick="javascript:likecourse(this)">
+            {% endif %}
+
     {% if isHaving == 1 %}
 <a class="fatie" href="/post/{{ course.id }}">发帖</a>
     {% endif %}
+
+
+
+
+
 
 <li class="list">
 <h3>帖子列表</h3>
@@ -113,5 +128,26 @@
         $('#content_{{ post.id }}').html(s)
         {% endfor %}
     });
+
+    function likecourse(obj)
+    {
+        console.log(obj)
+        courseid = {{ course.id }}
+        $.ajax
+        ({
+            url: '/like_course/',
+            type: 'POST',
+            data: {'courseID': courseid},
+            success: function(data) {
+
+                if (obj.value == '已收藏') {
+                    obj.value = '收藏';
+                }
+                else {
+                    obj.value = '已收藏';
+                }
+            }
+        })
+    }
     </script>
 {% endblock %}

@@ -245,6 +245,11 @@ def course_post_list(request,courseid):
         newposts.append(post)
 
     newposts.reverse()
+
+    isLike = 0
+    ulcf = UserLikeCourse.objects.filter(CourseID=mycourse,UserID=myuser)
+    if len(ulcf)!=0:
+        isLike = 1
     context['posts'] = newposts
     context['course'] = mycourse
     context['user'] = myuser
@@ -252,6 +257,7 @@ def course_post_list(request,courseid):
     context['courses'] = courses
     context['hasnotes'] = hasnotes
     context['isHaving'] = isHaving
+    context['isLike'] = isLike
     return render(request,'web/course_bbs_list.html',context)
 
 def course_post_detail(request,courseid,postid):
@@ -515,6 +521,24 @@ def like_post_deal(request):
         postuser.save()
 
     return HttpResponse('follow success')
+
+@csrf_exempt
+def like_course(request):
+    myuser = BBSUser.objects.get(user=request.user)
+    course = BBSCourse.objects.get(id=int(request.POST['courseID']))
+
+    if UserLikeCourse.objects.filter(UserID=myuser, CourseID=course).exists():
+        UserLikeCourse.objects.get(UserID=myuser, CourseID=course).delete()
+    else:
+        print("shit")
+        newLikeCourse = UserLikeCourse()
+        newLikeCourse.UserID = myuser
+        newLikeCourse.CourseID = course
+        print(newLikeCourse)
+        newLikeCourse.save()
+
+    return HttpResponse('follow success')
+
 
 @csrf_exempt
 def post_course_post(request,courseid):

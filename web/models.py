@@ -97,5 +97,8 @@ class UserDislikeCourse(models.Model):
     UserID = models.ForeignKey(BBSUser)
     CourseID = models.ForeignKey(BBSCourse)
 
+class UserLikeCourse(models.Model):
+    UserID = models.ForeignKey(BBSUser)
+    CourseID = models.ForeignKey(BBSCourse)
 
 
