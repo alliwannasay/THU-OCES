@@ -1,101 +1,106 @@
 {% extends "base.html" %}
 
-{%block css%} <link rel="stylesheet" href="{{BASE_DIR}}/static/button.css" />
-<link rel="stylesheet" href="{{BASE_DIR}}/static/list.css" />{% endblock %}
-
-{% block sub-title %}
-<h2>清华大学在线评课系统</h2>
-
+{%block css%}
+<style type="text/css">
+#bg{
+    width: 60px;
+    height: 16px;
+    background: url("../../static/star_gray.png");
+}
+#over{
+    height:16px;
+    background:url("../../static/star_org.png") no-repeat;
+}
+</style>
 {% endblock %}
 
-{% block title %}学堂Plus{% endblock %}
+
 {% block content %}
 
-    <form class="navbar-form navbar-right" role="search" action="/search_course/" method="post">
+    <form role="search" action="/search_course/" method="post" style="background-color: #976cd2">
                 {% csrf_token %}
-                <div class="form-group">
+                <div style="display: inline-block; padding:8px; width: 70%">
                     <input type="text" class="form-control" placeholder="Search" name="searchContent">
                 </div>
-                <button type="submit" class="btn btn-default">
-                    <span class="glyphicon glyphicon-search"></span>
+                <div style="display: inline-block; padding-left: 20px">
+                <button type="submit" class="btn btn-default" style="background-color: #976cd2; border-color: #976cd2; color:white">
+                    搜索
                 </button>
+                </div>
             </form>
 
 
+<div style="background-color: #cacdfa">
+        <div style="padding: 5px; text-align: center; font-size:200%">热门课程</div>
+    </div>
 
-    <li class="list">
-<h3>热门课程</h3>
-<ol>
 {% for hotc in hotBind %}
     {% for  hott in hotc %}
+
         {% if forloop.first %}
-    <li>
-        <div class="icon" title="No unread posts"><div></div></div>
-        <div class="dis">
-            <div class="inner">
+        <div style="margin: 5px; padding: 10px; background-color: white">
+        <div style="font-family: STSong">
             <a href="/course/{{ hott.id }}/">{{ hott.C_Name }}</a>
         </div>
+        <div id="bg" style="display: inline-block"><!--这里是背景，也就是灰色的星星-->
+        <!--说明，这里的width就是设置分数啦，以我写的为例，一个星星的长度是12px，也就是1分12px，如果是4.3分，就是4.3*12px = 51.6px的长度，当然这个一般是取得数据后用js或者其他模板语言去控制的-->
+            <div id="over" style="width:{{ hott.C_Rank }}%"></div><!--这里是遮罩，设置宽度以达到评分的效果-->
         </div>
-
-        <div class="stat">
-            <div class="good info">评分：{{ hott.C_Rank }}</div>
+        <div style="display: inline-block; padding-left: 20px">
+            {{ hott.C_Ranknum }}个评价
         </div>
+        <div style="display: inline-block; padding-left: 100px">
         <input id="{{ hott.id }}" type="button" class="btn btn-default likeBtn blue mybutton" value="不感兴趣" onclick="javascript:dislikeCourse(this)">
-    </li>
+        </div>
         {%endif%}
 
         {% if forloop.last %}
-            <li>
-
-        <div class="stat">
-            <div class="good info">短评：{{ hott }}</div>
+        <!--<div class="stat">
+            短评：{{ hott }}
+        </div>-->
         </div>
-
-    </li>
         {%endif%}
 {% empty %}
     <li>抱歉，目前还没有推荐课程。</li>
 {% endfor %}
 {% endfor %}
-    </ol>
-    </li>
 
-    <li class="list">
-<h3>推荐课程</h3>
-<ol>
+
+<div style="background-color: #cacdfa">
+    <div style="padding: 5px; text-align: center; font-size:200%">推荐课程</div>
+</div>
+
 {% for recc in recBind %}
     {% for  rect in recc %}
+
         {% if forloop.first %}
-    <li>
-        <div class="icon" title="No unread posts"><div></div></div>
-        <div class="dis">
-            <div class="inner">
+        <div style="margin: 5px; padding: 10px; background-color: white">
+        <div style="font-family: STSong">
             <a href="/course/{{ rect.id }}/">{{ rect.C_Name }}</a>
         </div>
+        <div id="bg" style="display: inline-block"><!--这里是背景，也就是灰色的星星-->
+        <!--说明，这里的width就是设置分数啦，以我写的为例，一个星星的长度是12px，也就是1分12px，如果是4.3分，就是4.3*12px = 51.6px的长度，当然这个一般是取得数据后用js或者其他模板语言去控制的-->
+            <div id="over" style="width:{{ rect.C_Rank }}%"></div><!--这里是遮罩，设置宽度以达到评分的效果-->
         </div>
-
-        <div class="stat">
-            <div class="good info">评分：{{ rect.C_Rank }}</div>
+        <div style="display: inline-block; padding-left: 20px">
+            {{ rect.C_Ranknum }}个评价
         </div>
+        <div style="display: inline-block; padding-left: 100px">
         <input id="{{ rect.id }}" type="button" class="btn btn-default likeBtn blue mybutton" value="不感兴趣" onclick="javascript:dislikeCourse(this)">
-    </li>
+        </div>
         {%endif%}
 
         {% if forloop.last %}
-            <li>
-
-        <div class="stat">
-            <div class="good info">短评：{{ rect }}</div>
+        <!--<div class="stat">
+            短评：{{ rect }}
+        </div>-->
         </div>
-
-    </li>
         {%endif%}
 {% empty %}
     <li>抱歉，目前还没有推荐课程。</li>
 {% endfor %}
 {% endfor %}
-    </ol>
-    </li>
+
 
 
 {#<li class="list">#}

@@ -1,22 +1,33 @@
 {% extends "base.html" %}
 
-{%block css%} <link rel="stylesheet" href="{{BASE_DIR}}/static/postpost.css" />
-<link rel="stylesheet" href="{{BASE_DIR}}/static/postpostplus.css" />
-<link rel="stylesheet" href="{{BASE_DIR}}/static/detail.css" /> {% endblock %}
-
-{% block sub-title %}
-<h2>{{ user.U_name }}您选的{{ course.C_Name }}课程，帖子详情</h2>
+{% block css %}
 {% endblock %}
 
-{% block title %}学堂Plus{% endblock %}
-
 {% block content %}
-{#    <div class="button1 return">#}
-{#        <a href="/course/{{ course.id }}/">返回</a>#}
-{##}
-{#    </div>#}
-    <input type=button class="button1 return" value="返回" onclick="javascript:window.location.href='/course/{{ course.id }}/'">
 
+    <div style="background-color: #cacdfa">
+        <div style="padding: 5px; text-align: center; font-size:200%">评论留言区</div>
+    </div>
+
+        <div style="margin: 10px; background-color: white">
+        <div class="media">
+            <div class="media-left">
+                <img class="media-object" src="{{BASE_DIR}}/media/{{bigpost.P_User.U_Image}}" width="60" height="60"/>
+                <div style="text-align: center">
+                    {{ bigpost.P_User.U_name}}
+                </div>
+            </div>
+            <div class="media-body" style="padding-top: 10px">
+                {{ bigpost.P_Content }}
+                {% if bigpost.P_User == user%}
+                    <button id="{{ bigpost.id }}" class="button2" data-toggle="modal" data-target="#myModal" onclick="javascript:deletepost(this)">删除</button>
+                {% endif %}
+            </div>
+        </div>
+        <div style="color: #909090; padding-left: 60%">
+            互动 {{ post.P_ReplyNum }} 赞 {{ post.P_LikeNum }}
+        </div>
+    </div>
 <div class="container">
     <div class="post">
         <div class="profile">
@@ -24,9 +35,7 @@
             <img class="image" src="{{BASE_DIR}}/media/{{bigpost.P_User.U_Image}}" width="100px" height="100px" />
             </div>
             <div class="info">昵称：{{ bigpost.P_User.U_name}}</div>
-            <div class="info">称号：{{ bigpost.P_User.U_Honor}}</div>
         </div>
-        <li class="postcon">
             <div class="inner">
             <div class="name">
                 {{ bigpost.P_Title }}
@@ -34,13 +43,6 @@
             <div class="content" id="content_{{ bigpost.id }}">{{ bigpost.P_Content}}</div>
             </div>
         <div class="cate">
-            {% if bigpost.P_Type == 0 %}
-                <div class="cat info">类别：普通贴</div>
-            {% elif bigpost.P_Type == 1%}
-                <div class="cat info">类别：提问贴</div>
-            {% elif bigpost.P_Type == 2%}
-                <div class="cat info">类别：笔记贴</div>
-            {% endif %}
             <div class="good info">点赞数：<span id="likeid">{{ bigpost.P_LikeNum}}</span></div>
             {% if islike %}
             <input id="{{ bigpost.id }}" type="button" class="btn btn-default likeBtn blue mybutton" value="取消" onclick="javascript:likebtn(this)">
@@ -48,7 +50,6 @@
             <input id="{{ bigpost.id }}" type="button" class="btn btn-default likeBtn blue mybutton" value="点赞" onclick="javascript:likebtn(this)">
             {% endif %}
             </div>
-        </li>
         </div>
      
 

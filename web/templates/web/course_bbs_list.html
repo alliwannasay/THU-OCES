@@ -1,81 +1,81 @@
 {% extends "base.html" %}
 
-{%block css%} <link rel="stylesheet" href="{{BASE_DIR}}/static/button.css" /> 
-<link rel="stylesheet" href="{{BASE_DIR}}/static/list.css" />{% endblock %}
-
-{% block sub-title %}
-<h2>{{ course.C_Name }}课程讨论区</h2>
-    {% if isHaving == 1 %}
-<a class="fatie" href="/post/{{ course.id }}">发帖</a>
-    {% endif %}
-
+{%block css%}
 {% endblock %}
 
-{% block title %}学堂Plus{% endblock %}
+
 {% block content %}
 
-<h2>{{ course.C_Name }} </h2>
-    <h2>评分人数：{{ course.C_Ranknum }}</h2>
-    <h2>评分：{{ course.C_Rank }}</h2>
-{#    <button id="likecou" class="button2" data-toggle="modal" data-target="#myModal" onclick="javascript:likecourse(this)">删除</button>#}
-
+    <div style="background-color: #cacdfa; padding-bottom: 15px; margin: 5px">
+        <div style="padding: 15px;padding-left: 30px; font-size: 200%;">
+            {{ course.C_Name }}
             {% if isLike %}
-            <input id="likecou" type="button" class="btn btn-default likeBtn blue mybutton" value="已收藏" onclick="javascript:likecourse(this)">
+            <input id="likecou" type="button" class="btn btn-default likeBtn blue mybutton" style="margin-left: 100px" value="已收藏" onclick="javascript:likecourse(this)">
             {% else %}
-            <input id="likecou" type="button" class="btn btn-default likeBtn blue mybutton" value="收藏" onclick="javascript:likecourse(this)">
+            <input id="likecou" type="button" class="btn btn-default likeBtn blue mybutton" style="margin-left: 100px" value="收藏" onclick="javascript:likecourse(this)">
             {% endif %}
+        </div>
+        <div style="padding-left: 30px;">开课教师：</div>
+        <div style="padding-left: 30px;">课程介绍：</div>
+        <div style="padding-left: 30px;">课程任务：</div>
+        <div style="padding-left: 30px;">考核方式：</div>
+    </div>
+
+    <div style="background-color: white; margin: 5px; padding: 15px">
+        <div style="display: inline-block; font-size: 300%; padding-left: 30px">
+            {{ course.C_Rank }}
+        </div>
+        <div style="display: inline-block;">
+            <div>
+                <div style="display: inline-block">
+                    分
+                </div>
+                <div style="display: inline-block; padding-left: 100px">
+                    {{ course.C_Ranknum }}个用户已评
+                </div>
+            </div>
+            <div style="padding-left: 100px">
+                查看全部历史评分
+            </div>
+        </div>
+    </div>
+
 
     {% if isHaving == 1 %}
 <a class="fatie" href="/post/{{ course.id }}">发帖</a>
     {% endif %}
 
+<div style="background-color: #cacdfa">
+    <div style="padding: 5px; text-align: center; font-size:200%">评论留言区</div>
+</div>
 
 
 
 
 
-<li class="list">
-<h3>帖子列表</h3>
-<ol>
 {% for post in posts %}
-    <li>
-        <div class="icon" title="No unread posts"><div></div></div>
-        <div class="dis">
-            <div class="inner">
-            <a href="/course/{{ course.id }}/post/{{ post.id }}">{{ post.P_Title }}</a>
-
-            
+    <div onclick="window.location.href='/course/{{ course.id }}/post/{{ post.id }}'" style="margin: 10px; background-color: white">
+        <div class="media">
+            <div class="media-left">
+                <img class="media-object" src="{{BASE_DIR}}/media/{{post.P_User.U_Image}}" width="60" height="60"/>
+                <div style="text-align: center">
+                    {{ post.P_User.U_name}}
+                </div>
+            </div>
+            <div class="media-body" style="padding-top: 10px">
+                {{ post.P_Content }}
+                {% if post.P_User == user%}
+                    <button id="{{ post.id }}" class="button2" data-toggle="modal" data-target="#myModal" onclick="javascript:deletepost(this)">删除</button>
+                {% endif %}
+            </div>
         </div>
+        <div style="color: #909090; padding-left: 60%">
+            互动 {{ post.P_ReplyNum }} 赞 {{ post.P_LikeNum }}
         </div>
-        <div class="stat">
-            {% if post.P_Type == 0 %}
-                <div class="cat info">类别：普通贴</div>
-            {% elif post.P_Type == 1%}
-                <div class="cat info">类别：提问贴</div>
-            {% elif post.P_Type == 2%}
-                <div class="cat info">类别：笔记贴</div>
-            {% endif %}
-            {% if post.P_Type == 1%}
-                <div class="cat info">悬赏：{{ post.P_Wanted }}</div>
-            {% endif %}
-            <div class="good info">点赞数：{{ post.P_LikeNum}}</div>
-        </div>
-        <div class="info1">
-            <span><img class="image" src="{{BASE_DIR}}/media/{{post.P_User.U_Image}}" width="30" height="30" /></span>
-            <span>
-            <div class="info">昵称：{{ post.P_User.U_name}}</div>
-            <div class="info">称号：{{ post.P_User.U_Honor}}</div>
-            </span>
-        </div>
-        {% if post.P_User == user%}
-            <button id="{{ post.id }}" class="button2" data-toggle="modal" data-target="#myModal" onclick="javascript:deletepost(this)">删除</button>
-        {% endif %}
-    </li>
+    </div>
 {% empty %}
     <li>抱歉，目前还没有帖子。</li>
 {% endfor %}
-    </ol>
-    </li>
 
     <!-- 模态框（Modal） -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
