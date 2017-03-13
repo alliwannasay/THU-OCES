@@ -285,6 +285,8 @@ def course_post_detail(request,courseid,postid):
         reply.P_Type = type_dic['回答贴']
         reply.P_Parent = bigpost
         reply.save()
+        bigpost.P_ReplyNum += 1
+        bigpost.save()
         myuser.U_GPB += gpb_amount['reply']
         raiseLevel(myuser)
         myuser.save()
@@ -420,26 +422,33 @@ def my_class(request, param):
     for course in course_with_score:
         mycomment = get_my_comment(myuser, course.CourseID)
         if course.Score == -1:
-            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva',mycomment]
+            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva',mycomment, course.CourseID.id]
             courses_uneva.append(li)
         else:
-            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva',course.Score,mycomment]
+            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva',course.Score,mycomment, course.CourseID.id]
             courses_eva.append(li)
 
     for course in course_with_score:
         mycomment = get_my_comment(myuser, course.CourseID)
-        if mycomment != "尚未评价":
-            li = [course.CourseID.C_Name, course.CourseID.C_Name + 'eva', mycomment]
+        if mycomment != "尚未点评":
+            li = [course.CourseID.C_Name, course.CourseID.C_Name + 'eva', mycomment, course.CourseID.id]
             courses_com.append(li)
             
-    if request.method == 'POST':
-        for course in courses:
-            if not request.POST.get(course.C_Name, None) == None:
-                return HttpResponseRedirect('/course/'+str(course.id)+'/')
-        for course in courses_uneva:
-            if not request.POST.get(course[1], None) == None:
-                courseid = BBSCourse.objects.get(C_Name = course[0]).id
-                return HttpResponseRedirect("/course_evaluation/" + str(param) + "/" + str(courseid) + '/')    
+    # if request.method == 'POST':
+    #     if request.POST.get('returnid') != None:
+    #         coursenamepost = request.POST.get('returnid')
+    #         thiscourse = BBSCourse.objects.filter(C_Name=coursenamepost)
+    #         print(thiscourse)
+            #return HttpResponseRedirect('/course/' + str(course.id) + '/')
+        #print(request.POST['returnid'])
+        # for course in courses:
+        #     print(request.POST.get(course.C_Name))
+        #     if not request.POST.get(course.C_Name, None) == None:
+        #         return HttpResponseRedirect('/course/'+str(course.id)+'/')
+        # for course in courses_uneva:
+        #     # if not request.POST.get(course[1], None) == None:
+        #     courseid = BBSCourse.objects.get(C_Name = course[0]).id
+        #     return HttpResponseRedirect("/course_evaluation/" + str(param) + "/" + str(courseid) + '/')
     
     return render(request, 'web/my_class.html',
                   {'user':visitedUser, 'courses':courses, 
@@ -602,6 +611,7 @@ def delete_bigpost(request,courseid,postid):
         return HttpResponseRedirect('/login/')
     mycourse = BBSCourse.objects.get(id=courseid)
     courses = get_courses(request.user)
+    print('delete',mycourse.C_Name)
     if mycourse not in courses:
         return HttpResponseRedirect('/')
     postde = BBSPost.objects.get(id=postid)
@@ -659,6 +669,17 @@ def good_post(request,courseid,bigpostid):
         parent.P_User.save()
         return HttpResponseRedirect("/course/" + courseid + "/post/" + bigpostid + "/")
     return HttpResponseRedirect("/course/"+courseid+"/post/"+bigpostid+"/")
+
+def my_like_courses(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    courses = get_courses(request.user)
+    myuser = BBSUser.objects.get(user=request.user)
+    mylikecoursesre = UserLikeCourse.objects.filter(UserID=myuser)
+    mylikecourses = []
+    for i in mylikecoursesre:
+        mylikecourses.append(i.CourseID)
+    return render(request, 'web/my_like_courses.html', {'user':myuser,'courses':mylikecourses})
 
 
 @csrf_exempt

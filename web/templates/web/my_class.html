@@ -13,15 +13,15 @@
 	  
 		<form method = "post">
 			{% csrf_token %}
-			<p>未评价课程</p>
+			<p>未评分课程</p>
 			<table border="1">
 			<tr>
 			<th>名称</th>
 			<th>我的评价</th>
 			{% for course in courses_uneva %}
 			<tr>
-			<td><input type = "submit" name = {{course.0}} value = {{course.0}}></td>
-			<td><input type = "submit" name = {{course.1}} value = "我要评价"></td>
+			<td><a href = '/course/{{ course.3 }}/'>{{ course.0 }}</a></td>
+			<td><a href = '/course_evaluation/{{ user.U_studentid }}/{{ course.3 }}/'>我的评价</a></td>
 			</tr>
 			{% endfor %}
 			</table>
@@ -36,7 +36,7 @@
             <th>我的评价</th>
 			{% for course in courses_eva %}
 			<tr>
-			<td><input type = "submit" name = {{course.0}} value = {{course.0}}></td>
+			<td><a href = '/course/{{ course.4 }}/'>{{ course.0 }}</a></td>
 			<td>{{course.2}}.0/5.0</td>
             <td>{{course.3}}</td>
 			</tr>
@@ -52,7 +52,7 @@
             <th>我的评价</th>
 			{% for course in courses_com %}
 			<tr>
-			<td><input type = "submit" name = {{course.0}} value = {{course.0}}></td>
+			<td><a href = '/course/{{ course.3 }}/'>{{ course.0 }}</a></td>
             <td>{{course.2}}</td>
 			</tr>
 			{% endfor %}
