@@ -265,8 +265,7 @@ def course_post_detail(request,courseid,postid):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
     courses = get_courses(request.user)
-    if thiscourse not in courses:
-        return HttpResponseRedirect('/')
+
 
     myuser = BBSUser.objects.get(user=request.user)
     bigpost = BBSPost.objects.get(id=postid, P_Course=thiscourse)
