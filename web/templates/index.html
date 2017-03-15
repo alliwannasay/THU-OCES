@@ -1,147 +1,184 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>引导语</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-{%block css%}
-<style type="text/css">
-#bg{
-    width: 60px;
-    height: 16px;
-    background: url("../../static/star_gray.png");
-}
-#over{
-    height:16px;
-    background:url("../../static/star_org.png") no-repeat;
-}
-</style>
-{% endblock %}
-
-
-{% block content %}
-
-    <form role="search" action="/search_course/" method="post" style="background-color: #976cd2">
-                {% csrf_token %}
-                <div style="display: inline-block; padding:8px; width: 70%">
-                    <input type="text" class="form-control" placeholder="Search" name="searchContent">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+    <link rel="stylesheet" href="{{BASE_DIR}}/static/button.css" />
+      <style type="text/css">
+          .bg{
+              width: 60px;
+              height: 16px;
+              background: url("../../static/star_gray.png");
+          }
+          .over{
+              height:16px;
+              background:url("../../static/star_org.png") no-repeat;
+          }
+          .buttons-row .button{
+              border: 0;
+              color: black;
+              background-color: white;
+          }
+          .buttons-row .button:first-child{
+              border-left-width: 0;
+          }
+          .buttons-row .button.active{
+              background-color: #41C7DB;
+              color: white;
+          }
+          .buttons-tab .button.active{
+              color: #41C7DB;
+              border-color: #41C7DB;
+          }
+          .button.button-fill{
+              background-color: #41C7DB;
+          }
+          .row .label{
+              text-align: center;
+              font-size: 0.5rem;
+              border: 1px solid;
+              border-radius: 1rem;
+          }
+          .row .star{
+              text-align: right;
+          }
+      </style>
+  </head>
+  <body>
+    <div class="page-group">
+        <!-- 你的html代码 -->
+        <div class="page">
+            <div class="content">
+                <div class="buttons-tab">
+                    <a href="" class="active button">首页</a>
+                    <a href="/my_class/{{ request.user.username }}/" class="button">我的课程</a>
+                    <a href="/me/{{ request.user.username }}" class="button">个人</a>
                 </div>
-                <div style="display: inline-block; padding-left: 20px">
-                <button type="submit" class="btn btn-default" style="background-color: #976cd2; border-color: #976cd2; color:white">
-                    搜索
-                </button>
+                <div class="content-padded">
+                    <form role="search" action="/search_course/" method="post">
+                        {% csrf_token %}
+                        <div class="searchbar row">
+                            <div class="search-input col-85">
+                                <label class="icon icon-search" for="search"></label>
+                                <input type="search" id='search' name="searchContent" placeholder='输入关键字...'/>
+                            </div>
+                            <button type="submit" class="button button-fill button-primary col-15"><span class="icon icon-search"></span></button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-
-
-<div style="background-color: #cacdfa">
-        <div style="padding: 5px; text-align: center; font-size:200%">热门课程</div>
+                <div class="content-block">
+                    <div class="buttons-row">
+                        <a href="#tab1" class="tab-link active button">大家在看</a>
+                        <a href="#tab2" class="tab-link button">为你推荐</a>
+                    </div>
+                </div>
+                <div class="tabs">
+                    <div id="tab1" class="tab active">
+                        <div class="content-block">
+                            {% for hotc in hotBind %}
+                                {% for hott in hotc %}
+                                {% if forloop.first %}
+                                    <div class="list-block media-list">
+                                        <ul>
+                                            <li class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title-row">
+                                                        <a href="/course/{{ hott.id }}/"><div class="item-title" style="color: #41C7DB">{{ hott.C_Name }}</div></a>
+                                                        <div id="{{ hott.id }}" class="item-after create-actions">...</div>
+                                                    </div>
+                                                    <div class="item-title-row">
+                                                        <div class="item-subtitle">teacher</div>
+                                                        <div class="item-after" style="color: #FFAC2D">{{ hott.C_Rank }}</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="label col-20">好课</div>
+                                                        <div class="label col-20">不水</div>
+                                                        <div class="label col-20">老师赞</div>
+                                                        <div class="star col-40">
+                                                            <div class="bg" style="display: inline-block">
+                                                                <div class="over" style="width: {{ hott.C_Rank }}%"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title" style="font-size: 0.5rem; color: #41C7DB">
+                                                        精彩点评
+                                                    </div>
+                                                    <div class="item-text" style="font-size: 0.5rem">此处是文本内容...</div>
+                                                    <div class="item-subtitle" style="font-size: 0.5rem">{{ hott.C_Ranknum }}人打分 · {{ hott.C_Ranknum }}人点评</div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div id="tab2" class="tab">
+                        <div class="content-block">
+                            {% for recc in recBind %}
+                                {% for rect in recc %}
+                                {% if forloop.first %}
+                                    <div class="list-block media-list">
+                                        <ul>
+                                            <li class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title-row">
+                                                        <a href="/course/{{ rect.id }}/"><div class="item-title" style="color: #41C7DB">{{ rect.C_Name }}</div></a>
+                                                        <div id="{{ rect.id }}" class="item-after create-actions">...</div>
+                                                    </div>
+                                                    <div class="item-title-row">
+                                                        <div class="item-subtitle">teacher</div>
+                                                        <div class="item-after" style="color: #FFAC2D">{{ rect.C_Rank }}</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="label col-20">好课</div>
+                                                        <div class="label col-20">不水</div>
+                                                        <div class="label col-20">老师赞</div>
+                                                        <div class="star col-40">
+                                                            <div class="bg" style="display: inline-block">
+                                                                <div class="over" style="width: {{ rect.C_Rank }}%"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="item-content">
+                                                <div class="item-inner">
+                                                    <div class="item-title" style="font-size: 0.5rem; color: #41C7DB">
+                                                        精彩点评
+                                                    </div>
+                                                    <div class="item-text" style="font-size: 0.5rem">此处是文本内容...</div>
+                                                    <div class="item-subtitle" style="font-size: 0.5rem">{{ rect.C_Ranknum }}人打分 · {{ rect.C_Ranknum }}人点评</div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-{% for hotc in hotBind %}
-    {% for  hott in hotc %}
-
-        {% if forloop.first %}
-        <div style="margin: 5px; padding: 10px; background-color: white">
-        <div style="font-family: STSong">
-            <a href="/course/{{ hott.id }}/">{{ hott.C_Name }}</a>
-        </div>
-        <div id="bg" style="display: inline-block"><!--这里是背景，也就是灰色的星星-->
-        <!--说明，这里的width就是设置分数啦，以我写的为例，一个星星的长度是12px，也就是1分12px，如果是4.3分，就是4.3*12px = 51.6px的长度，当然这个一般是取得数据后用js或者其他模板语言去控制的-->
-            <div id="over" style="width:{{ hott.C_Rank }}%"></div><!--这里是遮罩，设置宽度以达到评分的效果-->
-        </div>
-        <div style="display: inline-block; padding-left: 20px">
-            {{ hott.C_Ranknum }}个评价
-        </div>
-        <div style="display: inline-block; padding-left: 100px">
-        <input id="{{ hott.id }}" type="button" class="btn btn-default likeBtn blue mybutton" value="不感兴趣" onclick="javascript:dislikeCourse(this)">
-        </div>
-        {%endif%}
-
-        {% if forloop.last %}
-        <!--<div class="stat">
-            短评：{{ hott }}
-        </div>-->
-        </div>
-        {%endif%}
-{% empty %}
-    <li>抱歉，目前还没有推荐课程。</li>
-{% endfor %}
-{% endfor %}
-
-
-<div style="background-color: #cacdfa">
-    <div style="padding: 5px; text-align: center; font-size:200%">推荐课程</div>
-</div>
-
-{% for recc in recBind %}
-    {% for  rect in recc %}
-
-        {% if forloop.first %}
-        <div style="margin: 5px; padding: 10px; background-color: white">
-        <div style="font-family: STSong">
-            <a href="/course/{{ rect.id }}/">{{ rect.C_Name }}</a>
-        </div>
-        <div id="bg" style="display: inline-block"><!--这里是背景，也就是灰色的星星-->
-        <!--说明，这里的width就是设置分数啦，以我写的为例，一个星星的长度是12px，也就是1分12px，如果是4.3分，就是4.3*12px = 51.6px的长度，当然这个一般是取得数据后用js或者其他模板语言去控制的-->
-            <div id="over" style="width:{{ rect.C_Rank }}%"></div><!--这里是遮罩，设置宽度以达到评分的效果-->
-        </div>
-        <div style="display: inline-block; padding-left: 20px">
-            {{ rect.C_Ranknum }}个评价
-        </div>
-        <div style="display: inline-block; padding-left: 100px">
-        <input id="{{ rect.id }}" type="button" class="btn btn-default likeBtn blue mybutton" value="不感兴趣" onclick="javascript:dislikeCourse(this)">
-        </div>
-        {%endif%}
-
-        {% if forloop.last %}
-        <!--<div class="stat">
-            短评：{{ rect }}
-        </div>-->
-        </div>
-        {%endif%}
-{% empty %}
-    <li>抱歉，目前还没有推荐课程。</li>
-{% endfor %}
-{% endfor %}
-
-
-
-{#<li class="list">#}
-{#<h3>好课推荐</h3>#}
-{#<ol>#}
-{#{% for recCourse in recCourses %}#}
-{#    <li>#}
-{#        <div class="icon" title="No unread posts"><div></div></div>#}
-{#        <div class="dis">#}
-{#            <div class="inner">#}
-{#            <a href="/course/{{ recCourse.id }}/">{{ recCourse.C_Name }}</a>#}
-{#        </div>#}
-{#        </div>#}
-{##}
-{#        <div class="stat">#}
-{#            <div class="good info">评分：{{ recCourse.C_Rank }}</div>#}
-{#        </div>#}
-{#        <input id="{{ recCourse.id }}" type="button" class="btn btn-default likeBtn blue mybutton" value="不感兴趣" onclick="javascript:dislikeCourse(this)">#}
-{#    </li>#}
-{#{% empty %}#}
-{#    <li>抱歉，目前还没有推荐课程。</li>#}
-{#{% endfor %}#}
-{#    </ol>#}
-{#    </li>#}
-
-
-    <script type="text/javascript">
-
-    function dislikeCourse(obj) {
-
-        $.ajax
-        ({
-            url: '/dislike_course/',
-            type: 'POST',
-            data: {'courseID': obj.id},
-            success: function(data) {
-                window.location.href="/"
-            }
-
-        })
-    }
-
+    <script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+    <script type="text/jsx">
     </script>
-{% endblock %}
+  </body>
+</html>

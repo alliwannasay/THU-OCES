@@ -1,60 +1,99 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- Bootstrap core CSS -->
-        <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="{{BASE_DIR}}/static/footer.css" />
-        <link rel="stylesheet" href="{{BASE_DIR}}/static/label_select.css" />
-    </head>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>引导语</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-    <body>
-    <div style="background-color: #5a1bc4; margin-bottom: 3px">
-        <div style="padding: 15px; text-align: center; font-size:150%; color: white">兴趣标签</div>
-    </div>
-    <div style="background-color: #cacdfa">
-        <div style="padding: 15px; text-align: center; font-size:120%">请选择你感兴趣的标签</div>
-    </div>
-    <div style="padding-left: 100px; padding-top: 100px">
-    <form method = "post">
-        {% csrf_token %}
-        <p>删除标签：</p>
-        <div class="label_select">
-        <select name="labels_followed">
-            {% for label in labels_followed %}
-                <option value={{ label }}>{{ label }}</option>
-            {% endfor %}
-        </select>
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+    <link rel="stylesheet" href="{{BASE_DIR}}/static/button.css" />
+      <style>
+          input[type=checkbox]{
+              visibility: hidden;
+          }
+          .col-25{
+              margin-bottom: 0.5rem;
+          }
+          label{
+              border-color: gray;
+              border: 1px solid;
+              border-radius: 1rem;
+              padding-left: 0.8rem;
+              padding-right: 0.8rem;
+          }
+          .col-25 input[type=checkbox]:checked + label{
+              border-color: #41C7DB;
+              color: #41C7DB;
+          }
+      </style>
+  </head>
+  <body>
+    <div class="page-group">
+        <!-- 你的html代码 -->
+        <div class="page">
+            <header class="bar bar-nav" style="background-color: #41C7DB">
+                <h1 class="title" style="color: white">选择你感兴趣的标签</h1>
+            </header>
+            <div class="content" style="margin-top: 0.5rem; background-color: white">
+                <div class="content-block">
+                    <form method="post">
+                        {%  csrf_token %}
+                            <div class="row" style="text-align: center;">
+                                <div class="col-25">
+                                    <div class="myCheckBox">
+                                        <input type="checkbox" id="check1">
+                                        <label for="check1">20</label>
+                                    </div>
+                                </div>
+                                <div class="col-25">
+                                    <div class="myCheckBox">
+                                        <input type="checkbox" id="check2">
+                                        <label for="check2">20</label>
+                                    </div>
+                                </div>
+                                <div class="col-25">
+                                    <div class="myCheckBox">
+                                        <input type="checkbox" id="check3">
+                                        <label for="check3">20</label>
+                                    </div>
+                                </div>
+                                <div class="col-25">
+                                    <div class="myCheckBox">
+                                        <input type="checkbox" id="check4">
+                                        <label for="check4">20</label>
+                                    </div>
+                                </div>
+                                <div class="col-25">
+                                    <div class="myCheckBox">
+                                        <input type="checkbox" id="check5">
+                                        <label for="check5">20</label>
+                                    </div>
+                                </div>
+                            </div>
+                        <div style="text-align: center;">
+                            <button type="submit" name="next" style="padding: 0.5rem 3rem; margin-top: 18rem">选择完毕，进入首页</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <input class="btn btn-lg btn-primary btn-block" style="width:30%; font-size: 50%; padding: 8px; background-color: #cacdfa; border-color: #cacdfa; color: black;" type = "submit" name = "delete" value ="删除">
-
-        <br>
-        <p>添加标签：</p>
-        <div class="label_select">
-        <select name="labels_unfollowed">
-            {% for label in labels_unfollowed %}
-                <option value={{ label }}>{{ label }}</option>
-            {% endfor %}
-        </select>
-        </div>
-        <input class="btn btn-lg btn-primary btn-block" style="width:30%; font-size: 50%; padding: 8px; background-color: #cacdfa; border-color: #cacdfa; color: black;" type = "submit" name = "add" value ="添加">
-    </form>
     </div>
 
-    <footer class="footer">
-	{% csrf_token %}
-        <form method = "post">
-            {% csrf_token %}
-            <input type="submit" class="btn btn-lg btn-primary btn-block" name="next" value = "继续   >" style="background-color: #cacdfa; border-color: #cacdfa; color: black;" onclick="disp_alert()">
-        </form>
-    </footer>
-    </body>
+    <script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+
 
     <script type="text/javascript">
 		function disp_alert(){
 			alert("标签选择完成，即将进入主界面")
 		}
 	</script>
+
+  </body>
+
 </html>
