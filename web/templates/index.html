@@ -83,19 +83,18 @@
                     <div id="tab1" class="tab active">
                         <div class="content-block">
                             {% for hotc in hotBind %}
-                                {% for hott in hotc %}
-                                {% if forloop.first %}
+
                                     <div class="list-block media-list">
                                         <ul>
                                             <li class="item-content">
                                                 <div class="item-inner">
                                                     <div class="item-title-row">
-                                                        <a href="/course/{{ hott.id }}/"><div class="item-title" style="color: #41C7DB">{{ hott.C_Name }}</div></a>
-                                                        <div id="{{ hott.id }}" class="item-after create-actions">...</div>
+                                                        <a href="/course/{{ hotc.course.id }}/"><div class="item-title" style="color: #41C7DB">{{ hotc.course.C_Name }}</div></a>
+                                                        <div id="{{ hotc.course.id }}" class="item-after create-actions">...</div>
                                                     </div>
                                                     <div class="item-title-row">
                                                         <div class="item-subtitle">teacher</div>
-                                                        <div class="item-after" style="color: #FFAC2D">{{ hott.C_Rank }}</div>
+                                                        <div class="item-after" style="color: #FFAC2D">{{ hotc.course.C_Rank }}</div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="label col-20">好课</div>
@@ -103,7 +102,7 @@
                                                         <div class="label col-20">老师赞</div>
                                                         <div class="star col-40">
                                                             <div class="bg" style="display: inline-block">
-                                                                <div class="over" style="width: {{ hott.C_Rank }}%"></div>
+                                                                <div class="over" style="width: {{ hotc.hyaku }}%"></div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -114,33 +113,31 @@
                                                     <div class="item-title" style="font-size: 0.5rem; color: #41C7DB">
                                                         精彩点评
                                                     </div>
-                                                    <div class="item-text" style="font-size: 0.5rem">此处是文本内容...</div>
-                                                    <div class="item-subtitle" style="font-size: 0.5rem">{{ hott.C_Ranknum }}人打分 · {{ hott.C_Ranknum }}人点评</div>
+                                                    <div class="item-text" style="font-size: 0.5rem">{{ hotc.shortmsg }}</div>
+                                                    <div class="item-subtitle" style="font-size: 0.5rem">{{ hotc.course.C_Ranknum }}人打分 · {{ hotc.course.C_Ranknum }}人点评</div>
                                                 </div>
                                             </li>
                                         </ul>
                                     </div>
-                                {% endif %}
-                                {% endfor %}
+
                             {% endfor %}
                         </div>
                     </div>
                     <div id="tab2" class="tab">
                         <div class="content-block">
                             {% for recc in recBind %}
-                                {% for rect in recc %}
-                                {% if forloop.first %}
+                                
                                     <div class="list-block media-list">
                                         <ul>
                                             <li class="item-content">
                                                 <div class="item-inner">
                                                     <div class="item-title-row">
-                                                        <a href="/course/{{ rect.id }}/"><div class="item-title" style="color: #41C7DB">{{ rect.C_Name }}</div></a>
-                                                        <div id="{{ rect.id }}" class="item-after create-actions">...</div>
+                                                        <a href="/course/{{ recc.course.id }}/"><div class="item-title" style="color: #41C7DB">{{ recc.course.C_Name }}</div></a>
+                                                        <div id="{{ recc.course.id }}" class="item-after create-actions">...</div>
                                                     </div>
                                                     <div class="item-title-row">
                                                         <div class="item-subtitle">teacher</div>
-                                                        <div class="item-after" style="color: #FFAC2D">{{ rect.C_Rank }}</div>
+                                                        <div class="item-after" style="color: #FFAC2D">{{ recc.course.C_Rank }}</div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="label col-20">好课</div>
@@ -148,7 +145,7 @@
                                                         <div class="label col-20">老师赞</div>
                                                         <div class="star col-40">
                                                             <div class="bg" style="display: inline-block">
-                                                                <div class="over" style="width: {{ rect.C_Rank }}%"></div>
+                                                                <div class="over" style="width: {{ recc.hyaku }}%"></div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -159,14 +156,13 @@
                                                     <div class="item-title" style="font-size: 0.5rem; color: #41C7DB">
                                                         精彩点评
                                                     </div>
-                                                    <div class="item-text" style="font-size: 0.5rem">此处是文本内容...</div>
-                                                    <div class="item-subtitle" style="font-size: 0.5rem">{{ rect.C_Ranknum }}人打分 · {{ rect.C_Ranknum }}人点评</div>
+                                                    <div class="item-text" style="font-size: 0.5rem">{{ recc.shortmsg }}</div>
+                                                    <div class="item-subtitle" style="font-size: 0.5rem">{{ recc.course.C_Ranknum }}人打分 · {{ recc.course.C_Ranknum }}人点评</div>
                                                 </div>
                                             </li>
                                         </ul>
                                     </div>
-                                {% endif %}
-                                {% endfor %}
+                       
                             {% endfor %}
                         </div>
                     </div>

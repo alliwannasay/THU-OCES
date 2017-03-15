@@ -99,7 +99,7 @@ def get_recommended_courses(myuser,mycourses):
         if course in dcourses:
             continue
         remainCourses.append(course)
-    return remainCourses
+    return remainCourses[0:9]
 
 def get_hot_courses(myuser):
     allcourses = BBSCourse.objects.all()
@@ -121,11 +121,25 @@ def get_best_comment(course):
     bestpost = posts[0]
     return bestpost.P_Content
 
+class newBind:
+    course = BBSCourse()
+    shortmsg = ""
+    hyaku = 0
+    def __init__(self,c,s):
+        self.course = c
+        self.shortmsg = s
+        self.hyaku = self.course.C_Rank * 100 / 5.0
+
+    def __iter__(self):
+        print("__iter__ called")
+        return iter(self.shortmsg)
+
 def bind_course_comment(courses):
     bindresult = []
     for i in range(0,len(courses)):
         comment = get_best_comment(courses[i])
-        bindresult.append((courses[i],comment))
+        nB = newBind(courses[i],comment)
+        bindresult.append(nB)
     bindresult.reverse()
     return bindresult
 
@@ -134,6 +148,8 @@ def get_my_comment(myuser,course):
     if len(myposts) == 0:
         return "尚未点评"
     return myposts[0].P_Content
+
+
 
 
 def bbs_list(request):
@@ -145,8 +161,9 @@ def bbs_list(request):
     hotCourses = get_hot_courses(myuser)
     recBind = bind_course_comment(recCourses)
     hotBind = bind_course_comment(hotCourses)
+    print('test',hotBind)
     labelstr = get_label_str(request.user)
-    readFile()
+    #readFile()
     return render(request, 'index.html',{'courses':courses,'hotBind':hotBind,'recBind':recBind,'user':myuser,'label':labelstr})
 
 
@@ -370,41 +387,55 @@ def user_change_label(request, param):
     visitedUser = BBSUser.objects.get(user=visitedUser)
     courses = get_courses(request.user)
     
-    labels = get_label(request.user)
-    labelnames = []
-    for label in labels:
-        labelnames.append(str(label))
-        
-    labelnames_un = []
+    mylabels = get_label(request.user)
+    # labelnames = []
+    # for label in labels:
+    #     labelnames.append(str(label))
+    #
+    # labelnames_un = []
     
     labels = CourseLabel.objects.all()
-    for label in labels:
-        if not (label.L_Name in labelnames):
-            labelnames_un.append(label.L_Name)
+    # for label in labels:
+    #     if not (label.L_Name in labelnames):
+    #         labelnames_un.append(label.L_Name)
+    # if request.method == 'POST':
+    #     #print("post")
+    #     isdelete = request.POST.get('delete', None)
+    #     isadd = request.POST.get('add', None)
+    #     isnext = request.POST.get('next', None)
+    #     if not isnext == None:
+    #         visitedUser.U_NewUser = 0
+    #         visitedUser.save()
+    #         return HttpResponseRedirect('/')
+    #     elif not isdelete == None:
+    #         #print("delete")
+    #         #print(request.POST.get('labels_followed', None))
+    #         la = CourseLabel.objects.get(L_Name = request.POST.get('labels_followed', None))
+    #         UserFollowLabel.objects.get(UserID = visitedUser, LabelID = la).delete()
+    #     elif not isadd == None:
+    #         #print("add")
+    #         #print(request.POST.get('labels_unfollowed', None))
+    #         la = CourseLabel.objects.get(L_Name = request.POST.get('labels_unfollowed', None))
+    #         UserFollowLabel.objects.create(UserID = visitedUser, LabelID = la)
+    #
+    #     return HttpResponseRedirect("/change_label/" + str(param) + "/")
+    #
     if request.method == 'POST':
-        #print("post")
-        isdelete = request.POST.get('delete', None)
-        isadd = request.POST.get('add', None)
-        isnext = request.POST.get('next', None)
-        if not isnext == None:
-            visitedUser.U_NewUser = 0
-            visitedUser.save()
-            return HttpResponseRedirect('/')
-        elif not isdelete == None:
-            #print("delete")
-            #print(request.POST.get('labels_followed', None))
-            la = CourseLabel.objects.get(L_Name = request.POST.get('labels_followed', None))
-            UserFollowLabel.objects.get(UserID = visitedUser, LabelID = la).delete()
-        elif not isadd == None:
-            #print("add")
-            #print(request.POST.get('labels_unfollowed', None))
-            la = CourseLabel.objects.get(L_Name = request.POST.get('labels_unfollowed', None))
-            UserFollowLabel.objects.create(UserID = visitedUser, LabelID = la)
-        
-        return HttpResponseRedirect("/change_label/" + str(param) + "/")
-    
+        print(request.POST)
+        dict = request.POST
+        key = 'labelsubmit'
+        labelids = dict.getlist(key)
+        orire = UserFollowLabel.objects.filter(UserID=visitedUser)
+        orire.delete()
+
+        for labelid in labelids:
+            newlabel = CourseLabel.objects.get(id = int(labelid))
+
+            UserFollowLabel.objects.create(UserID = visitedUser,LabelID = newlabel)
+        return HttpResponseRedirect("/")
+
     return render(request,'web/user_change_label.html',
-                  {'user':visitedUser, 'courses':courses, 'labels_followed': labelnames, 'labels_unfollowed': labelnames_un})
+                  {'user':visitedUser, 'courses':courses, 'labels':labels, 'mylabels':mylabels})
 
 def my_class(request, param):
     if not request.user.is_authenticated():

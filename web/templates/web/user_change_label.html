@@ -43,36 +43,24 @@
                     <form method="post">
                         {%  csrf_token %}
                             <div class="row" style="text-align: center;">
+                                {%for label in labels  %}
+                                    {% if label in mylabels %}
                                 <div class="col-25">
                                     <div class="myCheckBox">
-                                        <input type="checkbox" id="check1">
-                                        <label for="check1">20</label>
+                                        <input type="checkbox" name="labelsubmit" id={{ label.id }} value={{ label.id }} checked="checked">
+                                        <label for={{ label.id }}>{{ label }}</label>
                                     </div>
                                 </div>
-                                <div class="col-25">
+                                    {% else %}
+                                    <div class="col-25">
                                     <div class="myCheckBox">
-                                        <input type="checkbox" id="check2">
-                                        <label for="check2">20</label>
+                                        <input type="checkbox" name="labelsubmit" id={{ label.id }} value={{ label.id }}>
+                                        <label for={{ label.id }}>{{ label }}</label>
                                     </div>
                                 </div>
-                                <div class="col-25">
-                                    <div class="myCheckBox">
-                                        <input type="checkbox" id="check3">
-                                        <label for="check3">20</label>
-                                    </div>
-                                </div>
-                                <div class="col-25">
-                                    <div class="myCheckBox">
-                                        <input type="checkbox" id="check4">
-                                        <label for="check4">20</label>
-                                    </div>
-                                </div>
-                                <div class="col-25">
-                                    <div class="myCheckBox">
-                                        <input type="checkbox" id="check5">
-                                        <label for="check5">20</label>
-                                    </div>
-                                </div>
+                                    {% endif %}
+
+                                {% endfor %}
                             </div>
                         <div style="text-align: center;">
                             <button type="submit" name="next" style="padding: 0.5rem 3rem; margin-top: 18rem">选择完毕，进入首页</button>
