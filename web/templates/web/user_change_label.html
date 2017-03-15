@@ -15,7 +15,7 @@
           input[type=checkbox]{
               visibility: hidden;
           }
-          .col-25{
+          .col-33{
               margin-bottom: 0.5rem;
           }
           label{
@@ -25,7 +25,7 @@
               padding-left: 0.8rem;
               padding-right: 0.8rem;
           }
-          .col-25 input[type=checkbox]:checked + label{
+          .col-33 input[type=checkbox]:checked + label{
               border-color: #41C7DB;
               color: #41C7DB;
           }
@@ -45,19 +45,19 @@
                             <div class="row" style="text-align: center;">
                                 {%for label in labels  %}
                                     {% if label in mylabels %}
-                                <div class="col-25">
-                                    <div class="myCheckBox">
-                                        <input type="checkbox" name="labelsubmit" id={{ label.id }} value={{ label.id }} checked="checked">
-                                        <label for={{ label.id }}>{{ label }}</label>
+                                    <div class="col-33">
+                                        <div class="myCheckBox">
+                                            <input type="checkbox" name="labelsubmit" id={{ label.id }} value={{ label.id }} checked="checked">
+                                            <label for={{ label.id }}>{{ label }}</label>
+                                        </div>
                                     </div>
-                                </div>
                                     {% else %}
-                                    <div class="col-25">
-                                    <div class="myCheckBox">
-                                        <input type="checkbox" name="labelsubmit" id={{ label.id }} value={{ label.id }}>
-                                        <label for={{ label.id }}>{{ label }}</label>
+                                    <div class="col-33">
+                                        <div class="myCheckBox">
+                                            <input type="checkbox" name="labelsubmit" id={{ label.id }} value={{ label.id }}>
+                                            <label for={{ label.id }}>{{ label }}</label>
+                                        </div>
                                     </div>
-                                </div>
                                     {% endif %}
 
                                 {% endfor %}
