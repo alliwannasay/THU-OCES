@@ -1,78 +1,166 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>我的课程</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-{%block css%}
-<link rel="stylesheet" href="{{BASE_DIR}}/static/user.css" />
-{% endblock %}
-
-{% block content %}
-    <div style="background-color: #cacdfa">
-        <div style="padding: 15px; text-align: center">我的课程</div>
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+    <link rel="stylesheet" href="{{BASE_DIR}}/static/button.css" />
+      <style type="text/css">
+          .bg{
+              width: 60px;
+              height: 16px;
+              background: url("../../static/star_gray.png");
+          }
+          .over{
+              height:16px;
+              background:url("../../static/star_org.png") no-repeat;
+          }
+          .buttons-row .button{
+              border: 0;
+              color: black;
+              background-color: white;
+          }
+          .buttons-row .button:first-child{
+              border-left-width: 0;
+          }
+          .buttons-row .button.active{
+              background-color: #41C7DB;
+              color: white;
+          }
+          .buttons-tab .button.active{
+              color: #41C7DB;
+              border-color: #41C7DB;
+          }
+          .button.button-fill{
+              background-color: #41C7DB;
+          }
+          .row .label{
+              text-align: center;
+              font-size: 0.5rem;
+              border: 1px solid;
+              border-radius: 1rem;
+          }
+          .row .star{
+              text-align: right;
+          }
+          #semPicker{
+              width: 90%;
+              background-color: white;
+              text-align: center;
+              border: 0;
+              padding: 0.2rem;
+          }
+          .mycheckbox1{
+              background-color: white;
+              border-top: 2px solid;
+              border-left: 1px solid;
+              border-right: 1px solid;
+              border-color: #eee;
+              padding: 0.2rem;
+          }
+          .mycheckbox1 label{
+              padding: 0.2rem 2rem;
+          }
+      </style>
+  </head>
+  <body>
+    <div class="page-group">
+        <!-- 你的html代码 -->
+        <div class="page">
+            <div class="content">
+                <div class="buttons-tab">
+                    <a href="/" class="button">首页</a>
+                    <a href="/my_class/{{ request.user.username }}/"  class="active button">我的课程</a>
+                    <a href="/me/{{ request.user.username }}" class="button">个人</a>
+                </div>
+                <div class="content-padded">
+                    <form role="search" action="/search_course/" method="post">
+                        {% csrf_token %}
+                        <div class="searchbar row">
+                            <div class="search-input col-85">
+                                <label class="icon icon-search" for="search"></label>
+                                <input type="search" id='search' name="searchContent" placeholder='输入关键字...'/>
+                            </div>
+                            <button type="submit" class="button button-fill button-primary col-15"><span class="icon icon-search"></span></button>
+                        </div>
+                    </form>
+                </div>
+                <div class="row no-gutter" style="text-align: center;">
+                    <div class="col-100" style="background-color: white">
+                        <select name="semPicker" id="semPicker">
+                            <option value="all">所有学期</option>
+                            <option value="1">大一</option>
+                            <option value="2">大二</option>
+                            <option value="3">大三</option>
+                            <option value="4">大四</option>
+                        </select>
+                        <span>
+                            <label class="icon icon-caret" for="semPicker"></label>
+                        </span>
+                    </div>
+                    <div class="col-50 mycheckbox1">
+                        <label for="eva">已打分</label>
+                        <input type="checkbox" id="eva">
+                    </div>
+                    <div class="col-50 mycheckbox1">
+                        <label for="com">已评价</label>
+                        <input type="checkbox" id="com">
+                    </div>
+                </div>
+                <div class="content-block">
+                        {% for course in courses_uneva %}
+                            <div class="list-block media-list">
+                                <ul>
+                                    <li class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title-row">
+                                                <a href="/course/{{ course.id }}/"><div class="item-title" style="color: #41C7DB">{{ course.C_Name }}</div></a>
+                                                <div id="{{ course.id }}" class="item-after create-actions">...</div>
+                                            </div>
+                                            <div class="item-title-row">
+                                                <div class="item-subtitle">teacher</div>
+                                                <div class="item-after" style="color: #FFAC2D">{{ course.C_Rank }}</div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="label col-20">好课</div>
+                                                <div class="label col-20">不水</div>
+                                                <div class="label col-20">老师赞</div>
+                                                <div class="star col-40">
+                                                    <div class="bg" style="display: inline-block">
+                                                        <div class="over" style="width: {{ hott.C_Rank }}%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="item-content">
+                                        <div class="item-inner">
+                                            <div class="item-title" style="font-size: 0.5rem; color: #41C7DB">
+                                                精彩点评
+                                            </div>
+                                            <div class="item-text" style="font-size: 0.5rem">此处是文本内容...</div>
+                                            <div class="item-subtitle" style="font-size: 0.5rem">{{ course.C_Ranknum }}人打分 · {{ course.C_Ranknum }}人点评</div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endfor %}
+                    </div>
+            </div>
+        </div>
     </div>
-    <li class="sss">
-      <div class="info">
-	  
-		<form method = "post">
-			{% csrf_token %}
-			<p>未评价课程</p>
-			<table border="1">
-			<tr>
-			<th>名称</th>
-			<th>我的评价</th>
-			{% for course in courses_uneva %}
-			<tr>
-			<td><input type = "submit" name = {{course.0}} value = {{course.0}}></td>
-			<td><input type = "submit" name = {{course.1}} value = "我要评价"></td>
-			</tr>
-			{% endfor %}
-			</table>
-			
-			<br><br><br>
 
-			<p>已评分课程</p>
-			<table border="1">
-			<tr>
-			<th>名称</th>
-			<th>我的评分</th>
-            <th>我的评价</th>
-			{% for course in courses_eva %}
-			<tr>
-			<td><input type = "submit" name = {{course.0}} value = {{course.0}}></td>
-			<td>{{course.2}}.0/5.0</td>
-            <td>{{course.3}}</td>
-			</tr>
-			{% endfor %}
-			</table>
-
-            <br><br><br>
-
-			<p>已评价课程</p>
-			<table border="1">
-			<tr>
-			<th>名称</th>
-            <th>我的评价</th>
-			{% for course in courses_com %}
-			<tr>
-			<td><input type = "submit" name = {{course.0}} value = {{course.0}}></td>
-            <td>{{course.2}}</td>
-			</tr>
-			{% endfor %}
-			</table>
-			
-		</form>
-		
-		
-		
-		{% if user.U_NewUser == 1 %}
-			</h3><br>您可以点击“我要评价”按钮对课程进行评分，评分后方可使用“查看课程评分功能”。<h3>
-		{% else %}
-		
-		{% endif %}
-
-
-      </div>
-
-
-    </li>
-	       
-
-{% endblock %}
+    <script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+    <script type="text/javascript">
+        $.init()
+    </script>
+  </body>
+</html>

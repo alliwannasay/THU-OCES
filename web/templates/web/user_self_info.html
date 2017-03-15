@@ -1,152 +1,95 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>个人主页</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-{%block css%}
-{% endblock %}
-{% block sub-title %}
-<h2>{{ user.U_RealName }}您的信息</h2>
-{% endblock %}
-
-
-{% block title %}学堂Plus{% endblock %}
-
-
-{% block content %}
-    <div style="background-color: #cacdfa">
-        <div style="padding: 15px; text-align: center">个人帐户</div>
-    </div>
-    <div class="info" style="padding: 20px">
-        <div>
-            <img src="{{ BASE_DIR }}/media/{{ user.U_Image }}" width="60px" height="60px"/>
-            <span style="padding-left:20px; padding-bottom:40px">{{ request.user.username }}</span>
-            <span style="padding-left:100px; padding-bottom:40px">Lv. 2</span>
-        </div>
-    </div>
-    <div class="row" style="padding: 20px">
-            <div class="list-group">
-                <a href="" class="list-group-item">我的收藏</a>
-                <a href="" class="list-group-item">我的积分:{{ user.U_GPB }}</a>
-                <a href="/change_label/{{ request.user.username }}/" class="list-group-item">兴趣标签</a>
-                <a href="" class="list-group-item">分享给朋友</a>
-                <a href="" class="list-group-item">关于</a>
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+    <link rel="stylesheet" href="{{BASE_DIR}}/static/button.css" />
+      <style type="text/css">
+          .bg{
+              width: 60px;
+              height: 16px;
+              background: url("../../static/star_gray.png");
+          }
+          .over{
+              height:16px;
+              background:url("../../static/star_org.png") no-repeat;
+          }
+          .buttons-row .button{
+              border: 0;
+              color: black;
+              background-color: white;
+          }
+          .buttons-row .button:first-child{
+              border-left-width: 0;
+          }
+          .buttons-row .button.active{
+              background-color: #41C7DB;
+              color: white;
+          }
+          .buttons-tab .button.active{
+              color: #41C7DB;
+              border-color: #41C7DB;
+          }
+          .button.button-fill{
+              background-color: #41C7DB;
+          }
+          .row .label{
+              text-align: center;
+              font-size: 0.5rem;
+              border: 1px solid;
+              border-radius: 1rem;
+          }
+          .row .star{
+              text-align: right;
+          }
+          .myinfo {
+              margin-top: 0.5rem;
+              background-color: #41C7DB;
+          }
+      </style>
+  </head>
+  <body>
+    <div class="page-group">
+        <!-- 你的html代码 -->
+        <div class="page">
+            <div class="content">
+                <div class="buttons-tab">
+                    <a href="" class="active button">首页</a>
+                    <a href="/my_class/{{ request.user.username }}/" class="button">我的课程</a>
+                    <a href="/me/{{ request.user.username }}" class="button">个人</a>
+                </div>
+                <div class="list-block media-list myinfo">
+                    <ul>
+                      <li>
+                          <div class="item-content" style="padding: 1rem; background-color: #41C7DB">
+                              <div class="item-media">
+                                  <img src="http://gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i3/TB10LfcHFXXXXXKXpXXXXXXXXXX_!!0-item_pic.jpg_250x250q60.jpg" style='width: 2.2rem;'>
+                              </div>
+                              <div class="item-inner">
+                                  <div class="item-title-row">
+                                      <div class="item-title">标题</div>
+                                  </div>
+                              </div>
+                          </div>
+                      </li>
+                    </ul>
+                </div>
             </div>
+        </div>
     </div>
-    <a href="/logout" class="btn btn-lg btn-primary btn-block" style="background-color: #5a1bc4; border-color:#5a1bc4; color: white;">退出登录</a>
-    <!--<li class="sss">
-      <div class="info">
-        <div>
-        <img src="{{ BASE_DIR }}/media/{{ user.U_Image }}" width="60px" height="60px" />
-        </div>
-        <div class="row">
-            <div class="list-group">
-                <a href="" class="list-group-item">asdasdas</a>
 
-            </div>
-        </div>
-        {% if request.user == user.user %}
-            <label class="button2" for="changeImage">上传头像</label>
-            <input id="changeImage" name="U_Image" type="file" style="position:absolute;clip:rect(0 0 0 0);"/>
-        {% endif %}
-        {% if request.user == user.user %}
-        <div class="na">
-            昵称
-            <input id="changeNick" type="text" value="{{ user.U_name }}"/>
-            <input class="button2"id="saveNick" type="button" value="修改昵称"/>
-        </div>
-        {% else %}
-            <div>昵称：{{ user.U_name }}</div>
-        {% endif %}
-
-      </div>
-      <div class="xinxi">
-        <div class="xinxizixiang">真名：{{ user.U_RealName }}</div>
-        <div class="xinxizixiang">院系：{{ user.U_Major }}</div>
-        <div class="xinxizixiang">等级：{{ user.U_Level}}</div>
-        <div class="xinxizixiang">称号：{{ user.U_Honor}}</div>
-        <div class="xinxizixiang">GP币：{{ user.U_GPB }}</div>
-        <div class="xinxizixiang">签名：{{ user.U_Description }}</div>
-		<div class="xinxizixiang">关注的标签：{{ label }}
-			<form method = "post">
-				{% csrf_token %}
-				<input type = "submit" name = "changelabel" value = "修改标签">
-				<br>
-				<input type = "submit" name = "myclass" value = "我的课程">
-				<br>
-				<input type = "submit" name = "setting" value = "设置">
-			</form>
-		</div>
-      </div>
-
-    </li>-->
-	       
-
+    <script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
     <script type="text/javascript">
-    function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-    }
-    var csrftoken = getCookie('csrftoken');
-    function csrfSafeMethod(method) {
-        // these HTTP methods do not require CSRF protection
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            }
-        }
-    });
-
-    $(function () {
-       $('#changeImage').bind("change", function () {
-           if ($(this).prop('files')[0].type.indexOf("image") <= -1 ) {
-               alert("请选择图片");
-               return;
-           }
-           var formdata = new FormData();
-           formdata.append("file", $(this).prop('files')[0]);
-           console.log($(this).prop('files')[0]);
-           $.ajax({
-               url: "/ajax_change_image/",
-               type: "POST",
-               data: formdata,
-               processData: false,
-               contentType: false,
-               success: function () {
-                   window.location.href = window.location.href;
-               }
-           });
-       })
-    });
-
-    $(function () {
-        $('#saveNick').bind("click", function () {
-            console.log("click");
-            var newNick = $('#changeNick').val();
-            if (newNick != "") {
-                $.ajax({
-                    url:'/ajax_change_nickname/',
-                    type: 'POST',
-                    data: {'newNick': newNick},
-                    success: function () {
-                        alert("修改成功");
-                    }
-                })
-            }
-        })
-    });
-
+        $.init()
     </script>
-    
-{% endblock %}
+  </body>
+</html>
