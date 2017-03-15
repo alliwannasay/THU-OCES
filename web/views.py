@@ -99,7 +99,7 @@ def get_recommended_courses(myuser,mycourses):
         if course in dcourses:
             continue
         remainCourses.append(course)
-    return remainCourses
+    return remainCourses[0:9]
 
 def get_hot_courses(myuser):
     allcourses = BBSCourse.objects.all()
@@ -121,11 +121,25 @@ def get_best_comment(course):
     bestpost = posts[0]
     return bestpost.P_Content
 
+class newBind:
+    course = BBSCourse()
+    shortmsg = ""
+    hyaku = 0
+    def __init__(self,c,s):
+        self.course = c
+        self.shortmsg = s
+        self.hyaku = self.course.C_Rank * 100 / 5.0
+
+    def __iter__(self):
+        print("__iter__ called")
+        return iter(self.shortmsg)
+
 def bind_course_comment(courses):
     bindresult = []
     for i in range(0,len(courses)):
         comment = get_best_comment(courses[i])
-        bindresult.append((courses[i],comment))
+        nB = newBind(courses[i],comment)
+        bindresult.append(nB)
     bindresult.reverse()
     return bindresult
 
@@ -134,6 +148,8 @@ def get_my_comment(myuser,course):
     if len(myposts) == 0:
         return "尚未点评"
     return myposts[0].P_Content
+
+
 
 
 def bbs_list(request):
@@ -145,8 +161,9 @@ def bbs_list(request):
     hotCourses = get_hot_courses(myuser)
     recBind = bind_course_comment(recCourses)
     hotBind = bind_course_comment(hotCourses)
+    print('test',hotBind)
     labelstr = get_label_str(request.user)
-    readFile()
+    #readFile()
     return render(request, 'index.html',{'courses':courses,'hotBind':hotBind,'recBind':recBind,'user':myuser,'label':labelstr})
 
 
@@ -285,6 +302,8 @@ def course_post_detail(request,courseid,postid):
         reply.P_Type = type_dic['回答贴']
         reply.P_Parent = bigpost
         reply.save()
+        bigpost.P_ReplyNum += 1
+        bigpost.save()
         myuser.U_GPB += gpb_amount['reply']
         raiseLevel(myuser)
         myuser.save()
@@ -368,41 +387,55 @@ def user_change_label(request, param):
     visitedUser = BBSUser.objects.get(user=visitedUser)
     courses = get_courses(request.user)
     
-    labels = get_label(request.user)
-    labelnames = []
-    for label in labels:
-        labelnames.append(str(label))
-        
-    labelnames_un = []
+    mylabels = get_label(request.user)
+    # labelnames = []
+    # for label in labels:
+    #     labelnames.append(str(label))
+    #
+    # labelnames_un = []
     
     labels = CourseLabel.objects.all()
-    for label in labels:
-        if not (label.L_Name in labelnames):
-            labelnames_un.append(label.L_Name)
+    # for label in labels:
+    #     if not (label.L_Name in labelnames):
+    #         labelnames_un.append(label.L_Name)
+    # if request.method == 'POST':
+    #     #print("post")
+    #     isdelete = request.POST.get('delete', None)
+    #     isadd = request.POST.get('add', None)
+    #     isnext = request.POST.get('next', None)
+    #     if not isnext == None:
+    #         visitedUser.U_NewUser = 0
+    #         visitedUser.save()
+    #         return HttpResponseRedirect('/')
+    #     elif not isdelete == None:
+    #         #print("delete")
+    #         #print(request.POST.get('labels_followed', None))
+    #         la = CourseLabel.objects.get(L_Name = request.POST.get('labels_followed', None))
+    #         UserFollowLabel.objects.get(UserID = visitedUser, LabelID = la).delete()
+    #     elif not isadd == None:
+    #         #print("add")
+    #         #print(request.POST.get('labels_unfollowed', None))
+    #         la = CourseLabel.objects.get(L_Name = request.POST.get('labels_unfollowed', None))
+    #         UserFollowLabel.objects.create(UserID = visitedUser, LabelID = la)
+    #
+    #     return HttpResponseRedirect("/change_label/" + str(param) + "/")
+    #
     if request.method == 'POST':
-        #print("post")
-        isdelete = request.POST.get('delete', None)
-        isadd = request.POST.get('add', None)
-        isnext = request.POST.get('next', None)
-        if not isnext == None:
-            visitedUser.U_NewUser = 0
-            visitedUser.save()
-            return HttpResponseRedirect('/')
-        elif not isdelete == None:
-            #print("delete")
-            #print(request.POST.get('labels_followed', None))
-            la = CourseLabel.objects.get(L_Name = request.POST.get('labels_followed', None))
-            UserFollowLabel.objects.get(UserID = visitedUser, LabelID = la).delete()
-        elif not isadd == None:
-            #print("add")
-            #print(request.POST.get('labels_unfollowed', None))
-            la = CourseLabel.objects.get(L_Name = request.POST.get('labels_unfollowed', None))
-            UserFollowLabel.objects.create(UserID = visitedUser, LabelID = la)
-        
-        return HttpResponseRedirect("/change_label/" + str(param) + "/")
-    
+        print(request.POST)
+        dict = request.POST
+        key = 'labelsubmit'
+        labelids = dict.getlist(key)
+        orire = UserFollowLabel.objects.filter(UserID=visitedUser)
+        orire.delete()
+
+        for labelid in labelids:
+            newlabel = CourseLabel.objects.get(id = int(labelid))
+
+            UserFollowLabel.objects.create(UserID = visitedUser,LabelID = newlabel)
+        return HttpResponseRedirect("/")
+
     return render(request,'web/user_change_label.html',
-                  {'user':visitedUser, 'courses':courses, 'labels_followed': labelnames, 'labels_unfollowed': labelnames_un})
+                  {'user':visitedUser, 'courses':courses, 'labels':labels, 'mylabels':mylabels})
 
 def my_class(request, param):
     if not request.user.is_authenticated():
@@ -420,26 +453,33 @@ def my_class(request, param):
     for course in course_with_score:
         mycomment = get_my_comment(myuser, course.CourseID)
         if course.Score == -1:
-            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva',mycomment]
+            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva',mycomment, course.CourseID.id]
             courses_uneva.append(li)
         else:
-            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva',course.Score,mycomment]
+            li = [course.CourseID.C_Name, course.CourseID.C_Name+'eva',course.Score,mycomment, course.CourseID.id]
             courses_eva.append(li)
 
     for course in course_with_score:
         mycomment = get_my_comment(myuser, course.CourseID)
-        if mycomment != "尚未评价":
-            li = [course.CourseID.C_Name, course.CourseID.C_Name + 'eva', mycomment]
+        if mycomment != "尚未点评":
+            li = [course.CourseID.C_Name, course.CourseID.C_Name + 'eva', mycomment, course.CourseID.id]
             courses_com.append(li)
             
-    if request.method == 'POST':
-        for course in courses:
-            if not request.POST.get(course.C_Name, None) == None:
-                return HttpResponseRedirect('/course/'+str(course.id)+'/')
-        for course in courses_uneva:
-            if not request.POST.get(course[1], None) == None:
-                courseid = BBSCourse.objects.get(C_Name = course[0]).id
-                return HttpResponseRedirect("/course_evaluation/" + str(param) + "/" + str(courseid) + '/')    
+    # if request.method == 'POST':
+    #     if request.POST.get('returnid') != None:
+    #         coursenamepost = request.POST.get('returnid')
+    #         thiscourse = BBSCourse.objects.filter(C_Name=coursenamepost)
+    #         print(thiscourse)
+            #return HttpResponseRedirect('/course/' + str(course.id) + '/')
+        #print(request.POST['returnid'])
+        # for course in courses:
+        #     print(request.POST.get(course.C_Name))
+        #     if not request.POST.get(course.C_Name, None) == None:
+        #         return HttpResponseRedirect('/course/'+str(course.id)+'/')
+        # for course in courses_uneva:
+        #     # if not request.POST.get(course[1], None) == None:
+        #     courseid = BBSCourse.objects.get(C_Name = course[0]).id
+        #     return HttpResponseRedirect("/course_evaluation/" + str(param) + "/" + str(courseid) + '/')
     
     return render(request, 'web/my_class.html',
                   {'user':visitedUser, 'courses':courses, 
@@ -602,6 +642,7 @@ def delete_bigpost(request,courseid,postid):
         return HttpResponseRedirect('/login/')
     mycourse = BBSCourse.objects.get(id=courseid)
     courses = get_courses(request.user)
+    print('delete',mycourse.C_Name)
     if mycourse not in courses:
         return HttpResponseRedirect('/')
     postde = BBSPost.objects.get(id=postid)
@@ -659,6 +700,17 @@ def good_post(request,courseid,bigpostid):
         parent.P_User.save()
         return HttpResponseRedirect("/course/" + courseid + "/post/" + bigpostid + "/")
     return HttpResponseRedirect("/course/"+courseid+"/post/"+bigpostid+"/")
+
+def my_like_courses(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    courses = get_courses(request.user)
+    myuser = BBSUser.objects.get(user=request.user)
+    mylikecoursesre = UserLikeCourse.objects.filter(UserID=myuser)
+    mylikecourses = []
+    for i in mylikecoursesre:
+        mylikecourses.append(i.CourseID)
+    return render(request, 'web/my_like_courses.html', {'user':myuser,'courses':mylikecourses})
 
 
 @csrf_exempt

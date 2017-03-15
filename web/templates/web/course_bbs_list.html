@@ -19,6 +19,7 @@
         <div style="padding-left: 30px;">课程介绍：</div>
         <div style="padding-left: 30px;">课程任务：</div>
         <div style="padding-left: 30px;">考核方式：</div>
+        <button class="button2" data-toggle="modal" data-target="#myModal" >明天看</button>
     </div>
 
     <div style="background-color: white; margin: 5px; padding: 15px">
@@ -64,57 +65,34 @@
             </div>
             <div class="media-body" style="padding-top: 10px">
                 {{ post.P_Content }}
-                {% if post.P_User == user%}
-                    <button id="{{ post.id }}" class="button2" data-toggle="modal" data-target="#myModal" onclick="javascript:deletepost(this)">删除</button>
-                {% endif %}
+
             </div>
         </div>
         <div style="color: #909090; padding-left: 60%">
             互动 {{ post.P_ReplyNum }} 赞 {{ post.P_LikeNum }}
         </div>
     </div>
+                {% if post.P_User == user%}
+                    <button id="{{ post.id }}" class="button2" onclick="javascript:deletepost(this)">删除</button>
+                {% endif %}
 {% empty %}
     <li>抱歉，目前还没有帖子。</li>
 {% endfor %}
 
-    <!-- 模态框（Modal） -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
-   aria-labelledby="myModalLabel" aria-hidden="true">
-   <div class="modal-dialog">
-      <div class="modal-content">
-         <div class="modal-header">
-            <button type="button" class="close"
-               data-dismiss="modal" aria-hidden="true">
-                  &times;
-            </button>
-            <h4 class="modal-title" id="myModalLabel">
-               确认
-            </h4>
-         </div>
-         <div class="modal-body">
 
-              删除
-
-         </div>
-         <div class="modal-footer">
-
-             <a id="deleteid" href="/">确认删除</a>
-            <button type="button" class="btn btn-default"
-               data-dismiss="modal">取消
-            </button>
-         </div>
-      </div><!-- /.modal-content -->
-</div><!-- /.modal -->
-</div>
 
     <script type="text/javascript">
 
     function deletepost(obj){
+
         idstr = obj.id
         deletedom = document.getElementById("deleteid")
         cid = {{ course.id }}
+
         restr = "/course/"+cid+"/delete_post/"+idstr+"/"
-        deletedom.setAttribute("href",restr)
+        alert("确定删除？")
+        window.location.href = restr
+
     }
 
     $(function () {
@@ -150,4 +128,36 @@
         })
     }
     </script>
+{% endblock %}
+
+{% block modal %}
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close"
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+               确认
+            </h4>
+         </div>
+         <div class="modal-body">
+
+              删除
+
+         </div>
+         <div class="modal-footer">
+
+             <a id="deleteid" href="/">确认删除</a>
+            <button type="button" class="btn btn-default"
+               data-dismiss="modal">取消
+            </button>
+         </div>
+      </div><!-- /.modal-content -->
+</div><!-- /.modal -->
+</div>
 {% endblock %}
