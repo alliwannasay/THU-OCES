@@ -51,9 +51,9 @@
         <div class="page">
             <div class="content">
                 <div class="buttons-tab">
-                    <a href="" class="active button">首页</a>
-                    <a href="/my_class/{{ request.user.username }}/" class="button">我的课程</a>
-                    <a href="/me/{{ request.user.username }}" class="button">个人</a>
+                    <a href="/" external class="button">首页</a>
+                    <a href="/my_class/{{ request.user.username }}/" external class="button">我的课程</a>
+                    <a href="/me/{{ request.user.username }}" external class="active button">个人</a>
                 </div>
                 <div class="list-block media-list myinfo">
                     <ul>
@@ -64,6 +64,7 @@
                               </div>
                               <div class="item-inner">
                                   <div class="item-title-row">
+                                      <div class="item-title">标题</div>
                                       <div class="item-title">标题</div>
                                   </div>
                               </div>

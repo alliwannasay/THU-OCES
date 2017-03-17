@@ -58,8 +58,8 @@
             <div class="content">
                 <div class="buttons-tab">
                     <a href="" class="active button">首页</a>
-                    <a href="/my_class/{{ request.user.username }}/" class="button">我的课程</a>
-                    <a href="/me/{{ request.user.username }}" class="button">个人</a>
+                    <a href="/my_class/{{ request.user.username }}/" external class="button">我的课程</a>
+                    <a href="/me/{{ request.user.username }}" external class="button">个人</a>
                 </div>
                 <div class="content-padded">
                     <form role="search" action="/search_course/" method="post">
