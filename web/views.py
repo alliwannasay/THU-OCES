@@ -229,6 +229,12 @@ def instruction(request):
     
     return render(request, 'web/instruction.html',{'courses':courses,'user':myuser,})
 
+def bindHyaku(courses):
+    nBlist = []
+    for course in courses:
+        nB = newBind(course,get_best_comment(course))
+        nBlist.append(nB)
+    return nBlist
 
 def course_post_list(request,courseid):
     context = {}
@@ -242,40 +248,31 @@ def course_post_list(request,courseid):
         isHaving = 0
 
     myuser = BBSUser.objects.get(user=request.user)
-    posts = BBSPost.objects.filter(P_Course=mycourse, P_Parent=None)
+    # posts = BBSPost.objects.filter(P_Course=mycourse, P_Parent=None)
 
-    allnotes = BBSPost.objects.filter(P_Course=mycourse, P_Type=type_dic['笔记贴'])
-    if len(allnotes) != 0:
-        hasnotes = 1
-    mynotesrelas = UserHasNode.objects.filter(UserID=myuser)
-    mynotes = []
-    posts = list(posts)
+    # posts = list(posts)
 
-    for mynotesrela in mynotesrelas:
-        mynotes.append(mynotesrela.PostID)
-    newposts = []
-    for post in posts:
-        if post.P_Type == type_dic['笔记贴'] and (post not in mynotes):
-            continue
-        if post.P_Type == type_dic['大讨论区']:
-            continue
-        newposts.append(post)
-
-    newposts.reverse()
+    # newposts = []
+    # for post in posts:
+    #     if post.P_Type == type_dic['大讨论区']:
+    #         continue
+    #     newposts.append(post)
+    #
+    # newposts.reverse()
 
     isLike = 0
     ulcf = UserLikeCourse.objects.filter(CourseID=mycourse,UserID=myuser)
     if len(ulcf)!=0:
         isLike = 1
-    context['posts'] = newposts
+    # context['posts'] = newposts
     context['course'] = mycourse
     context['user'] = myuser
-
-    context['courses'] = courses
-    context['hasnotes'] = hasnotes
     context['isHaving'] = isHaving
     context['isLike'] = isLike
+    context['courseBind'] = newBind(mycourse,get_best_comment(mycourse))
     return render(request,'web/course_bbs_list.html',context)
+
+
 
 def course_post_detail(request,courseid,postid):
     thiscourse = BBSCourse.objects.get(id=courseid)
@@ -489,9 +486,11 @@ class signBind:
     course = BBSCourse()
     sign = 0
     hyaku = 0
-    def __init__(self,c,s):
+    shortmsg = ""
+    def __init__(self,c,s,sm):
         self.course = c
         self.sign = s
+        self.shortmsg = sm
         self.hyaku = self.course.C_Rank * 100 / 5.0
 
     def __iter__(self):
@@ -509,6 +508,7 @@ def hasCom(myuser,course):
     if mycomment == "尚未点评":
         return False
     return True
+
 
 def my_class(request,param):
     if not request.user.is_authenticated():
@@ -529,7 +529,7 @@ def my_class(request,param):
             newsign = 1
         else:
             newsign = 0
-        sB = signBind(course,newsign)
+        sB = signBind(course,newsign,get_best_comment(course))
         sBlist.append(sB)
     return render(request, 'web/my_class.html',
                   {'user':myuser, 'courses':courses, 'coursesBinds': sBlist})
@@ -585,7 +585,9 @@ def course_evaluation(request, param, courseid):
             else:
                 return HttpResponseRedirect('/my_class/' + myuser.U_studentid + '/')
 
-    return render(request, 'web/course_evaluation.html', {'user':myuser,'course':course, 'courses':courses})
+    re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
+    nB = newBind(course,re.Term)
+    return render(request, 'web/course_evaluation.html', {'user':myuser,'course':course, 'courseBind':nB,'courses':courses})
 
 @csrf_exempt
 def like_post_deal(request):
