@@ -585,7 +585,9 @@ def course_evaluation(request, param, courseid):
             else:
                 return HttpResponseRedirect('/my_class/' + myuser.U_studentid + '/')
 
-    return render(request, 'web/course_evaluation.html', {'user':myuser,'course':course, 'courses':courses})
+    re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
+    nB = newBind(course,re.Term)
+    return render(request, 'web/course_evaluation.html', {'user':myuser,'course':course, 'courseBind':nB,'courses':courses})
 
 @csrf_exempt
 def like_post_deal(request):
