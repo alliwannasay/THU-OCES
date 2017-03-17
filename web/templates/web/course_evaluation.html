@@ -1,50 +1,75 @@
-{% extends "base.html" %}
-
-{%block css%} <link rel="stylesheet" href="{{BASE_DIR}}/static/postpost.css" />
-<link rel="stylesheet" href="{{BASE_DIR}}/static/postpostplus.css" /> {% endblock %}
-
-{% block sub-title %}
-<h2>{{ course.C_Name }}:课程评价</h2>
-{% endblock %}
-
-
-{% block title %}学堂Plus{% endblock %}
-{% block content %}
-
-    <div class="form">
-    <div class="outbox ">
-        {% if error %}
-            <div class="mention" role="alert">
-                    <p>{{ error }}</p>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>个人主页</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+    <link rel="stylesheet" href="{{BASE_DIR}}/static/button.css" />
+      <style type="text/css">
+          .buttons-row .button{
+              border: 0;
+              color: black;
+              background-color: white;
+          }
+          .buttons-row .button:first-child{
+              border-left-width: 0;
+          }
+          .buttons-row .button.active{
+              background-color: #41C7DB;
+              color: white;
+          }
+          .buttons-tab .button.active{
+              color: #41C7DB;
+              border-color: #41C7DB;
+          }
+          .button.button-fill{
+              background-color: #41C7DB;
+          }
+          .row .label{
+              text-align: center;
+              font-size: 0.5rem;
+              border: 1px solid;
+              border-radius: 1rem;
+          }
+          .row .star{
+              text-align: right;
+          }
+          .myinfo {
+              margin-top: 1rem;
+              margin-bottom: 1rem;
+              background-color: #41C7DB;
+          }
+          .myoption {
+              padding-left: 1rem;
+              padding-top: 0.5rem;
+              padding-bottom: 0.5rem;
+          }
+      </style>
+  </head>
+  <body>
+    <div class="page-group">
+        <!-- 你的html代码 -->
+        <div class="page">
+            <header class="bar bar-nav">
+                <a class="icon icon-left pull-left"></a>
+                <a class="icon icon-check pull-right"></a>
+                <h1 class="title">我的评价</h1>
+            </header>
+            <div class="content">
             </div>
-        {% endif %}
-        <form class="form-base" id="newform" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-
-            <div class="messagebox">
-                <input type="text" id="id_title" placeholder="Title" name="P_Title" value="{{ P_Title }}">
-
-                <textarea class="input" id="id_content" type="text" placeholder="Content" name="P_Content" value="{{ P_Content }}"></textarea>
-
-            </div>
-			
-			<div>
-				<p>打分:
-					<select name="Score">
-						<option value="1">1</option>
-						<option value="2">2</option>
-						<option value="3">3</option>
-						<option value="4">4</option>
-						<option value="5">5</option>
-					</select>
-				</p>
-			</div>
-
-            <input id="happyBtn0" class="button1" type = "submit" name = "eva" value="提交评价"
-
-            <button class="button2"><a href="/my_class/{{ user.U_studentid }}/">返回</a></button>
-        </form>
-    </div>
+        </div>
     </div>
 
-{% endblock %}
+    <script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+    <script type="text/javascript">
+        $.init()
+    </script>
+  </body>
+</html>
