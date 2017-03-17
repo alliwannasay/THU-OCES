@@ -488,9 +488,11 @@ def my_class_new(request, param):
 class signBind:
     course = BBSCourse()
     sign = 0
+    hyaku = 0
     def __init__(self,c,s):
         self.course = c
         self.sign = s
+        self.hyaku = self.course.C_Rank * 100 / 5.0
 
     def __iter__(self):
         print("__iter__ called")
@@ -503,7 +505,7 @@ def hasEva(myuser,course):
     return True
 
 def hasCom(myuser,course):
-    mycomment = get_my_comment(myuser, course.CourseID)
+    mycomment = get_my_comment(myuser, course)
     if mycomment == "尚未点评":
         return False
     return True
@@ -528,7 +530,7 @@ def my_class(request,param):
         else:
             newsign = 0
         sB = signBind(course,newsign)
-        sBlist.append(sBlist)
+        sBlist.append(sB)
     return render(request, 'web/my_class.html',
                   {'user':myuser, 'courses':courses, 'coursesBinds': sBlist})
 

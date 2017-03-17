@@ -114,18 +114,18 @@
                     </div>
                 </div>
                 <div class="content-block">
-                        {% for course in courses_uneva %}
-                            <div class="list-block media-list">
+                        {% for coursesBind in coursesBinds %}
+                            <div class="list-block media-list sign{{ coursesBind.sign }}">
                                 <ul>
                                     <li class="item-content">
                                         <div class="item-inner">
                                             <div class="item-title-row">
-                                                <a href="/course/{{ course.id }}/"><div class="item-title" style="color: #41C7DB">{{ course.C_Name }}</div></a>
-                                                <div id="{{ course.id }}" class="item-after create-actions">...</div>
+                                                <a href="/course/{{ coursesBind.course.id }}/"><div class="item-title" style="color: #41C7DB">{{ coursesBind.course.C_Name }}</div></a>
+                                                <div id="{{ coursesBind.course.id }}" class="item-after create-actions">...</div>
                                             </div>
                                             <div class="item-title-row">
                                                 <div class="item-subtitle">teacher</div>
-                                                <div class="item-after" style="color: #FFAC2D">{{ course.C_Rank }}</div>
+                                                <div class="item-after" style="color: #FFAC2D">{{ coursesBind.course.C_Rank }}</div>
                                             </div>
                                             <div class="row">
                                                 <div class="label col-20">好课</div>
@@ -133,7 +133,7 @@
                                                 <div class="label col-20">老师赞</div>
                                                 <div class="star col-40">
                                                     <div class="bg" style="display: inline-block">
-                                                        <div class="over" style="width: {{ hott.C_Rank }}%"></div>
+                                                        <div class="over" style="width: {{ coursesBind.hyaku }}%"></div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -145,7 +145,7 @@
                                                 精彩点评
                                             </div>
                                             <div class="item-text" style="font-size: 0.5rem">此处是文本内容...</div>
-                                            <div class="item-subtitle" style="font-size: 0.5rem">{{ course.C_Ranknum }}人打分 · {{ course.C_Ranknum }}人点评</div>
+                                            <div class="item-subtitle" style="font-size: 0.5rem">{{ coursesBind.course.C_Ranknum }}人打分</div>
                                         </div>
                                     </li>
                                 </ul>
