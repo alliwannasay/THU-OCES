@@ -11,6 +11,15 @@
     <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
     <link rel="stylesheet" href="{{BASE_DIR}}/static/button.css" />
       <style type="text/css">
+          .bg{
+              width: 60px;
+              height: 16px;
+              background: url("../../static/star_gray.png");
+          }
+          .over{
+              height:16px;
+              background:url("../../static/star_org.png") no-repeat;
+          }
           .buttons-row .button{
               border: 0;
               color: black;
@@ -39,15 +48,23 @@
           .row .star{
               text-align: right;
           }
-          .myinfo {
-              margin-top: 1rem;
-              margin-bottom: 1rem;
-              background-color: #41C7DB;
+          #semPicker{
+              width: 90%;
+              background-color: white;
+              text-align: center;
+              border: 0;
+              padding: 0.2rem;
           }
-          .myoption {
-              padding-left: 1rem;
-              padding-top: 0.5rem;
-              padding-bottom: 0.5rem;
+          .mycheckbox1{
+              background-color: white;
+              border-top: 2px solid;
+              border-left: 1px solid;
+              border-right: 1px solid;
+              border-color: #eee;
+              padding: 0.2rem;
+          }
+          .mycheckbox1 label{
+              padding: 0.2rem 2rem;
           }
       </style>
   </head>
