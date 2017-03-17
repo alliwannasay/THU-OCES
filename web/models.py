@@ -34,6 +34,7 @@ class BBSCourse(models.Model):
     C_SeqNum = models.CharField(blank=True,max_length=50)
     C_Ranknum = models.IntegerField(default=0)
     C_Rank = models.FloatField(default=0)
+    C_Comnum = models.IntegerField(default=0)
 
     def __str__(self):
         return self.C_Name
@@ -47,6 +48,7 @@ class BBSPost(models.Model):
     P_Time = models.DateTimeField(default=timezone.now)
     P_LastComTime = models.DateTimeField(default=timezone.now)
     P_LikeNum = models.IntegerField(default=0)
+    P_DislikeNum = models.IntegerField(default=0)
     P_Section = models.IntegerField(default=1)
     P_Parent = models.ForeignKey('self', blank=True, null=True,related_name="child")
     P_ReplyNum = models.IntegerField(default=0)
@@ -100,5 +102,10 @@ class UserDislikeCourse(models.Model):
 class UserLikeCourse(models.Model):
     UserID = models.ForeignKey(BBSUser)
     CourseID = models.ForeignKey(BBSCourse)
+
+class UserReportPost(models.Model):
+    UserID = models.ForeignKey(BBSUser)
+    PostID = models.ForeignKey(BBSPost)
+    Reason = models.CharField(max_length=50)
 
 

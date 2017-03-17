@@ -34,18 +34,24 @@
         <div style="padding: 5px; text-align: center; font-size:200%">我的收藏</div>
     </div>
 
-{% for course in courses %}
+{% for mylikecourse in courses %}
 
         <div style="margin: 5px; padding: 10px; background-color: white">
         <div style="font-family: STSong">
-            <a href="/course/{{ course.id }}/">{{ course.C_Name }}</a>
+            <a href="/course/{{ mylikecourse.course.id }}/">{{ mylikecourse.course.C_Name }}</a>
+        </div>
+        <div style="display: inline-block; padding-left: 20px">
+            {{ mylikecourse.course.C_Rank }}分
         </div>
         <div id="bg" style="display: inline-block"><!--这里是背景，也就是灰色的星星-->
         <!--说明，这里的width就是设置分数啦，以我写的为例，一个星星的长度是12px，也就是1分12px，如果是4.3分，就是4.3*12px = 51.6px的长度，当然这个一般是取得数据后用js或者其他模板语言去控制的-->
-            <div id="over" style="width:{{ course.C_Rank }}%"></div><!--这里是遮罩，设置宽度以达到评分的效果-->
+            <div id="over" style="width:{{ mylikecourse.hyaku }}%"></div><!--这里是遮罩，设置宽度以达到评分的效果-->
         </div>
         <div style="display: inline-block; padding-left: 20px">
-            {{ course.C_Ranknum }}个评价
+            {{ mylikecourse.course.C_Ranknum }}人打分, {{ mylikecourse.course.C_Comnum }}人点评
+        </div>
+        <div style="display: inline-block; padding-left: 20px">
+            精彩点评：{{ mylikecourse.shortmsg }}
         </div>
 
 {% empty %}

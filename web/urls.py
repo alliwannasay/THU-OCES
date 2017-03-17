@@ -4,6 +4,7 @@ from .views import *
 urlpatterns = [
     url(r'^$', views.bbs_list, name='index'),
     url(r'^course/(\d+)/$', views.course_post_list,name='course'),
+    url(r'^course_posts/(\d+)/',views.course_posts),
     url(r'^login/$',views.login,name='login'),
     url(r'^logout/$',views.logout,name='logout'),
     url(r'^course/(\d+)/post/(\d+)/$',views.course_post_detail),
@@ -23,6 +24,8 @@ urlpatterns = [
     url(r'^dislike_course/$', views.dislike_course),
     url(r'^instruction/$',views.instruction),
     url(r'^search_course/$',views.search_course),
-    url(r'^my_like_courses/$',views.my_like_courses)
+    url(r'^my_like_courses/$',views.my_like_courses),
+    url(r'^report/(\d+)/$',views.report),
+    url(r'^about/',views.about)
     
 ]

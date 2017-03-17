@@ -272,6 +272,48 @@ def course_post_list(request,courseid):
     context['courseBind'] = newBind(mycourse,get_best_comment(mycourse))
     return render(request,'web/course_bbs_list.html',context)
 
+class postBind:
+    post = BBSPost()
+    rank = 0
+    hyaku = 0
+    def __init__(self,c,r):
+        self.post = c
+        self.rank = r
+        self.hyaku = self.rank * 100 / 5.0
+
+    def __iter__(self):
+        print("__iter__ called")
+        return iter(self.rank)
+
+def course_posts(request,courseid):
+    context = {}
+    mycourse = BBSCourse.objects.get(id=courseid)
+    isHaving = 1
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    courses = get_courses(request.user)
+    if mycourse not in courses:
+        isHaving = 0
+    myuser = BBSUser.objects.get(user=request.user)
+    posts = BBSPost.objects.filter(P_Course=mycourse, P_Parent=None)
+    timeposts = list(posts)
+
+    timepBlist = []
+    for tp in timeposts:
+        re = UserHasCourse.objects.get(UserID=tp.P_User,CourseID=mycourse)
+        pB = postBind(tp,re.Score)
+        timepBlist.append(pB)
+    timepBlist.reverse()
+
+    likepBlist = sorted(timepBlist,key=lambda rank : rank.post.P_LikeNum,reverse=True)
+    context['timepBs'] = timepBlist
+    context['likepBs'] = likepBlist
+    context['isHaving'] = isHaving
+    context['course'] = mycourse
+    context['user'] = myuser
+    return render(request, 'web/course_posts.html', context)
+
+
 
 
 def course_post_detail(request,courseid,postid):
@@ -664,6 +706,8 @@ def post_course_post(request,courseid):
         userme.U_GPB += gpb_amount['post']
         raiseLevel(userme)
         userme.save()
+        course.C_Comnum += 1
+        course.save()
         return HttpResponseRedirect(reverse('course',args=[courseid]))
     return render(request, 'web/post_post.html', {'user':myuser,'course':course, 'courses':courses})
 
@@ -687,6 +731,7 @@ def delete_post(request,courseid,postid,parentid):
     myuser = BBSUser.objects.get(user=request.user)
     myuser.U_GPB -= gpb_amount['reply']
     myuser.save()
+
     return HttpResponseRedirect("/course/"+str(courseid)+"/post/"+str(parentid)+"/")
 
 def delete_bigpost(request,courseid,postid):
@@ -708,6 +753,8 @@ def delete_bigpost(request,courseid,postid):
     myuser = BBSUser.objects.get(user=request.user)
     myuser.U_GPB -= gpb_amount['post']
     myuser.save()
+    mycourse.C_Comnum -= 1
+    mycourse.save()
     return HttpResponseRedirect("/course/" + str(courseid) + "/")
 
 
@@ -762,6 +809,7 @@ def my_like_courses(request):
     mylikecourses = []
     for i in mylikecoursesre:
         mylikecourses.append(i.CourseID)
+    mylikecourses = bindHyaku(mylikecourses)
     return render(request, 'web/my_like_courses.html', {'user':myuser,'courses':mylikecourses})
 
 
@@ -822,6 +870,22 @@ def search_course_by_name(coursesall,searchcontent):
         rescourse.append(thiscourse)
     rescourse.reverse()
     return rescourse
+
+def report(request,postid):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    post = BBSPost.objects.get(id=postid)
+    myuser = BBSUser.objects.get(user=request.user)
+    if request.method == 'POST':
+        newReport = UserReportPost(UserID=myuser,PostID=post,Reason="不知道写写啥")
+        newReport.save()
+    return render(request, 'web/report.html', {'user': myuser, 'post': post})
+
+def about(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    myuser = BBSUser.objects.get(user=request.user)
+    return render(request,'web/about.html')
 
 
 def kmp_next(base,next):
