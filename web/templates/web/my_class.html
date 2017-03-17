@@ -121,7 +121,7 @@
                                         <div class="item-inner">
                                             <div class="item-title-row">
                                                 <a href="/course/{{ coursesBind.course.id }}/"><div class="item-title" style="color: #41C7DB">{{ coursesBind.course.C_Name }}</div></a>
-                                                <a href="/course_evaluation/{{ request.user.username }}/{{ coursesBind.course.id }}/"><div id="{{ coursesBind.course.id }}" class="item-after create-actions">...</div></a>
+                                                <a href="/course_evaluation/{{ request.user.username }}/{{ coursesBind.course.id }}/" external><div id="{{ coursesBind.course.id }}" class="item-after create-actions">...</div></a>
                                             </div>
                                             <div class="item-title-row">
                                                 <div class="item-subtitle">teacher</div>
@@ -132,7 +132,7 @@
                                         <div class="item-inner">
                                             <div class="row">
                                                 <div class="col-25" style="font-size: 0.7rem; font-weight: bold">
-                                                    我的打分
+                                                    我的打分:{{ coursesBind.rank }}
                                                 </div>
                                                 <div class="star col-33">
                                                     <div class="bg" style="display: inline-block">

@@ -134,6 +134,21 @@ class newBind:
         print("__iter__ called")
         return iter(self.shortmsg)
 
+class myRankBind:
+    course = BBSCourse()
+    rank = 0
+    shortmsg = ""
+    hyaku = 0
+    def __init__(self,c,r,s):
+        self.course = c
+        self.rank = r
+        self.shortmsg = s
+        self.hyaku = self.rank * 100 / 5.0
+
+    def __iter__(self):
+        print("__iter__ called")
+        return iter(self.shortmsg)
+
 def bind_course_comment(courses):
     bindresult = []
     for i in range(0,len(courses)):
@@ -476,7 +491,7 @@ def user_change_label(request, param):
     return render(request,'web/user_change_label.html',
                   {'user':visitedUser, 'courses':courses, 'labels':labels, 'mylabels':mylabels})
 
-def my_class_new(request, param):
+def my_class_old(request, param):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
     visitedUser = User.objects.get(username=param)
@@ -527,13 +542,16 @@ def my_class_new(request, param):
 class signBind:
     course = BBSCourse()
     sign = 0
+    rank = 0
     hyaku = 0
     shortmsg = ""
-    def __init__(self,c,s,sm):
+
+    def __init__(self,c,s,r,sm):
         self.course = c
         self.sign = s
+        self.rank = r
         self.shortmsg = sm
-        self.hyaku = self.course.C_Rank * 100 / 5.0
+        self.hyaku = self.rank * 100 / 5.0
 
     def __iter__(self):
         print("__iter__ called")
@@ -550,6 +568,14 @@ def hasCom(myuser,course):
     if mycomment == "尚未点评":
         return False
     return True
+
+def getScore(myuser,course):
+    re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
+    return re.Score
+
+def getTerm(myuser,course):
+    re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
+    return re.Term
 
 
 def my_class(request,param):
@@ -571,7 +597,7 @@ def my_class(request,param):
             newsign = 1
         else:
             newsign = 0
-        sB = signBind(course,newsign,get_best_comment(course))
+        sB = signBind(course,newsign,getScore(myuser,course),getTerm(myuser,course))
         sBlist.append(sB)
     return render(request, 'web/my_class.html',
                   {'user':myuser, 'courses':courses, 'coursesBinds': sBlist})
@@ -628,7 +654,8 @@ def course_evaluation(request, param, courseid):
                 return HttpResponseRedirect('/my_class/' + myuser.U_studentid + '/')
 
     re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
-    nB = newBind(course,re.Term)
+
+    nB = myRankBind(course,re.Score,re.Term)
     return render(request, 'web/course_evaluation.html', {'user':myuser,'course':course, 'courseBind':nB,'courses':courses})
 
 @csrf_exempt
