@@ -40,8 +40,14 @@
               text-align: right;
           }
           .myinfo {
-              margin-top: 0.5rem;
+              margin-top: 1rem;
+              margin-bottom: 1rem;
               background-color: #41C7DB;
+          }
+          .myoption {
+              padding-left: 1rem;
+              padding-top: 0.5rem;
+              padding-bottom: 0.5rem;
           }
       </style>
   </head>
@@ -60,18 +66,58 @@
                       <li>
                           <div class="item-content" style="padding: 1rem; background-color: #41C7DB">
                               <div class="item-media">
-                                  <img src="http://gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i3/TB10LfcHFXXXXXKXpXXXXXXXXXX_!!0-item_pic.jpg_250x250q60.jpg" style='width: 2.2rem;'>
+                                  <img src="{{ BASE_DIR }}/media/{{ user.U_Image }}" style='width: 2.2rem;'>
                               </div>
                               <div class="item-inner">
                                   <div class="item-title-row">
-                                      <div class="item-title">标题</div>
-                                      <div class="item-title">标题</div>
+                                      <div class="item-title" style="padding-left: 0.5rem; color: white">
+                                          {{ request.user.username }}
+                                          <span class="level" style="margin-left: 0.5rem; border: 1px solid; font-size: 0.5rem; padding-left: 0.4rem; padding-right: 0.4rem; border-radius: 0.5rem">
+                                              学神
+                                          </span>
+                                      </div>
                                   </div>
                               </div>
                           </div>
                       </li>
                     </ul>
                 </div>
+                <div class="list-block">
+                    <ul>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title myoption">我的收藏</div>
+                            </div>
+                        </li>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title myoption">我的积分</div>
+                            </div>
+                        </li>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title myoption">兴趣标签</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="list-block">
+                    <ul>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title myoption">分享给朋友</div>
+                            </div>
+                        </li>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title myoption">关于</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <a href="/logout" external>
+                    <button style="padding: 0.5rem 3rem; width: 100%">退出登录</button>
+                </a>
             </div>
         </div>
     </div>
