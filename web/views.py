@@ -437,7 +437,7 @@ def user_change_label(request, param):
     return render(request,'web/user_change_label.html',
                   {'user':visitedUser, 'courses':courses, 'labels':labels, 'mylabels':mylabels})
 
-def my_class(request, param):
+def my_class_new(request, param):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
     visitedUser = User.objects.get(username=param)
@@ -484,7 +484,57 @@ def my_class(request, param):
     return render(request, 'web/my_class.html',
                   {'user':visitedUser, 'courses':courses, 
                    'courses_eva': courses_eva, 'courses_uneva': courses_uneva, 'courses_com':courses_com})
-    
+
+class signBind:
+    course = BBSCourse()
+    sign = 0
+    hyaku = 0
+    def __init__(self,c,s):
+        self.course = c
+        self.sign = s
+        self.hyaku = self.course.C_Rank * 100 / 5.0
+
+    def __iter__(self):
+        print("__iter__ called")
+        return iter(self.sign)
+
+def hasEva(myuser,course):
+    re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
+    if re.Score == -1:
+        return False
+    return True
+
+def hasCom(myuser,course):
+    mycomment = get_my_comment(myuser, course)
+    if mycomment == "尚未点评":
+        return False
+    return True
+
+def my_class(request,param):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    visitedUser = User.objects.get(username=param)
+    myuser = BBSUser.objects.get(user=visitedUser)
+    courses = get_courses(request.user)
+    sBlist = []
+    for course in courses:
+        newsign = 0
+        hasEvaBo = hasEva(myuser,course)
+        hasComBo = hasCom(myuser,course)
+        if hasEvaBo and hasComBo:
+            newsign = 3
+        elif hasEvaBo and (not hasComBo):
+            newsign = 2
+        elif (not hasEvaBo) and hasComBo:
+            newsign = 1
+        else:
+            newsign = 0
+        sB = signBind(course,newsign)
+        sBlist.append(sB)
+    return render(request, 'web/my_class.html',
+                  {'user':myuser, 'courses':courses, 'coursesBinds': sBlist})
+
+
 def course_evaluation(request, param, courseid):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
