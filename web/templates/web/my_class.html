@@ -106,22 +106,22 @@
                     </div>
                     <div class="col-50 mycheckbox1">
                         <label for="eva">已打分</label>
-                        <input type="checkbox" id="eva">
+                        <input type="checkbox" id="eva" onchange="checkChange()">
                     </div>
                     <div class="col-50 mycheckbox1">
                         <label for="com">已评价</label>
-                        <input type="checkbox" id="com">
+                        <input type="checkbox" id="com" onchange="checkChange()">
                     </div>
                 </div>
                 <div class="content-block">
                         {% for coursesBind in coursesBinds %}
-                            <div class="list-block media-list sign{{ coursesBind.sign }}">
+                            <div class="list-block media-list courseDisplay sign{{ coursesBind.sign }}">
                                 <ul>
                                     <li class="item-content">
                                         <div class="item-inner">
                                             <div class="item-title-row">
                                                 <a href="/course/{{ coursesBind.course.id }}/"><div class="item-title" style="color: #41C7DB">{{ coursesBind.course.C_Name }}</div></a>
-                                                <a href="/course_evaluation/{{ request.user.username }}/{{ coursesBind.course.id }}/"><div id="{{ coursesBind.course.id }}" class="item-after create-actions">...</div></a>
+                                                <a href="/course_evaluation/{{ request.user.username }}/{{ coursesBind.course.id }}/" external><div id="{{ coursesBind.course.id }}" class="item-after create-actions">...</div></a>
                                             </div>
                                             <div class="item-title-row">
                                                 <div class="item-subtitle">teacher</div>
@@ -154,7 +154,21 @@
     <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
     <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
     <script type="text/javascript">
-        $.init()
+        $.init();
+        function checkChange()
+        {
+            $(".courseDisplay").show();
+            if ($("#eva").attr("checked") == true)
+            {
+                $(".sign0").hide();
+                $(".sign1").hide();
+            }
+            if ($("#com").attr("checked") == true)
+            {
+                $(".sign0").hide();
+                $(".sign2").hide();
+            }
+        }
     </script>
   </body>
 </html>
