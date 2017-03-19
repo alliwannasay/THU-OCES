@@ -12,4 +12,5 @@ admin.site.register(UserHasNode)
 admin.site.register(CourseLabel)
 admin.site.register(UserFollowLabel)
 admin.site.register(UserLikeCourse)
+admin.site.register(Honor)
 # Register your models here.

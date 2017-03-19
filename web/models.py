@@ -108,6 +108,8 @@ class UserReportPost(models.Model):
     PostID = models.ForeignKey(BBSPost)
     Reason = models.CharField(max_length=50)
 
-
+class Honor(models.Model):
+    H_Name = models.CharField(blank=True, max_length=50)
+    H_Threshold = models.IntegerField(default = 0)
 
 

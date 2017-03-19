@@ -573,9 +573,7 @@ def getScore(myuser,course):
     re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
     return re.Score
 
-def getTerm(myuser,course):
-    re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
-    return re.Term
+
 
 
 def my_class(request,param):
@@ -597,7 +595,7 @@ def my_class(request,param):
             newsign = 1
         else:
             newsign = 0
-        sB = signBind(course,newsign,getScore(myuser,course),getTerm(myuser,course))
+        sB = signBind(course,newsign,getScore(myuser,course),get_my_comment(myuser,course))
         sBlist.append(sB)
     return render(request, 'web/my_class.html',
                   {'user':myuser, 'courses':courses, 'coursesBinds': sBlist})
@@ -655,7 +653,7 @@ def course_evaluation(request, param, courseid):
 
     re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
 
-    nB = myRankBind(course,re.Score,re.Term)
+    nB = myRankBind(course,re.Score,get_my_comment(myuser,course))
     return render(request, 'web/course_evaluation.html', {'user':myuser,'course':course, 'courseBind':nB,'courses':courses})
 
 @csrf_exempt
