@@ -30,7 +30,8 @@ import sys
 # Create your views here.
 
 gpb_amount = {
-        'post': 100,
+        'post': 30,
+        'score':10,
         'get_liked': 10,
         'reply': 20,
         'wanted': 200,
@@ -600,7 +601,7 @@ def my_class(request,param):
     return render(request, 'web/my_class.html',
                   {'user':myuser, 'courses':courses, 'coursesBinds': sBlist})
 
-
+@csrf_exempt
 def course_evaluation(request, param, courseid):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
@@ -609,47 +610,75 @@ def course_evaluation(request, param, courseid):
     if course not in courses:
         return HttpResponseRedirect('/')
     myuser = BBSUser.objects.get(user=request.user)
-    
-    
     if request.method == "POST":
-        if not request.POST.get('eva', None) == None:
-            print("POST eva")
-            
-            title = request.POST['P_Title'] if request.POST['P_Title'] else ""
-            content = request.POST['P_Content'] if request.POST['P_Content'] else ""
-            wantedvalue = 0
-            realtype = 0 #增加帖子类型后可在此修改
-            Score = int(request.POST.get('Score', None))
-            if not title:
-                return render(request,'web/course_evaluation.html',{'user':myuser, 'error':'请输入评论题目，并修正评分','P_Title':title,'P_Content':content,'course':course, 'courses':courses})
-            if not content:
-                return render(request,'web/course_evaluation.html',{'user':myuser, 'error':'请输入评论详情，并修正评分','P_Title':title,'P_Content':content,'course':course, 'courses':courses})
-            
-            UHC = UserHasCourse.objects.get(UserID = myuser, CourseID = course)
-            UHC.Score = Score
-            UHC.save()
-
-            course.C_Ranknum += 1
-            course.C_Rank = (course.C_Rank*(course.C_Ranknum-1)+Score)/course.C_Ranknum
-            course.save()
-            
-            title = '【课程评价】' + title + '【评分：' + str(Score) + '.0/5.0】'
-    
-            post = BBSPost()
-            post.P_User = myuser
-            post.P_Title = title
-            post.P_Content = content
-            post.P_Course = course
-            post.P_Type = realtype
-            post.P_Wanted = wantedvalue
-            post.save()
+        print(request.POST)
+        oriposts = BBSPost.objects.filter(P_User=myuser,P_Course=course)
+        if len(oriposts) == 0:
+            newpost = BBSPost(P_User=myuser,P_Course=course,P_Content=request.POST['com'])
+            newpost.save()
             myuser.U_GPB += gpb_amount['post']
-            raiseLevel(myuser)
             myuser.save()
-            if myuser.U_NewUser == 1:
-                return HttpResponseRedirect("/change_label/" + myuser.U_studentid + "/")
-            else:
-                return HttpResponseRedirect('/my_class/' + myuser.U_studentid + '/')
+        else:
+            oriposts.delete()
+            newpost = BBSPost(P_User=myuser, P_Course=course, P_Content=request.POST['com'])
+            newpost.save()
+
+
+        re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
+        if re.Score == -1:
+            course.C_Ranknum += 1
+            re.Score = request.POST['score']
+            course.C_Rank = (course.C_Rank * (course.C_Ranknum - 1) + int(request.POST['score'])) / course.C_Ranknum
+            course.save()
+            myuser.U_GPB += gpb_amount['score']
+            myuser.save()
+        else:
+            oriScore = re.Score
+            re.Score = request.POST['score']
+            course.C_Rank = (course.C_Rank * (course.C_Ranknum) + int(request.POST['score']) - oriScore) / course.C_Ranknum
+        re.save()
+
+    
+    
+    # if request.method == "POST":
+    #     if not request.POST.get('eva', None) == None:
+    #         print("POST eva")
+    #
+    #         title = request.POST['P_Title'] if request.POST['P_Title'] else ""
+    #         content = request.POST['P_Content'] if request.POST['P_Content'] else ""
+    #         wantedvalue = 0
+    #         realtype = 0 #增加帖子类型后可在此修改
+    #         Score = int(request.POST.get('Score', None))
+    #         if not title:
+    #             return render(request,'web/course_evaluation.html',{'user':myuser, 'error':'请输入评论题目，并修正评分','P_Title':title,'P_Content':content,'course':course, 'courses':courses})
+    #         if not content:
+    #             return render(request,'web/course_evaluation.html',{'user':myuser, 'error':'请输入评论详情，并修正评分','P_Title':title,'P_Content':content,'course':course, 'courses':courses})
+    #
+    #         UHC = UserHasCourse.objects.get(UserID = myuser, CourseID = course)
+    #         UHC.Score = Score
+    #         UHC.save()
+    #
+    #         course.C_Ranknum += 1
+    #         course.C_Rank = (course.C_Rank*(course.C_Ranknum-1)+Score)/course.C_Ranknum
+    #         course.save()
+    #
+    #         title = '【课程评价】' + title + '【评分：' + str(Score) + '.0/5.0】'
+    #
+    #         post = BBSPost()
+    #         post.P_User = myuser
+    #         post.P_Title = title
+    #         post.P_Content = content
+    #         post.P_Course = course
+    #         post.P_Type = realtype
+    #         post.P_Wanted = wantedvalue
+    #         post.save()
+    #         myuser.U_GPB += gpb_amount['post']
+    #         raiseLevel(myuser)
+    #         myuser.save()
+    #         if myuser.U_NewUser == 1:
+    #             return HttpResponseRedirect("/change_label/" + myuser.U_studentid + "/")
+    #         else:
+    #             return HttpResponseRedirect('/my_class/' + myuser.U_studentid + '/')
 
     re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
 
@@ -792,38 +821,6 @@ def logout(request):
     else:
         return HttpResponseRedirect('/login/')
 
-@csrf_exempt
-def good_post(request,courseid,bigpostid):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login/')
-    mycourse = BBSCourse.objects.get(id=courseid)
-    courses = get_courses(request.user)
-    if mycourse not in courses:
-        return HttpResponseRedirect('/')
-    if request.method == 'POST':
-        goodpostid = int(request.POST['postID'])
-        parentid = int(request.POST['parentID'])
-        goodpost = BBSPost.objects.get(id=goodpostid)
-        parent = BBSPost.objects.get(id=parentid)
-        if parent.P_BestChild != None:
-            if parent.P_BestChild == goodpost:
-                parent.P_BestChild.P_User.U_GPB -= parent.P_Wanted
-                parent.P_BestChild.P_User.save()
-                parent.P_BestChild = None
-                parent.save()
-                return HttpResponseRedirect("/course/"+courseid+"/post/"+bigpostid+"/")
-            else:
-                parent.P_BestChild.P_User.U_GPB -= parent.P_Wanted
-                parent.P_BestChild.P_User.save()
-        parent.P_BestChild = goodpost
-        parent.save()
-        goodpost.P_User.U_GPB += parent.P_Wanted
-        raiseLevel(goodpost.P_User)
-        goodpost.P_User.save()
-        parent.P_User.U_GPB -= parent.P_Wanted
-        parent.P_User.save()
-        return HttpResponseRedirect("/course/" + courseid + "/post/" + bigpostid + "/")
-    return HttpResponseRedirect("/course/"+courseid+"/post/"+bigpostid+"/")
 
 def my_like_courses(request):
     if not request.user.is_authenticated():

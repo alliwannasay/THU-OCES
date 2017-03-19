@@ -14,7 +14,6 @@ urlpatterns = [
     url(r'^course/(\d+)/delete_post/(\d+)/parentpost/(\d+)/$', views.delete_post),
     url(r'^course/(\d+)/delete_post/(\d+)/$', views.delete_bigpost),
     url(r'^post/(\d+)/$',views.post_course_post,name='newpost'),
-    url(r'^good/(\d+)/(\d+)/$',views.good_post),
     url(r'^ajax_change_nickname/$', views.ajax_change_nickname),
     url(r'^ajax_append_image/$', views.ajax_append_image),
     url(r'^ajax_change_image/$', views.ajax_change_image),

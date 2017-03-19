@@ -106,7 +106,7 @@
         <div class="page">
             <header class="bar bar-nav">
                 <a class="icon icon-left pull-left" href="javascript: history.back(-1);" external></a>
-                <a class="icon icon-check pull-right" href="javascript: "></a>
+                <a class="icon icon-check pull-right" href="javascript:postInfo()"></a>
                 <h1 class="title">我的评价</h1>
 
             </header>
@@ -191,10 +191,10 @@
         function postInfo()
         {
             var comm = $("#myComText").attr("value");
-            $.post("/evaluation/{{ request.user.username }}/{{ courseBind.course.id }}/",
+            $.post("/course_evaluation/{{ request.user.username }}/{{ courseBind.course.id }}/",
                     { score: mypoint, com: comm },
                     function(data){
-                        window.location.href="/course/{{ courseBind.course.id }}/";
+                        window.location.href="/my_class/{{ request.user.username }}/";
                     });
         }
     </script>
