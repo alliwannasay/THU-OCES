@@ -1,121 +1,182 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>个人主页</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+    <link rel="stylesheet" href="{{BASE_DIR}}/static/button.css" />
+      <style type="text/css">
+          .bg{
+              width: 60px;
+              height: 16px;
+              background: url("../../../static/star_gray.png");
+          }
+          .over{
+              height:16px;
+              background:url("../../../static/star_org.png") no-repeat;
+          }
+          .buttons-row .button{
+              border: 0;
+              color: black;
+              background-color: white;
+          }
+          .buttons-row .button:first-child{
+              border-left-width: 0;
+          }
+          .buttons-row .button.active{
+              background-color: #41C7DB;
+              color: white;
+          }
+          .buttons-tab .button.active{
+              color: #41C7DB;
+              border-color: #41C7DB;
+          }
+          .button.button-fill{
+              background-color: #41C7DB;
+          }
+          .row .label{
+              text-align: center;
+              font-size: 0.5rem;
+              border: 1px solid;
+              border-radius: 1rem;
+          }
+          #semPicker{
+              width: 90%;
+              background-color: white;
+              text-align: center;
+              border: 0;
+              padding: 0.2rem;
+          }
+          .mycheckbox1{
+              background-color: white;
+              border-top: 2px solid;
+              border-left: 1px solid;
+              border-right: 1px solid;
+              border-color: #eee;
+              padding: 0.2rem;
+          }
+          .mycheckbox1 label{
+              padding: 0.2rem 2rem;
+          }
+          .courseTitle {
+              text-align: center;
+              background-color: white;
+              margin-top: 1rem;
+          }
+          .myScore {
+              background-color: white;
+              padding-top: 0.5rem;
+              padding-bottom: 0.5rem;
+              border-bottom: 2px solid;
+              border-color: #eee;
+          }
+          .myLabel {
+              background-color: white;
+              padding-top: 0.5rem;
+              padding-bottom: 0.5rem;
+              text-align: center;
+              border-bottom: 2px solid;
+              border-color: #eee;
+          }
+          .myLabel span{
+              font-size: 0.7rem;
+              border: 1px solid;
+              padding-left: 0.5rem;
+              padding-right: 0.5rem;
+              border-radius: 0.5rem;
+          }
+          .myCom textarea{
+              width: 100%;
+              height: 10rem;
+              font-size: 0.7rem;
+          }
+          .Datainfo{
+              background-color: white;
+              border-top: 1rem solid;
+              border-color: #eee;
+              padding: 1rem;
+          }
+          .courseInfo{
+              background-color: white;
+              border-top: 1rem solid;
+              border-color: #eee;
+              padding: 1rem;
+              font-size: 0.7rem;
+          }
+      </style>
+  </head>
+  <body>
+    <div class="page-group">
+        <!-- 你的html代码 -->
+        <div class="page">
+            <header class="bar bar-nav">
+                <a class="icon icon-left pull-left" href="javascript: history.back(-1);" external></a>
+                <a class="icon icon-star pull-right"></a>
+                <h1 class="title">课程详情</h1>
 
-{%block css%}
-{% endblock %}
-
-
-{% block content %}
-
-
-
-    {% if isHaving == 1 %}
-<a class="fatie" href="/post/{{ course.id }}">发帖</a>
-    {% endif %}
-
-
-<div style="background-color: #cacdfa">
-    <div style="padding: 5px; text-align: center; font-size:200%">精选</div>
-</div>
-
-
-{% for likepB in likepBs %}
-    <div onclick="window.location.href='/course/{{ course.id }}/post/{{ likepB.post.id }}'" style="margin: 10px; background-color: white">
-        <div class="media">
-            <div class="media-left">
-                <img class="media-object" src="{{BASE_DIR}}/media/{{likepB.post.P_User.U_Image}}" width="60" height="60"/>
-                <div style="text-align: center">
-                    {{ likepB.post.P_User.U_name}}
+            </header>
+            <div class="content">
+                <div class="courseTitle">
+                    <div style="padding-bottom: 0.5rem;padding-top: 1rem; color: #41C7DB">
+                        {{ courseBind.course.C_Name }}
+                    </div>
+                    <div style="padding-bottom: 0.5rem">
+                        teacher
+                    </div>
+                </div>
+                <div class="row Datainfo">
+                    <div class="col-66">
+                        课程标签
+                    </div>
+                    <div class="col-33" style="text-align: center">
+                        <div class="star">
+                            <div class="bg" style="display: inline-block">
+                                <div class="over" style="width: {{ courseBind.hyaku }}%"></div>
+                            </div>
+                        </div>
+                        <div class="score" style="color: #FFAC2D; font-weight: bold; font-size: 1.1rem">
+                            {{ courseBind.course.C_Rank }}
+                        </div>
+                        <div>
+                            <a style="color: #5A5A5A; text-decoration: underline; font-size: 0.7rem">
+                                {{ courseBind.course.C_Ranknum }}人已打过分
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-50">
+                        年级分布
+                    </div>
+                    <div class="col-50">
+                        院系分布
+                    </div>
+                </div>
+                <div class="courseInfo">
+                    <div>
+                        课程信息
+                    </div>
+                    <p>
+Fusce egestas facilisis lorem, in egestas massa sollicitudin at. Suspendisse potenti. Praesent ornare commodo quam, a tincidunt nulla tempor eget. Nam libero ligula, ultrices malesuada rutrum non, vestibulum eu libero. Proin sed enim eu lorem facilisis rhoncus. Aliquam erat volutpat. Ut posuere eleifend congue. Nulla viverra eros ac est vestibulum, et sollicitudin enim dictum. Sed ut justo volutpat mauris condimentum aliquam sed consectetur nisi. Morbi ac nulla sollicitudin, sodales leo sed, vestibulum justo.
+                    </p>
                 </div>
             </div>
-
-            {% if likepB.rank != -1 %}
-            <div class="media-body" style="padding-top: 10px">
-                {{ likepB.rank }}分
-            </div>
-            {% endif %}
-
-
-            <div class="media-body" style="padding-top: 10px">
-                {{ likepB.post.P_Content }}
-            </div>
-        </div>
-        <div style="color: #909090; padding-left: 60%">
-            互动 {{ likepB.post.P_ReplyNum }} 赞 {{ likepB.post.P_LikeNum }} 踩 {{ likepB.post.P_DislikeNum }} <a href="/report/{{ likepB.post.id }}/">举报</a>
+            <a href="/course_posts/{{ courseBind.course.id }}/" external>
+                <nav class="bar bar-tab" style="text-align: center; background-color: #41C7DB; color: white; font-size: 0.8rem; font-weight: bold">
+                    <span class="icon icon-message"> 评论留言区</span>
+                </nav>
+            </a>
         </div>
     </div>
-                {% if likepB.post.P_User == user%}
-                    <button id="{{ likepB.post.id }}" class="button2" onclick="javascript:deletepost(this)">删除</button>
-                {% endif %}
-{% empty %}
-    <li>抱歉，目前还没有帖子。</li>
-{% endfor %}
 
-
-    <div style="background-color: #cacdfa">
-    <div style="padding: 5px; text-align: center; font-size:200%">最新</div>
-</div>
-
-
-{% for timepB in timepBs %}
-    <div onclick="window.location.href='/course/{{ course.id }}/post/{{ timepB.post.id }}'" style="margin: 10px; background-color: white">
-        <div class="media">
-            <div class="media-left">
-                <img class="media-object" src="{{BASE_DIR}}/media/{{timepB.post.P_User.U_Image}}" width="60" height="60"/>
-                <div style="text-align: center">
-                    {{ timepB.post.P_User.U_name}}
-                </div>
-            </div>
-
-            {% if timepB.rank != -1 %}
-            <div class="media-body" style="padding-top: 10px">
-                {{ timepB.rank }}分
-            </div>
-            {% endif %}
-
-
-            <div class="media-body" style="padding-top: 10px">
-                {{ timepB.post.P_Content }}
-            </div>
-        </div>
-        <div style="color: #909090; padding-left: 60%">
-            互动 {{ timepB.post.P_ReplyNum }} 赞 {{ timepB.post.P_LikeNum }} 踩 {{ timepB.post.P_DislikeNum }} <a href="/report/{{ likepB.post.id }}/">举报</a>
-        </div>
-    </div>
-                {% if timepB.post.P_User == user%}
-                    <button id="{{ timepB.post.id }}" class="button2" onclick="javascript:deletepost(this)">删除</button>
-                {% endif %}
-{% empty %}
-    <li>抱歉，目前还没有帖子。</li>
-{% endfor %}
-
-
+    <script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
     <script type="text/javascript">
-
-    function deletepost(obj){
-
-        idstr = obj.id
-        deletedom = document.getElementById("deleteid")
-        cid = {{ course.id }}
-
-        restr = "/course/"+cid+"/delete_post/"+idstr+"/"
-        alert("确定删除？")
-        window.location.href = restr
-
-    }
-
-{#    $(function () {#}
-{#        {% for likepB in likepBs  %}#}
-{#            var s = '{{ likepB.post.P_Content|safe }}'#}
-{#            p = s.match(/__url_start__(\S*?)__url_end__/)#}
-{#            while (!(p === null)) {#}
-{#                s = s.replace(p[0], "<img src='{{BASE_DIR}}/media/" + p[1] + "' />")#}
-{#                p = s.match(/__url_start__(\S*?)__url_end__/)#}
-{#            }#}
-{#        $('#content_{{ likepB.post.id }}').html(s)#}
-{#        {% endfor %}#}
-{#    });#}
-
-
+        $.init();
     </script>
-{% endblock %}
-
+  </body>
+</html>
