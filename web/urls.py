@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^search_course/$',views.search_course),
     url(r'^my_like_courses/$',views.my_like_courses),
     url(r'^report/(\d+)/$',views.report),
-    url(r'^about/',views.about)
+    url(r'^about/',views.about),
+    url(r'^my_gpb/',views.my_gpb)
     
 ]

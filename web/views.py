@@ -870,6 +870,8 @@ def dislike_course(request):
     return HttpResponseRedirect("/")
 
 def search_course(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
     courses = get_courses(request.user)
     myuser = BBSUser.objects.get(user=request.user)
     coursesall = BBSCourse.objects.all()
@@ -911,6 +913,13 @@ def about(request):
         return HttpResponseRedirect('/login/')
     myuser = BBSUser.objects.get(user=request.user)
     return render(request,'web/about.html')
+
+def my_gpb(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    myuser = BBSUser.objects.get(user=request.user)
+    honors = Honor.objects.all()
+    return render(request, 'web/my_gpb.html',{'user':myuser,'honors':honors})
 
 
 def kmp_next(base,next):
@@ -961,5 +970,7 @@ def kmp_practice(b,base):
       return occur_num
     occur_num += 1
   return occur_num
+
+
 
 
