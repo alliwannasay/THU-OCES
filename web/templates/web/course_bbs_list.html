@@ -45,9 +45,6 @@
               border: 1px solid;
               border-radius: 1rem;
           }
-          .row .star{
-              text-align: right;
-          }
           #semPicker{
               width: 90%;
               background-color: white;
@@ -98,6 +95,19 @@
               height: 10rem;
               font-size: 0.7rem;
           }
+          .Datainfo{
+              background-color: white;
+              border-top: 1rem solid;
+              border-color: #eee;
+              padding: 1rem;
+          }
+          .courseInfo{
+              background-color: white;
+              border-top: 1rem solid;
+              border-color: #eee;
+              padding: 1rem;
+              font-size: 0.7rem;
+          }
       </style>
   </head>
   <body>
@@ -106,7 +116,7 @@
         <div class="page">
             <header class="bar bar-nav">
                 <a class="icon icon-left pull-left" href="javascript: history.back(-1);" external></a>
-                <a class="icon icon-check pull-right"></a>
+                <a class="icon icon-star pull-right"></a>
                 <h1 class="title">课程详情</h1>
 
             </header>
@@ -119,45 +129,46 @@
                         teacher
                     </div>
                 </div>
-                <div style="padding-top: 1rem; padding-bottom: 0.5rem; font-size: 0.7rem; text-align: center; color: dimgray">
-                    评论质量将影响您的评分在课程综合分中所占权重
-                </div>
-                <div class="myScore row">
-                    <div class="col-66" style="text-align: right">
-                        <a href="javascript:click(1)">
-                            <img src="../../../static/star.png" id="star1" style="width: 1.2rem">
-                        </a>
-                        <a href="javascript:click(2)">
-                            <img src="../../../static/star.png" id="star2" style="width: 1.2rem">
-                        </a>
-                        <a href="javascript:click(3)">
-                            <img src="../../../static/star.png" id="star3" style="width: 1.2rem">
-                        </a>
-                        <a href="javascript:click(4)">
-                            <img src="../../../static/star.png" id="star4" style="width: 1.2rem">
-                        </a>
-                        <a href="javascript:click(5)">
-                            <img src="../../../static/star.png" id="star5" style="width: 1.2rem">
-                        </a>
+                <div class="row Datainfo">
+                    <div class="col-66">
+                        课程标签
                     </div>
-                    <div class="myRank col-33" style="color: #FFAC2D; font-weight: bold">
-                        {% if courseBind.rank == -1 %}
-                        未打分
-                        {% else %}
-                        {{ courseBind.rank }}.0
-                        {% endif %}
+                    <div class="col-33" style="text-align: center">
+                        <div class="star">
+                            <div class="bg" style="display: inline-block">
+                                <div class="over" style="width: {{ courseBind.hyaku }}%"></div>
+                            </div>
+                        </div>
+                        <div class="score" style="color: #FFAC2D; font-weight: bold; font-size: 1.1rem">
+                            {{ courseBind.course.C_Rank }}
+                        </div>
+                        <div>
+                            <a style="color: #5A5A5A; text-decoration: underline; font-size: 0.7rem">
+                                {{ courseBind.course.C_Ranknum }}人已打过分
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-50">
+                        年级分布
+                    </div>
+                    <div class="col-50">
+                        院系分布
                     </div>
                 </div>
-                <div class="myLabel">
-                    <span>好课</span>
-                    <span>不水</span>
-                    <span>老师赞</span>
-                    <span>任务重</span>
-                </div>
-                <div class="myCom">
-                    <textarea placeholder="写下你对本课程的评价（限1000字）"></textarea>
+                <div class="courseInfo">
+                    <div>
+                        课程信息
+                    </div>
+                    <p>
+Fusce egestas facilisis lorem, in egestas massa sollicitudin at. Suspendisse potenti. Praesent ornare commodo quam, a tincidunt nulla tempor eget. Nam libero ligula, ultrices malesuada rutrum non, vestibulum eu libero. Proin sed enim eu lorem facilisis rhoncus. Aliquam erat volutpat. Ut posuere eleifend congue. Nulla viverra eros ac est vestibulum, et sollicitudin enim dictum. Sed ut justo volutpat mauris condimentum aliquam sed consectetur nisi. Morbi ac nulla sollicitudin, sodales leo sed, vestibulum justo.
+                    </p>
                 </div>
             </div>
+            <a href="/course_posts/{{ courseBind.course.id }}/" external>
+                <nav class="bar bar-tab" style="text-align: center; background-color: #41C7DB; color: white; font-size: 0.8rem; font-weight: bold">
+                    <span class="icon icon-message"> 评论留言区</span>
+                </nav>
+            </a>
         </div>
     </div>
 
@@ -166,24 +177,6 @@
     <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
     <script type="text/javascript">
         $.init();
-        var mypoint = {{ courseBind.rank }};
-        if (mypoint != -1)
-        {
-            click(mypoint);
-        }
-        function click(point)
-        {
-            for (var i = 1; i <= 5; i++)
-            {
-                $("#star"+i).attr("src", "../../../static/star.png")
-            }
-            for (var i = 1; i <= point; i++)
-            {
-                $("#star"+i).attr("src", "../../../static/star_red.png");
-            }
-            mypoint = point;
-            $(".myRank").text(mypoint+".0");
-        }
     </script>
   </body>
 </html>
