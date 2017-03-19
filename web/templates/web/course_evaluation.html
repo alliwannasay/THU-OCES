@@ -155,7 +155,7 @@
                     <span>任务重</span>
                 </div>
                 <div class="myCom">
-                    <textarea placeholder="写下你对本课程的评价（限1000字）"></textarea>
+                    <textarea id="myComText" placeholder="写下你对本课程的评价（限1000字）"></textarea>
                 </div>
             </div>
         </div>
@@ -173,7 +173,7 @@
         }
         if ("{{ courseBind.shortmsg }}" != "尚未点评")
         {
-            
+            $("#myComText").text("{{ courseBind.shortmsg }}");
         }
         function click(point)
         {
@@ -188,7 +188,15 @@
             mypoint = point;
             $(".myRank").text(mypoint+".0");
         }
-
+        function postInfo()
+        {
+            var comm = $("#myComText").attr("value");
+            $.post("/evaluation/{{ request.user.username }}/{{ courseBind.course.id }}/",
+                    { score: mypoint, com: comm },
+                    function(data){
+                        window.location.href="/course/{{ courseBind.course.id }}/";
+                    });
+        }
     </script>
   </body>
 </html>
