@@ -177,7 +177,6 @@ def bbs_list(request):
     hotCourses = get_hot_courses(myuser)
     recBind = bind_course_comment(recCourses)
     hotBind = bind_course_comment(hotCourses)
-    print('test',hotBind)
     labelstr = get_label_str(request.user)
     #readFile()
     return render(request, 'index.html',{'courses':courses,'hotBind':hotBind,'recBind':recBind,'user':myuser,'label':labelstr})
@@ -866,6 +865,7 @@ def ajax_change_nickname(request):
 @csrf_exempt
 def dislike_course(request):
     myuser = BBSUser.objects.get(user=request.user)
+    print(request.POST)
     dcourse = BBSCourse.objects.get(id=int(request.POST['courseID']))
     newrela = UserDislikeCourse(UserID=myuser,CourseID=dcourse)
     newrela.save()

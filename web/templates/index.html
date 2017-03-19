@@ -90,7 +90,7 @@
                                                 <div class="item-inner">
                                                     <div class="item-title-row">
                                                         <a href="/course/{{ hotc.course.id }}/"><div class="item-title" style="color: #41C7DB">{{ hotc.course.C_Name }}</div></a>
-                                                        <div id="{{ hotc.course.id }}" class="item-after create-actions">...</div>
+{#                                                        <a href="javascript:dislikeCourse({{ hotc.course.id }})"><div class="item-after create-actions">不感兴趣</div></a>#}
                                                     </div>
                                                     <div class="item-title-row">
                                                         <div class="item-subtitle">teacher</div>
@@ -127,13 +127,13 @@
                         <div class="content-block">
                             {% for recc in recBind %}
                                 
-                                    <div class="list-block media-list">
+                                    <div id="w{{ recc.course.id }}" class="list-block media-list">
                                         <ul>
                                             <li class="item-content">
                                                 <div class="item-inner">
                                                     <div class="item-title-row">
                                                         <a href="/course/{{ recc.course.id }}/"><div class="item-title" style="color: #41C7DB">{{ recc.course.C_Name }}</div></a>
-                                                        <div id="{{ recc.course.id }}" class="item-after create-actions">...</div>
+                                                        <a href="javascript:dislikeCourse({{ recc.course.id }})"><div class="item-after create-actions" style="text-decoration: underline; font-size: 0.6rem">不感兴趣</div></a>
                                                     </div>
                                                     <div class="item-title-row">
                                                         <div class="item-subtitle">teacher</div>
@@ -176,6 +176,18 @@
     <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
     <script type="text/javascript">
         $.init()
+        function dislikeCourse(courseid) {
+            $.post
+            (
+                "/dislike_course/",
+                {'courseID': courseid},
+                function(data) {
+                    $("#w"+courseid).hide();
+                }
+
+            )
+        }
+
     </script>
   </body>
 </html>
