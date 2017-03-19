@@ -132,13 +132,37 @@
                                         <div class="item-inner">
                                             <div class="row">
                                                 <div class="col-25" style="font-size: 0.7rem; font-weight: bold">
-                                                    我的打分:{{ coursesBind.rank }}
+                                                    我的打分
                                                 </div>
-                                                <div class="star col-33">
-                                                    <div class="bg" style="display: inline-block">
-                                                        <div class="over" style="width: {{ coursesBind.hyaku }}%"></div>
+                                                {% if coursesBind.sign == 3 or coursesBind.sign == 2 %}
+                                                    <div class="star col-33">
+                                                        <div class="bg" style="display: inline-block">
+                                                            <div class="over" style="width: {{ coursesBind.hyaku }}%"></div>
+                                                        </div>
                                                     </div>
+                                                {% else %}
+                                                    <div class="noeva col-75" style="font-size: 0.7rem">
+                                                        <a href="/course_evaluation/{{ request.user.username }}/{{ coursesBind.course.id }}/" external>
+                                                            还没有为此课程打分，我要打分 >>
+                                                        </a>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-25" style="font-size: 0.7rem; font-weight: bold">
+                                                    我的点评
                                                 </div>
+                                                {% if coursesBind.sign == 3 or coursesBind.sign == 1 %}
+                                                    <div class="col-75" style="font-size: 0.7rem; text-overflow: ellipsis">
+                                                        {{ coursesBind.shortmsg }}
+                                                    </div>
+                                                {% else %}
+                                                    <div class="nocom col-75" style="font-size: 0.7rem">
+                                                        <a href="/course_evaluation/{{ request.user.username }}/{{ coursesBind.course.id }}/" external>
+                                                            还没有添加任何点评，我要点评 >>
+                                                        </a>
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </li>
