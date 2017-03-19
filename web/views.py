@@ -613,11 +613,15 @@ def course_evaluation(request, param, courseid):
     if request.method == "POST":
         print(request.POST)
         oriposts = BBSPost.objects.filter(P_User=myuser,P_Course=course)
-        if len(oriposts) == 0:
+        if request.POST['com'] == "":
+            x=1
+        elif len(oriposts) == 0:
             newpost = BBSPost(P_User=myuser,P_Course=course,P_Content=request.POST['com'])
             newpost.save()
             myuser.U_GPB += gpb_amount['post']
             myuser.save()
+            course.C_Comnum += 1
+            course.save()
         else:
             oriposts.delete()
             newpost = BBSPost(P_User=myuser, P_Course=course, P_Content=request.POST['com'])
@@ -631,6 +635,7 @@ def course_evaluation(request, param, courseid):
             course.C_Rank = (course.C_Rank * (course.C_Ranknum - 1) + int(request.POST['score'])) / course.C_Ranknum
             course.save()
             myuser.U_GPB += gpb_amount['score']
+            print(gpb_amount['score'])
             myuser.save()
         else:
             oriScore = re.Score

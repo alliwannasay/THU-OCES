@@ -120,7 +120,7 @@
                                     <li class="item-content">
                                         <div class="item-inner">
                                             <div class="item-title-row">
-                                                <a href="/course/{{ coursesBind.course.id }}/"><div class="item-title" style="color: #41C7DB">{{ coursesBind.course.C_Name }}</div></a>
+                                                <a href="/course/{{ coursesBind.course.id }}/" external><div class="item-title" style="color: #41C7DB">{{ coursesBind.course.C_Name }}</div></a>
                                                 <a href="/course_evaluation/{{ request.user.username }}/{{ coursesBind.course.id }}/" external><div id="{{ coursesBind.course.id }}" class="item-after create-actions">...</div></a>
                                             </div>
                                             <div class="item-title-row">
@@ -139,9 +139,7 @@
                                                         <div class="bg" style="display: inline-block">
                                                             <div class="over" style="width: {{ coursesBind.hyaku }}%"></div>
                                                         </div>
-                                                        <a href="/course_evaluation/{{ request.user.username }}/{{ coursesBind.course.id }}/" external>
-                                                            修改
-                                                        </a>
+
                                                     </div>
                                                 {% else %}
                                                     <div class="noeva col-75" style="font-size: 0.7rem">
