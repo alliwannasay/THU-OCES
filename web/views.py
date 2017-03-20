@@ -613,7 +613,8 @@ def course_evaluation(request, param, courseid):
         print(request.POST)
         oriposts = BBSPost.objects.filter(P_User=myuser,P_Course=course)
         if request.POST['com'] == "":
-            x=1
+            oriposts.delete()
+            myuser.U_GPB -= gpb_amount['post']
         elif len(oriposts) == 0:
             newpost = BBSPost(P_User=myuser,P_Course=course,P_Content=request.POST['com'])
             newpost.save()
@@ -827,19 +828,46 @@ def dislike_course(request):
     newrela.save()
     return HttpResponseRedirect("/")
 
-def search_course(request):
+def search_post(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    if request.method == 'POST':
+        searchContent = request.POST["searchContent"]
+        if searchContent == "":
+            searchContent = '0'
+        return HttpResponseRedirect('/search_course/'+searchContent+'/')
+
+def search_post_my(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    if request.method == 'POST':
+        searchContent = request.POST["searchContent"]
+        return HttpResponseRedirect('/search_my_course/'+searchContent+'/')
+
+def search_course(request,param):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
     courses = get_courses(request.user)
     myuser = BBSUser.objects.get(user=request.user)
     coursesall = BBSCourse.objects.all()
-    if request.method == 'POST':
-        searchContent = request.POST["searchContent"]
-        print(searchContent)
-        # coursesres = BBSCourse.objects.all().filter(Q(C_Name=searchContent)|Q(C_SeqNum=searchContent))
-        coursesres = search_course_by_name(coursesall,searchContent)
-        print(coursesres)
-    return render(request, 'web/search_result.html', {'user': myuser, 'search_courses': coursesres, 'courses': courses})
+    courseBinds = []
+    searchContent = param
+    # coursesres = BBSCourse.objects.all().filter(Q(C_Name=searchContent)|Q(C_SeqNum=searchContent))
+    coursesres = search_course_by_name(coursesall,searchContent)
+    courseBinds = bind_course_comment(coursesres)
+    return render(request, 'web/search_result.html', {'user': myuser, 'hotBind': courseBinds})
+
+def search_my_course(request,param):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    courses = get_courses(request.user)
+    myuser = BBSUser.objects.get(user=request.user)
+    courseBinds=[]
+    searchContent = param
+    # coursesres = BBSCourse.objects.all().filter(Q(C_Name=searchContent)|Q(C_SeqNum=searchContent))
+    coursesres = search_course_by_name(courses,searchContent)
+    courseBinds = bind_course_comment(coursesres)
+    return render(request, 'web/search_result.html', {'user': myuser, 'hotBind': courseBinds})
 
 def search_course_by_name(coursesall,searchcontent):
     result = []
