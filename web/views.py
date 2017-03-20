@@ -240,7 +240,7 @@ def instruction(request):
     myuser = BBSUser.objects.get(user=request.user)
     param = myuser.U_studentid
     if request.method == 'POST':
-        return HttpResponseRedirect("/change_label/" + str(param) + "/")
+        return HttpResponseRedirect("/instruction_my_class/")
     
     return render(request, 'web/instruction.html',{'courses':courses,'user':myuser,})
 
@@ -641,51 +641,7 @@ def course_evaluation(request, param, courseid):
             re.Score = request.POST['score']
             course.C_Rank = (course.C_Rank * (course.C_Ranknum) + int(request.POST['score']) - oriScore) / course.C_Ranknum
         re.save()
-
-    
-    
-    # if request.method == "POST":
-    #     if not request.POST.get('eva', None) == None:
-    #         print("POST eva")
-    #
-    #         title = request.POST['P_Title'] if request.POST['P_Title'] else ""
-    #         content = request.POST['P_Content'] if request.POST['P_Content'] else ""
-    #         wantedvalue = 0
-    #         realtype = 0 #增加帖子类型后可在此修改
-    #         Score = int(request.POST.get('Score', None))
-    #         if not title:
-    #             return render(request,'web/course_evaluation.html',{'user':myuser, 'error':'请输入评论题目，并修正评分','P_Title':title,'P_Content':content,'course':course, 'courses':courses})
-    #         if not content:
-    #             return render(request,'web/course_evaluation.html',{'user':myuser, 'error':'请输入评论详情，并修正评分','P_Title':title,'P_Content':content,'course':course, 'courses':courses})
-    #
-    #         UHC = UserHasCourse.objects.get(UserID = myuser, CourseID = course)
-    #         UHC.Score = Score
-    #         UHC.save()
-    #
-    #         course.C_Ranknum += 1
-    #         course.C_Rank = (course.C_Rank*(course.C_Ranknum-1)+Score)/course.C_Ranknum
-    #         course.save()
-    #
-    #         title = '【课程评价】' + title + '【评分：' + str(Score) + '.0/5.0】'
-    #
-    #         post = BBSPost()
-    #         post.P_User = myuser
-    #         post.P_Title = title
-    #         post.P_Content = content
-    #         post.P_Course = course
-    #         post.P_Type = realtype
-    #         post.P_Wanted = wantedvalue
-    #         post.save()
-    #         myuser.U_GPB += gpb_amount['post']
-    #         raiseLevel(myuser)
-    #         myuser.save()
-    #         if myuser.U_NewUser == 1:
-    #             return HttpResponseRedirect("/change_label/" + myuser.U_studentid + "/")
-    #         else:
-    #             return HttpResponseRedirect('/my_class/' + myuser.U_studentid + '/')
-
     re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
-
     nB = myRankBind(course,re.Score,get_my_comment(myuser,course))
     return render(request, 'web/course_evaluation.html', {'user':myuser,'course':course, 'courseBind':nB,'courses':courses})
 
@@ -922,6 +878,74 @@ def my_gpb(request):
     myuser = BBSUser.objects.get(user=request.user)
     honors = Honor.objects.all()
     return render(request, 'web/my_gpb.html',{'user':myuser,'honors':honors})
+
+def instruction_my_class(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    myuser = BBSUser.objects.get(user=request.user)
+    courses = get_courses(request.user)
+    sBlist = []
+    for course in courses:
+        newsign = 0
+        hasEvaBo = hasEva(myuser, course)
+        hasComBo = hasCom(myuser, course)
+        if hasEvaBo and hasComBo:
+            newsign = 3
+        elif hasEvaBo and (not hasComBo):
+            newsign = 2
+        elif (not hasEvaBo) and hasComBo:
+            newsign = 1
+        else:
+            newsign = 0
+        sB = signBind(course, newsign, getScore(myuser, course), get_my_comment(myuser, course))
+        sBlist.append(sB)
+    return render(request, 'web/instruction_my_class.html',{'user': myuser, 'courses': courses, 'coursesBinds': sBlist})
+
+@csrf_exempt
+def instruction_course_evaluation(request, courseid):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    courses = get_courses(request.user)
+    course = BBSCourse.objects.get(id=courseid)
+    if course not in courses:
+        return HttpResponseRedirect('/')
+    myuser = BBSUser.objects.get(user=request.user)
+    if request.method == "POST":
+        print(request.POST)
+        oriposts = BBSPost.objects.filter(P_User=myuser,P_Course=course)
+        if request.POST['com'] == "":
+            x=1
+        elif len(oriposts) == 0:
+            newpost = BBSPost(P_User=myuser,P_Course=course,P_Content=request.POST['com'])
+            newpost.save()
+            myuser.U_GPB += gpb_amount['post']
+            myuser.save()
+            course.C_Comnum += 1
+            course.save()
+        else:
+            oriposts.delete()
+            newpost = BBSPost(P_User=myuser, P_Course=course, P_Content=request.POST['com'])
+            newpost.save()
+
+
+        re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
+        if re.Score == -1:
+            course.C_Ranknum += 1
+            re.Score = request.POST['score']
+            course.C_Rank = (course.C_Rank * (course.C_Ranknum - 1) + int(request.POST['score'])) / course.C_Ranknum
+            course.save()
+            myuser.U_GPB += gpb_amount['score']
+            print(gpb_amount['score'])
+            myuser.save()
+        else:
+            oriScore = re.Score
+            re.Score = request.POST['score']
+            course.C_Rank = (course.C_Rank * (course.C_Ranknum) + int(request.POST['score']) - oriScore) / course.C_Ranknum
+        re.save()
+    re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
+    nB = myRankBind(course,re.Score,get_my_comment(myuser,course))
+    return render(request, 'web/instruction_course_evaluation.html', {'user':myuser,'course':course, 'courseBind':nB,'courses':courses})
+
 
 
 def kmp_next(base,next):

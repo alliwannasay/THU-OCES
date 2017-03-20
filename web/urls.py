@@ -22,6 +22,8 @@ urlpatterns = [
     url(r'^course_evaluation/(\w+)/(\d+)/', views.course_evaluation),
     url(r'^dislike_course/$', views.dislike_course),
     url(r'^instruction/$',views.instruction),
+    url(r'^instruction_course_evaluation/(\d+)/$',views.instruction_course_evaluation),
+    url(r'^instruction_my_class/$',views.instruction_my_class),
     url(r'^search_course/$',views.search_course),
     url(r'^my_like_courses/$',views.my_like_courses),
     url(r'^report/(\d+)/$',views.report),

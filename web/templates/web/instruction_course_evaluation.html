@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>个人主页</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+    <link rel="stylesheet" href="{{BASE_DIR}}/static/button.css" />
+      <style type="text/css">
+          .bg{
+              width: 60px;
+              height: 16px;
+              background: url("../../../static/star_gray.png");
+          }
+          .over{
+              height:16px;
+              background:url("../../../static/star_org.png") no-repeat;
+          }
+          .buttons-row .button{
+              border: 0;
+              color: black;
+              background-color: white;
+          }
+          .buttons-row .button:first-child{
+              border-left-width: 0;
+          }
+          .buttons-row .button.active{
+              background-color: #41C7DB;
+              color: white;
+          }
+          .buttons-tab .button.active{
+              color: #41C7DB;
+              border-color: #41C7DB;
+          }
+          .button.button-fill{
+              background-color: #41C7DB;
+          }
+          .row .label{
+              text-align: center;
+              font-size: 0.5rem;
+              border: 1px solid;
+              border-radius: 1rem;
+          }
+          .row .star{
+              text-align: right;
+          }
+          #semPicker{
+              width: 90%;
+              background-color: white;
+              text-align: center;
+              border: 0;
+              padding: 0.2rem;
+          }
+          .mycheckbox1{
+              background-color: white;
+              border-top: 2px solid;
+              border-left: 1px solid;
+              border-right: 1px solid;
+              border-color: #eee;
+              padding: 0.2rem;
+          }
+          .mycheckbox1 label{
+              padding: 0.2rem 2rem;
+          }
+          .courseTitle {
+              text-align: center;
+              background-color: white;
+              margin-top: 1rem;
+          }
+          .myScore {
+              background-color: white;
+              padding-top: 0.5rem;
+              padding-bottom: 0.5rem;
+              border-bottom: 2px solid;
+              border-color: #eee;
+          }
+          .myLabel {
+              background-color: white;
+              padding-top: 0.5rem;
+              padding-bottom: 0.5rem;
+              text-align: center;
+              border-bottom: 2px solid;
+              border-color: #eee;
+          }
+          .myLabel span{
+              font-size: 0.7rem;
+              border: 1px solid;
+              padding-left: 0.5rem;
+              padding-right: 0.5rem;
+              border-radius: 0.5rem;
+          }
+          .myCom textarea{
+              width: 100%;
+              height: 10rem;
+              font-size: 0.7rem;
+          }
+      </style>
+  </head>
+  <body>
+    <div class="page-group">
+        <!-- 你的html代码 -->
+        <div class="page">
+            <header class="bar bar-nav">
+                <a class="icon icon-left pull-left" href="javascript: history.back(-1);" external></a>
+                <a class="icon icon-check pull-right" href="javascript:postInfo()"></a>
+                <h1 class="title">我的评价</h1>
+
+            </header>
+            <div class="content">
+                <div class="courseTitle">
+                    <div style="padding-bottom: 0.5rem;padding-top: 1rem; color: #41C7DB">
+                        {{ courseBind.course.C_Name }}
+                    </div>
+                    <div style="padding-bottom: 0.5rem">
+                        teacher
+                    </div>
+                </div>
+                <div style="padding-top: 1rem; padding-bottom: 0.5rem; font-size: 0.7rem; text-align: center; color: dimgray">
+                    评论质量将影响您的评分在课程综合分中所占权重
+                </div>
+                <div class="myScore row">
+                    <div class="col-66" style="text-align: right">
+                        <a href="javascript:click(1)">
+                            <img src="../../../static/star.png" id="star1" style="width: 1.2rem">
+                        </a>
+                        <a href="javascript:click(2)">
+                            <img src="../../../static/star.png" id="star2" style="width: 1.2rem">
+                        </a>
+                        <a href="javascript:click(3)">
+                            <img src="../../../static/star.png" id="star3" style="width: 1.2rem">
+                        </a>
+                        <a href="javascript:click(4)">
+                            <img src="../../../static/star.png" id="star4" style="width: 1.2rem">
+                        </a>
+                        <a href="javascript:click(5)">
+                            <img src="../../../static/star.png" id="star5" style="width: 1.2rem">
+                        </a>
+                    </div>
+                    <div class="myRank col-33" style="color: #FFAC2D; font-weight: bold">
+                        {% if courseBind.rank == -1 %}
+                        未打分
+                        {% else %}
+                        {{ courseBind.rank }}.0
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="myLabel">
+                    <span>好课</span>
+                    <span>不水</span>
+                    <span>老师赞</span>
+                    <span>任务重</span>
+                </div>
+                <div class="myCom">
+                    <textarea id="myComText" placeholder="写下你对本课程的评价（限1000字）"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+    <script type="text/javascript">
+        $.init();
+        var mypoint = {{ courseBind.rank }};
+        if (mypoint != -1)
+        {
+            click(mypoint);
+        }
+        if ("{{ courseBind.shortmsg }}" != "尚未点评")
+        {
+            $("#myComText").text("{{ courseBind.shortmsg }}");
+        }
+        function click(point)
+        {
+            for (var i = 1; i <= 5; i++)
+            {
+                $("#star"+i).attr("src", "../../../static/star.png")
+            }
+            for (var i = 1; i <= point; i++)
+            {
+                $("#star"+i).attr("src", "../../../static/star_red.png");
+            }
+            mypoint = point;
+            $(".myRank").text(mypoint+".0");
+        }
+        function postInfo()
+        {
+            var comm = $("#myComText").attr("value");
+            if(mypoint == -1)
+            {
+                alert("第一次评课，评分不能为空哦");
+                return;
+            }
+            if(comm == "")
+            {
+                alert("第一次评课，点评不能为空哦");
+                return;
+            }
+            $.post("/instruction_course_evaluation/{{ courseBind.course.id }}/",
+                    { score: mypoint, com: comm },
+                    function(data){
+                        window.location.href="/change_label/{{ request.user.username }}/";
+                    });
+        }
+    </script>
+  </body>
+</html>

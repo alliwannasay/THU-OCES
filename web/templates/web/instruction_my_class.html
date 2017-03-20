@@ -75,9 +75,7 @@
         <div class="page">
             <div class="content">
                 <div class="buttons-tab">
-                    <a href="/" external class="button">首页</a>
                     <a href="/my_class/{{ request.user.username }}/" external class="active button">我的课程</a>
-                    <a href="/me/{{ request.user.username }}" external class="button">个人</a>
                 </div>
                 <div class="content-padded">
                     <form role="search" action="/search_course/" method="post">
@@ -104,14 +102,14 @@
                             <label class="icon icon-caret" for="semPicker"></label>
                         </span>
                     </div>
-                    <div class="col-50 mycheckbox1">
-                        <label for="eva">已打分</label>
-                        <input type="checkbox" id="eva" onchange="checkChange()">
-                    </div>
-                    <div class="col-50 mycheckbox1">
-                        <label for="com">已评价</label>
-                        <input type="checkbox" id="com" onchange="checkChange()">
-                    </div>
+{#                    <div class="col-50 mycheckbox1">#}
+{#                        <label for="eva">已打分</label>#}
+{#                        <input type="checkbox" id="eva" onchange="checkChange()">#}
+{#                    </div>#}
+{#                    <div class="col-50 mycheckbox1">#}
+{#                        <label for="com">已评价</label>#}
+{#                        <input type="checkbox" id="com" onchange="checkChange()">#}
+{#                    </div>#}
                 </div>
                 <div class="content-block">
                         {% for coursesBind in coursesBinds %}
@@ -120,8 +118,8 @@
                                     <li class="item-content">
                                         <div class="item-inner">
                                             <div class="item-title-row">
-                                                <a href="/course/{{ coursesBind.course.id }}/" external><div class="item-title" style="color: #41C7DB">{{ coursesBind.course.C_Name }}</div></a>
-                                                <a class="icon icon-edit" href="/course_evaluation/{{ request.user.username }}/{{ coursesBind.course.id }}/" external><div id="{{ coursesBind.course.id }}" class="item-after create-actions"></div></a>
+                                                <a href="javascript:alert('请先打分哦')" external><div class="item-title" style="color: #41C7DB">{{ coursesBind.course.C_Name }}</div></a>
+                                                <a class="icon icon-edit" href="/instruction_course_evaluation/{{ coursesBind.course.id }}/" external><div id="{{ coursesBind.course.id }}" class="item-after create-actions"></div></a>
                                             </div>
                                             <div class="item-title-row">
                                                 <div class="item-subtitle">teacher</div>
@@ -143,7 +141,7 @@
                                                     </div>
                                                 {% else %}
                                                     <div class="noeva col-75" style="font-size: 0.7rem">
-                                                        <a href="/course_evaluation/{{ request.user.username }}/{{ coursesBind.course.id }}/" external>
+                                                        <a href="/instruction_course_evaluation/{{ coursesBind.course.id }}/" external>
                                                             还没有为此课程打分，我要打分 >>
                                                         </a>
                                                     </div>
@@ -159,7 +157,7 @@
                                                     </div>
                                                 {% else %}
                                                     <div class="nocom col-75" style="font-size: 0.7rem">
-                                                        <a href="/course_evaluation/{{ request.user.username }}/{{ coursesBind.course.id }}/" external>
+                                                        <a href="/instruction_course_evaluation/{{ coursesBind.course.id }}/" external>
                                                             还没有添加任何点评，我要点评 >>
                                                         </a>
                                                     </div>
