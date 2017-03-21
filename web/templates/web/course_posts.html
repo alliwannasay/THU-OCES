@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>个人主页</title>
+    <title>评价留言区</title>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
@@ -108,6 +108,11 @@
               padding: 1rem;
               font-size: 0.7rem;
           }
+          .tab-link{
+              padding-top: 0.5rem;
+              padding-bottom: 0.5rem;
+              height: 2.2rem;
+          }
       </style>
   </head>
   <body>
@@ -116,59 +121,89 @@
         <div class="page">
             <header class="bar bar-nav">
                 <a class="icon icon-left pull-left" href="javascript: history.back(-1);" external></a>
-                <a class="icon icon-star pull-right"></a>
-                <h1 class="title">课程详情</h1>
-
+                <h1 class="title">评价留言区</h1>
             </header>
             <div class="content">
-                <div class="courseTitle">
-                    <div style="padding-bottom: 0.5rem;padding-top: 1rem; color: #41C7DB">
-                        {{ courseBind.course.C_Name }}
-                    </div>
-                    <div style="padding-bottom: 0.5rem">
-                        teacher
-                    </div>
+                <div class="buttons-row" style="padding: 0.5rem 0">
+                    <a href="#tab1" class="tab-link active button">精选</a>
+                    <a href="#tab2" class="tab-link button">最新</a>
                 </div>
-                <div class="row Datainfo">
-                    <div class="col-66">
-                        课程标签
-                    </div>
-                    <div class="col-33" style="text-align: center">
-                        <div class="star">
-                            <div class="bg" style="display: inline-block">
-                                <div class="over" style="width: {{ courseBind.hyaku }}%"></div>
+                <div class="tabs">
+                    <div class="tab active" id="tab1">
+                        {% for likepB in likepBs %}
+                            <div class="postInfo" style="background-color: white; padding: 0.5rem 1rem; margin:0.5rem; text-align: center" onclick="window.location.href='/course/{{ course.id }}/post/{{ likepB.post.id }}'">
+                                <div class="row">
+                                    <div class="col-20">
+                                        <div class="item-media">
+                                            <img src="{{ BASE_DIR }}/media/{{ likepB.post.P_User.U_Image }}" style='width: 3rem;'>
+                                        </div>
+                                        <div style="font-size: 0.6rem; color: #41C7DB">
+                                            {{ likepB.post.P_User.user.username}}
+                                        </div>
+                                    </div>
+                                    <div class="col-80" style="height: 100%">
+                                        {% if likepB.rank != -1 %}
+                                            <div class="row" style="text-align: left; margin-left: 0.6rem; border-bottom: 1px solid; border-color: #eee">
+                                                <div class="star col-33">
+                                                    <div class="bg" style="display: inline-block">
+                                                        <div class="over" style="width: {{ likepB.hyaku }}%"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-66" style="color: #FFAC2D">
+                                                    {{ likepB.rank }}.0
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        <div style="font-size: 0.7rem; text-align: left; padding: 0 0.5rem;">
+                                            <p style="margin-top: 0">{{ likepB.post.P_Content }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="font-size: 0.7rem; text-align: right; padding-right: 4rem; color: #5A5A5A">
+                                            互动 {{ likepB.post.P_ReplyNum }} · 赞 {{ likepB.post.P_LikeNum }} · 踩 {{ likepB.post.P_DislikeNum }}  · <a href="/report/{{ likepB.post.id }}/" external>举报</a>
+                                    </div>
                             </div>
-                        </div>
-                        <div class="score" style="color: #FFAC2D; font-weight: bold; font-size: 1.1rem">
-                            {{ courseBind.course.C_Rank }}
-                        </div>
-                        <div>
-                            <a style="color: #5A5A5A; text-decoration: underline; font-size: 0.7rem">
-                                {{ courseBind.course.C_Ranknum }}人已打过分
-                            </a>
-                        </div>
+                        {% endfor %}
                     </div>
-                    <div class="col-50">
-                        年级分布
+
+                    <div class="tab" id="tab2">
+                        {% for timepB in timepBs %}
+                            <div class="postInfo" style="background-color: white; padding: 0.5rem 1rem; margin:0.5rem; text-align: center" onclick="window.location.href='/course/{{ course.id }}/post/{{ timepB.post.id }}'">
+                                <div class="row">
+                                    <div class="col-20">
+                                        <div class="item-media">
+                                            <img src="{{ BASE_DIR }}/media/{{ timepB.post.P_User.U_Image }}" style='width: 3rem;'>
+                                        </div>
+                                        <div style="font-size: 0.6rem; color: #41C7DB">
+                                            {{ timepB.post.P_User.user.username}}
+                                        </div>
+                                    </div>
+                                    <div class="col-80" style="height: 100%">
+                                        {% if timepB.rank != -1 %}
+                                            <div class="row" style="text-align: left; margin-left: 0.6rem; border-bottom: 1px solid; border-color: #eee">
+                                                <div class="star col-33">
+                                                    <div class="bg" style="display: inline-block">
+                                                        <div class="over" style="width: {{ timepB.hyaku }}%"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-66" style="color: #FFAC2D">
+                                                    {{ timepB.rank }}.0
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                        <div style="font-size: 0.7rem; text-align: left; padding: 0 0.5rem">
+                                            <p style="margin-top: 0">{{ timepB.post.P_Content }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="font-size: 0.7rem; text-align: right; padding-right: 4rem; color: #5A5A5A">
+                                            互动 {{ timepB.post.P_ReplyNum }} · 赞 {{ timepB.post.P_LikeNum }} · 踩 {{ timepB.post.P_DislikeNum }}  · <a href="/report/{{ timepB.post.id }}/" external>举报</a>
+                                    </div>
+                            </div>
+                        {% endfor %}
                     </div>
-                    <div class="col-50">
-                        院系分布
-                    </div>
-                </div>
-                <div class="courseInfo">
-                    <div>
-                        课程信息
-                    </div>
-                    <p>
-Fusce egestas facilisis lorem, in egestas massa sollicitudin at. Suspendisse potenti. Praesent ornare commodo quam, a tincidunt nulla tempor eget. Nam libero ligula, ultrices malesuada rutrum non, vestibulum eu libero. Proin sed enim eu lorem facilisis rhoncus. Aliquam erat volutpat. Ut posuere eleifend congue. Nulla viverra eros ac est vestibulum, et sollicitudin enim dictum. Sed ut justo volutpat mauris condimentum aliquam sed consectetur nisi. Morbi ac nulla sollicitudin, sodales leo sed, vestibulum justo.
-                    </p>
                 </div>
             </div>
-            <a href="/course_posts/{{ courseBind.course.id }}/" external>
-                <nav class="bar bar-tab" style="text-align: center; background-color: #41C7DB; color: white; font-size: 0.8rem; font-weight: bold">
-                    <span class="icon icon-message"> 评论留言区</span>
-                </nav>
-            </a>
         </div>
     </div>
 

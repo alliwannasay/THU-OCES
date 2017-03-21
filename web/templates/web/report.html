@@ -3,32 +3,171 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>举报</title>
+    <title>个人主页</title>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-
     <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
     <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
     <link rel="stylesheet" href="{{BASE_DIR}}/static/button.css" />
-
+      <style type="text/css">
+          .bg{
+              width: 60px;
+              height: 16px;
+              background: url("../../../static/star_gray.png");
+          }
+          .over{
+              height:16px;
+              background:url("../../../static/star_org.png") no-repeat;
+          }
+          .buttons-row .button{
+              border: 0;
+              color: black;
+              background-color: white;
+          }
+          .buttons-row .button:first-child{
+              border-left-width: 0;
+          }
+          .buttons-row .button.active{
+              background-color: #41C7DB;
+              color: white;
+          }
+          .buttons-tab .button.active{
+              color: #41C7DB;
+              border-color: #41C7DB;
+          }
+          .button.button-fill{
+              background-color: #41C7DB;
+          }
+          .row .label{
+              text-align: center;
+              font-size: 0.5rem;
+              border: 1px solid;
+              border-radius: 1rem;
+          }
+          .row .star{
+              text-align: right;
+          }
+          #semPicker{
+              width: 90%;
+              background-color: white;
+              text-align: center;
+              border: 0;
+              padding: 0.2rem;
+          }
+          .mycheckbox1{
+              background-color: white;
+              border-top: 2px solid;
+              border-left: 1px solid;
+              border-right: 1px solid;
+              border-color: #eee;
+              padding: 0.2rem;
+          }
+          .mycheckbox1 label{
+              padding: 0.2rem 2rem;
+          }
+          .courseTitle {
+              text-align: center;
+              background-color: white;
+              margin-top: 1rem;
+          }
+          .myScore {
+              background-color: white;
+              padding-top: 0.5rem;
+              padding-bottom: 0.5rem;
+              border-bottom: 2px solid;
+              border-color: #eee;
+          }
+          .myLabel {
+              background-color: white;
+              padding-top: 0.5rem;
+              padding-bottom: 0.5rem;
+              text-align: center;
+              border-bottom: 2px solid;
+              border-color: #eee;
+          }
+          .myLabel span{
+              font-size: 0.7rem;
+              border: 1px solid;
+              padding-left: 0.5rem;
+              padding-right: 0.5rem;
+              border-radius: 0.5rem;
+          }
+          .myCom textarea{
+              width: 100%;
+              height: 10rem;
+              font-size: 0.7rem;
+          }
+      </style>
   </head>
   <body>
     <div class="page-group">
         <!-- 你的html代码 -->
         <div class="page">
+            <header class="bar bar-nav">
+                <a class="icon icon-left pull-left" href="javascript: history.back(-1);" external></a>
+                <h1 class="title">举报</h1>
+            </header>
             <div class="content">
-                <div class="content-block">
-                    <div style="margin: 0 auto; text-align: center">
-                        <p>垃圾广告</p>
-                        <p>人身攻击</p>
-                        <p>这块给我post回去一个理由string就行了</p>
-                        <form method="post">
-                            {%  csrf_token %}
-                            <button type="submit" value="继续" style="padding: 0.5rem 3rem; margin-top: 22rem">举报！</button>
-                        </form>
-
+                <div class="reportTitle">
+                    <div style="padding: 0.5rem; color: #5A5A5A; text-align: center; background-color: white; font-size: 0.7rem; margin: 0.5rem 0">
+                        你举报该条留言的原因为
                     </div>
+                    <from action="/report/{{ post.id }}">
+                        <div class="reportReason list-block media-list" style="padding: 1rem; background-color: white; margin: 0.5rem 0">
+                            <ul>
+                                <li>
+                                    <label class="label-checkbox item-content">
+                                        <input type="checkbox" name="">
+                                        <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
+                                        <div class="item-inner">
+                                            垃圾广告
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="label-checkbox item-content">
+                                        <input type="checkbox" name="">
+                                        <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
+                                        <div class="item-inner">
+                                            人身攻击
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="label-checkbox item-content">
+                                        <input type="checkbox" name="">
+                                        <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
+                                        <div class="item-inner">
+                                            未经授权/侵权
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="label-checkbox item-content">
+                                        <input type="checkbox" name="">
+                                        <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
+                                        <div class="item-inner">
+                                            欺诈/虚假信息
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="label-checkbox item-content">
+                                        <input type="checkbox" name="">
+                                        <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
+                                        <div class="item-inner">
+                                            与评课无关
+                                        </div>
+                                    </label>
+                                </li>
+                            </ul>
+                            <div>
+                                <input type="text" placeholder="其他举报原因" style="border: 1px solid; border-color: #5A5A5A; margin-left:1rem; margin-top:0.5rem; width: 14rem">
+                            </div>
+                        </div>
+                        <button type="submit" style="padding: 0.5rem 3rem; width: 100%">确认举报</button>
+                    </from>
                 </div>
             </div>
         </div>
@@ -38,7 +177,16 @@
     <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
     <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
     <script type="text/javascript">
-        $.init()
+        $.init();
+        function postInfo()
+        {
+            var comm = $("#myComText").attr("value");
+            $.post("/course_evaluation/{{ request.user.username }}/{{ courseBind.course.id }}/",
+                    { score: mypoint, com: comm },
+                    function(data){
+                        window.location.href="/my_class/{{ request.user.username }}/";
+                    });
+        }
     </script>
   </body>
 </html>

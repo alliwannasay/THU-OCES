@@ -17,15 +17,33 @@
     <div class="page-group">
         <!-- 你的html代码 -->
         <div class="page">
+            <header class="bar bar-nav">
+                <a class="icon icon-left pull-left" href="javascript: history.back(-1);" external></a>
+                <h1 class="title">我的积分</h1>
+            </header>
             <div class="content">
-                <div class="content-block">
-                    <div style="margin: 0 auto; text-align: center">
-                        <p>我的积分：{{ user.U_GPB }}</p>
-                        {% for honor in honors %}
-                        <p>称号：{{ honor.H_Name }} 分值：{{ honor.H_Threshold }}</p>
-                        {% endfor %}
-                    </div>
+                <div class="row" style="margin: 0.5rem 0; padding: 0.5rem 1rem; background-color: #41C7DB; color: white">
+                    <div class="col-50" style="text-align: left">我的积分</div>
+                    <div class="col-50" style="text-align: right">{{ user.U_GPB }}</div>
                 </div>
+                <div style="margin: 0.5rem 0; padding: 0.5rem 1rem; background-color: white; color: #5A5A5A; font-size: 0.7rem">
+                    <div>如何赚取积分:</div>
+                    <div>新用户登录 +50分</div>
+                    <div>为一门课打分 +10分 为一门课评论 +30分</div>
+                </div>
+                {% for honor in honors %}
+                    {% if user.U_GPB  >= honor.H_Threshold %}
+                        <div class="row" style="padding: 0.5rem 1rem; background-color: #41C7DB; color: white">
+                            <div class="col-50" style="text-align: left">称号: {{ honor.H_Name }}</div>
+                            <div class="col-50" style="text-align: right">已解锁！</div>
+                        </div>
+                    {% else %}
+                        <div class="row" style="padding: 0.5rem 1rem; background-color: #999999; color: white">
+                            <div class="col-50" style="text-align: left">称号: ???</div>
+                            <div class="col-50" style="text-align: right">达到{{ honor.H_Threshold }}分解锁</div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
     </div>
