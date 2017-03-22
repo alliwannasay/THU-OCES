@@ -53,6 +53,8 @@ def readFile():
     print(lines[len(lines) - 1])
     f.close()
 
+
+
 def raiseLevel(myuser):
     curlevel = myuser.U_Level
     curgpb = myuser.U_GPB
@@ -77,7 +79,7 @@ def raiseLevel(myuser):
 
 def get_courses(user):
     myuser = BBSUser.objects.get(user=user)
-    relas = UserHasCourse.objects.filter(UserID=myuser);
+    relas = UserHasCourse.objects.filter(UserID=myuser)
     courses = []
     for rela in relas:
         courses.append(rela.CourseID)
@@ -160,12 +162,10 @@ def bind_course_comment(courses):
     return bindresult
 
 def get_my_comment(myuser,course):
-    myposts = BBSPost.objects.filter(P_Course=course,P_User=myuser)
+    myposts = BBSPost.objects.filter(P_Course=course,P_User=myuser,P_Parent=None)
     if len(myposts) == 0:
         return "尚未点评"
     return myposts[0].P_Content
-
-
 
 
 def bbs_list(request):
@@ -173,6 +173,9 @@ def bbs_list(request):
         return HttpResponseRedirect('/login/')
     courses = get_courses(request.user)
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     recCourses = get_recommended_courses(myuser,courses)
     hotCourses = get_hot_courses(myuser)
     recBind = bind_course_comment(recCourses)
@@ -218,16 +221,23 @@ def login(request):
             return render(request, "web/login.html", {'error': "请输入密码"})
 
         user = auth.authenticate(username=studentidin, password=passwordin)
+
         if user is not None:
             auth.login(request, user)
-            return HttpResponseRedirect('/instruction')
+
+            if(request.user.username == "test"):
+                return HttpResponseRedirect("/instruction/")
+
+            return HttpResponseRedirect('/')
         else:
             user = validate_user_bymyself(request,studentid=studentidin, password=passwordin)
             if user is not None:
-                if user.U_NewUser == 1:
-                    return HttpResponseRedirect("/instruction/")
-                else:
-                    return HttpResponseRedirect('/')
+                return HttpResponseRedirect("/instruction/")
+            # if user is not None:
+            #     if user.U_NewUser == 1:
+            #         return HttpResponseRedirect("/instruction/")
+            #     else:
+            #         return HttpResponseRedirect('/')
             else:
                 return render(request, "web/login.html", {'error': "学号或密码不正确"})
     else:
@@ -263,6 +273,9 @@ def course_post_list(request,courseid):
         isHaving = 0
 
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     # posts = BBSPost.objects.filter(P_Course=mycourse, P_Parent=None)
 
     # posts = list(posts)
@@ -318,6 +331,9 @@ def course_posts(request,courseid):
     if mycourse not in courses:
         isHaving = 0
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     posts = BBSPost.objects.filter(P_Course=mycourse, P_Parent=None)
     timeposts = list(posts)
 
@@ -362,6 +378,9 @@ def course_post_detail(request,courseid,postid):
 
 
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     bigpost = BBSPost.objects.get(id=postid, P_Course=thiscourse)
 
     if request.method == 'POST':
@@ -412,6 +431,9 @@ def user_self_info(request, param, action):
         return HttpResponseRedirect('/login/')
     visitedUser = User.objects.get(username=param)
     visitedUser = BBSUser.objects.get(user=visitedUser)
+    if visitedUser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     courses = get_courses(request.user)
     #userme = BBSUser.objects.get(user=request.user)
     #courses = get_courses(request.user)
@@ -439,38 +461,9 @@ def user_change_label(request, param):
     courses = get_courses(request.user)
     
     mylabels = get_label(request.user)
-    # labelnames = []
-    # for label in labels:
-    #     labelnames.append(str(label))
-    #
-    # labelnames_un = []
     
     labels = CourseLabel.objects.all()
-    # for label in labels:
-    #     if not (label.L_Name in labelnames):
-    #         labelnames_un.append(label.L_Name)
-    # if request.method == 'POST':
-    #     #print("post")
-    #     isdelete = request.POST.get('delete', None)
-    #     isadd = request.POST.get('add', None)
-    #     isnext = request.POST.get('next', None)
-    #     if not isnext == None:
-    #         visitedUser.U_NewUser = 0
-    #         visitedUser.save()
-    #         return HttpResponseRedirect('/')
-    #     elif not isdelete == None:
-    #         #print("delete")
-    #         #print(request.POST.get('labels_followed', None))
-    #         la = CourseLabel.objects.get(L_Name = request.POST.get('labels_followed', None))
-    #         UserFollowLabel.objects.get(UserID = visitedUser, LabelID = la).delete()
-    #     elif not isadd == None:
-    #         #print("add")
-    #         #print(request.POST.get('labels_unfollowed', None))
-    #         la = CourseLabel.objects.get(L_Name = request.POST.get('labels_unfollowed', None))
-    #         UserFollowLabel.objects.create(UserID = visitedUser, LabelID = la)
-    #
-    #     return HttpResponseRedirect("/change_label/" + str(param) + "/")
-    #
+
     if request.method == 'POST':
         print(request.POST)
         dict = request.POST
@@ -483,6 +476,9 @@ def user_change_label(request, param):
             newlabel = CourseLabel.objects.get(id = int(labelid))
 
             UserFollowLabel.objects.create(UserID = visitedUser,LabelID = newlabel)
+        if visitedUser.U_NewUser == 0:
+            visitedUser.U_NewUser = 1
+            visitedUser.save()
         return HttpResponseRedirect("/")
 
     return render(request,'web/user_change_label.html',
@@ -645,32 +641,13 @@ def course_evaluation(request, param, courseid):
     return render(request, 'web/course_evaluation.html', {'user':myuser,'course':course, 'courseBind':nB,'courses':courses})
 
 @csrf_exempt
-def like_post_deal(request):
-    userme = BBSUser.objects.get(user=request.user)
-    post = BBSPost.objects.get(id=int(request.POST['postID']))
-    postuser = BBSUser.objects.get(id=post.P_User.id)
-    if UserLikePost.objects.filter(UserID=userme.id, PostID=post).exists():
-        UserLikePost.objects.get(UserID=userme.id, PostID=post).delete()
-        post.P_LikeNum -= 1
-        post.save()
-        postuser.U_GPB -= gpb_amount['get_liked']
-        postuser.save()
-    else:
-        newLikePost = UserLikePost()
-        newLikePost.UserID = userme
-        newLikePost.PostID = post
-        newLikePost.save()
-        post.P_LikeNum += 1
-        post.save()
-        postuser.U_GPB += gpb_amount['get_liked']
-        raiseLevel(postuser)
-        postuser.save()
-
-    return HttpResponse('follow success')
-
-@csrf_exempt
 def like_course(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     course = BBSCourse.objects.get(id=int(request.POST['courseID']))
 
     if UserLikeCourse.objects.filter(UserID=myuser, CourseID=course).exists():
@@ -685,44 +662,44 @@ def like_course(request):
 
     return HttpResponse('follow success')
 
-
-@csrf_exempt
-def post_course_post(request,courseid):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login/')
-    course = BBSCourse.objects.get(id=courseid)
-    courses = get_courses(request.user)
-    if course not in courses:
-        return HttpResponseRedirect('/')
-    myuser = BBSUser.objects.get(user=request.user)
-    if request.method == 'POST':
-        title = request.POST['P_Title'] if request.POST['P_Title'] else ""
-        content = request.POST['P_Content'] if request.POST['P_Content'] else ""
-        wantedvalue = request.POST['wantedval'] if request.POST['wantedval'] else 0
-        realtype = request.POST['Realtype'] if request.POST['Realtype'] else 0
-        if not title:
-            return render(request,'web/post_post.html',{'error':'请输入帖子题目','P_Title':title,'P_Content':content,'course':course, 'courses':courses})
-        if not content:
-            return render(request,'web/post_post.html',{'error':'请输入帖子详情','P_Title':title,'P_Content':content,'course':course, 'courses':courses})
-
-
-        userme = BBSUser.objects.get(user=request.user)
-
-        post = BBSPost()
-        post.P_User = userme
-        post.P_Title = title
-        post.P_Content = content
-        post.P_Course = course
-        post.P_Type = realtype
-        post.P_Wanted = wantedvalue
-        post.save()
-        userme.U_GPB += gpb_amount['post']
-        raiseLevel(userme)
-        userme.save()
-        course.C_Comnum += 1
-        course.save()
-        return HttpResponseRedirect(reverse('course',args=[courseid]))
-    return render(request, 'web/post_post.html', {'user':myuser,'course':course, 'courses':courses})
+#
+# @csrf_exempt
+# def post_course_post(request,courseid):
+#     if not request.user.is_authenticated():
+#         return HttpResponseRedirect('/login/')
+#     course = BBSCourse.objects.get(id=courseid)
+#     courses = get_courses(request.user)
+#     if course not in courses:
+#         return HttpResponseRedirect('/')
+#     myuser = BBSUser.objects.get(user=request.user)
+#     if request.method == 'POST':
+#         title = request.POST['P_Title'] if request.POST['P_Title'] else ""
+#         content = request.POST['P_Content'] if request.POST['P_Content'] else ""
+#         wantedvalue = request.POST['wantedval'] if request.POST['wantedval'] else 0
+#         realtype = request.POST['Realtype'] if request.POST['Realtype'] else 0
+#         if not title:
+#             return render(request,'web/post_post.html',{'error':'请输入帖子题目','P_Title':title,'P_Content':content,'course':course, 'courses':courses})
+#         if not content:
+#             return render(request,'web/post_post.html',{'error':'请输入帖子详情','P_Title':title,'P_Content':content,'course':course, 'courses':courses})
+#
+#
+#         userme = BBSUser.objects.get(user=request.user)
+#
+#         post = BBSPost()
+#         post.P_User = userme
+#         post.P_Title = title
+#         post.P_Content = content
+#         post.P_Course = course
+#         post.P_Type = realtype
+#         post.P_Wanted = wantedvalue
+#         post.save()
+#         userme.U_GPB += gpb_amount['post']
+#         raiseLevel(userme)
+#         userme.save()
+#         course.C_Comnum += 1
+#         course.save()
+#         return HttpResponseRedirect(reverse('course',args=[courseid]))
+#     return render(request, 'web/post_post.html', {'user':myuser,'course':course, 'courses':courses})
 
 @csrf_exempt
 def like_child_post(request):
@@ -773,54 +750,6 @@ def dislike_child_post(request):
     return HttpResponseRedirect("/")
 
 
-
-
-
-def delete_post(request,courseid,postid,parentid):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login/')
-    mycourse = BBSCourse.objects.get(id=courseid)
-    courses = get_courses(request.user)
-    if mycourse not in courses:
-        return HttpResponseRedirect('/')
-    postde = BBSPost.objects.get(id=postid)
-    likes = UserLikePost.objects.filter(PostID=postde)
-    follows = UserFollowPost.objects.filter(PostID=postde)
-    for like in likes:
-        like.delete()
-    for follow in follows:
-        follow.delete()
-    postde.delete()
-    myuser = BBSUser.objects.get(user=request.user)
-    myuser.U_GPB -= gpb_amount['reply']
-    myuser.save()
-
-    return HttpResponseRedirect("/course/"+str(courseid)+"/post/"+str(parentid)+"/")
-
-def delete_bigpost(request,courseid,postid):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login/')
-    mycourse = BBSCourse.objects.get(id=courseid)
-    courses = get_courses(request.user)
-    print('delete',mycourse.C_Name)
-    if mycourse not in courses:
-        return HttpResponseRedirect('/')
-    postde = BBSPost.objects.get(id=postid)
-    likes = UserLikePost.objects.filter(PostID=postde)
-    follows = UserFollowPost.objects.filter(PostID=postde)
-    for like in likes:
-        like.delete()
-    for follow in follows:
-        follow.delete()
-    postde.delete()
-    myuser = BBSUser.objects.get(user=request.user)
-    myuser.U_GPB -= gpb_amount['post']
-    myuser.save()
-    mycourse.C_Comnum -= 1
-    mycourse.save()
-    return HttpResponseRedirect("/course/" + str(courseid) + "/")
-
-
 def logout(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
@@ -844,27 +773,27 @@ def my_like_courses(request):
     return render(request, 'web/my_like_courses.html', {'user':myuser,'hotBind':mylikecourses})
 
 
-@csrf_exempt
-def ajax_append_image(request):
-    data = request.FILES['file']
-    path = default_storage.save(data.name, ContentFile(data.read()))
-    return HttpResponse(path)
-
-@csrf_exempt
-def ajax_change_image(request):
-    file = request.FILES if request.method == 'POST' else None
-    bbsuser = BBSUser.objects.get(user=request.user)
-    if file:
-        bbsuser.U_Image = file['file']
-        bbsuser.save()
-    return HttpResponse(bbsuser.U_Image)
-
-@csrf_exempt
-def ajax_change_nickname(request):
-    bbsuser = BBSUser.objects.get(user=request.user)
-    bbsuser.U_name = request.POST['newNick']
-    bbsuser.save()
-    return  HttpResponse("修改成功")
+# @csrf_exempt
+# def ajax_append_image(request):
+#     data = request.FILES['file']
+#     path = default_storage.save(data.name, ContentFile(data.read()))
+#     return HttpResponse(path)
+#
+# @csrf_exempt
+# def ajax_change_image(request):
+#     file = request.FILES if request.method == 'POST' else None
+#     bbsuser = BBSUser.objects.get(user=request.user)
+#     if file:
+#         bbsuser.U_Image = file['file']
+#         bbsuser.save()
+#     return HttpResponse(bbsuser.U_Image)
+#
+# @csrf_exempt
+# def ajax_change_nickname(request):
+#     bbsuser = BBSUser.objects.get(user=request.user)
+#     bbsuser.U_name = request.POST['newNick']
+#     bbsuser.save()
+#     return  HttpResponse("修改成功")
 
 
 @csrf_exempt
@@ -995,7 +924,7 @@ def instruction_course_evaluation(request, courseid):
     myuser = BBSUser.objects.get(user=request.user)
     if request.method == "POST":
         print(request.POST)
-        oriposts = BBSPost.objects.filter(P_User=myuser,P_Course=course)
+        oriposts = BBSPost.objects.filter(P_User=myuser,P_Course=course,P_Parent=None)
         if request.POST['com'] == "":
             x=1
         elif len(oriposts) == 0:
