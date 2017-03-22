@@ -200,7 +200,6 @@ def validate_user_bymyself(request,studentid,password):
             auth.login(request, newUserSys)
             newUser = BBSUser()
             newUser.U_studentid = studentid
-            newUser.U_password = password
             newUser.user = newUserSys
             newUser.save()
             return newUser
@@ -458,6 +457,7 @@ def user_change_label(request, param):
         return HttpResponseRedirect('/login/')
     visitedUser = User.objects.get(username=param)
     visitedUser = BBSUser.objects.get(user=visitedUser)
+
     courses = get_courses(request.user)
     
     mylabels = get_label(request.user)
@@ -574,6 +574,9 @@ def my_class(request,param):
         return HttpResponseRedirect('/login/')
     visitedUser = User.objects.get(username=param)
     myuser = BBSUser.objects.get(user=visitedUser)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     courses = get_courses(request.user)
     sBlist = []
     for course in courses:
@@ -602,6 +605,9 @@ def course_evaluation(request, param, courseid):
     if course not in courses:
         return HttpResponseRedirect('/')
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     if request.method == "POST":
         print(request.POST)
         oriposts = BBSPost.objects.filter(P_User=myuser,P_Course=course,P_Parent=None)
@@ -706,6 +712,9 @@ def like_child_post(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     if request.method == 'POST':
         print(request.POST)
         postid = request.POST['postID']
@@ -730,6 +739,9 @@ def dislike_child_post(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     if request.method == 'POST':
         print(request.POST)
         postid = request.POST['postID']
@@ -765,6 +777,9 @@ def my_like_courses(request):
         return HttpResponseRedirect('/login/')
     courses = get_courses(request.user)
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     mylikecoursesre = UserLikeCourse.objects.filter(UserID=myuser)
     mylikecourses = []
     for i in mylikecoursesre:
@@ -798,7 +813,12 @@ def my_like_courses(request):
 
 @csrf_exempt
 def dislike_course(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     print(request.POST)
     dcourse = BBSCourse.objects.get(id=int(request.POST['courseID']))
     newrela = UserDislikeCourse(UserID=myuser,CourseID=dcourse)
@@ -807,6 +827,10 @@ def dislike_course(request):
 
 def search_post(request):
     if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
         return HttpResponseRedirect('/login/')
     if request.method == 'POST':
         searchContent = request.POST["searchContent"]
@@ -817,6 +841,10 @@ def search_post(request):
 def search_post_my(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
+    myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     if request.method == 'POST':
         searchContent = request.POST["searchContent"]
         return HttpResponseRedirect('/search_my_course/'+searchContent+'/')
@@ -826,6 +854,9 @@ def search_course(request,param):
         return HttpResponseRedirect('/login/')
     courses = get_courses(request.user)
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     coursesall = BBSCourse.objects.all()
     courseBinds = []
     searchContent = param
@@ -839,6 +870,9 @@ def search_my_course(request,param):
         return HttpResponseRedirect('/login/')
     courses = get_courses(request.user)
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     courseBinds=[]
     searchContent = param
     # coursesres = BBSCourse.objects.all().filter(Q(C_Name=searchContent)|Q(C_SeqNum=searchContent))
@@ -868,6 +902,9 @@ def report(request,postid):
         return HttpResponseRedirect('/login/')
     post = BBSPost.objects.get(id=postid)
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
 
     if request.method == 'POST':
         reportlist = request.POST.getlist("check")
@@ -882,12 +919,18 @@ def about(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     return render(request,'web/about.html')
 
 def my_gpb(request):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
     myuser = BBSUser.objects.get(user=request.user)
+    if myuser.U_NewUser == 0:
+        logout(request)
+        return HttpResponseRedirect('/login/')
     honors = Honor.objects.all()
     return render(request, 'web/my_gpb.html',{'user':myuser,'honors':honors})
 

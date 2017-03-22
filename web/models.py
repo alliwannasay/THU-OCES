@@ -8,7 +8,7 @@ from django.template.defaultfilters import default
 class BBSUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     U_studentid = models.CharField(max_length=15)
-    U_password = models.CharField(max_length=100)
+    # U_password = models.CharField(max_length=100)
     U_name = models.CharField(blank=True,max_length=50)
     U_RealName = models.CharField(blank=True,max_length=50)
     U_Honor = models.CharField(blank=True, max_length=50)
