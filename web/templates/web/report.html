@@ -113,12 +113,12 @@
                     <div style="padding: 0.5rem; color: #5A5A5A; text-align: center; background-color: white; font-size: 0.7rem; margin: 0.5rem 0">
                         你举报该条留言的原因为
                     </div>
-                    <from action="/report/{{ post.id }}">
+                    <form action="/report/{{ post.id }}/" method="post">
                         <div class="reportReason list-block media-list" style="padding: 1rem; background-color: white; margin: 0.5rem 0">
                             <ul>
                                 <li>
                                     <label class="label-checkbox item-content">
-                                        <input type="checkbox" name="">
+                                        <input type="checkbox" name="check" value="垃圾广告">
                                         <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
                                         <div class="item-inner">
                                             垃圾广告
@@ -127,7 +127,7 @@
                                 </li>
                                 <li>
                                     <label class="label-checkbox item-content">
-                                        <input type="checkbox" name="">
+                                        <input type="checkbox" name="check" value="人身攻击">
                                         <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
                                         <div class="item-inner">
                                             人身攻击
@@ -136,7 +136,7 @@
                                 </li>
                                 <li>
                                     <label class="label-checkbox item-content">
-                                        <input type="checkbox" name="">
+                                        <input type="checkbox" name="check" value="未经授权/侵权">
                                         <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
                                         <div class="item-inner">
                                             未经授权/侵权
@@ -145,7 +145,7 @@
                                 </li>
                                 <li>
                                     <label class="label-checkbox item-content">
-                                        <input type="checkbox" name="">
+                                        <input type="checkbox" name="check" value="欺诈/虚假信息">
                                         <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
                                         <div class="item-inner">
                                             欺诈/虚假信息
@@ -154,7 +154,7 @@
                                 </li>
                                 <li>
                                     <label class="label-checkbox item-content">
-                                        <input type="checkbox" name="">
+                                        <input type="checkbox" name="check" value="与评课无关">
                                         <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
                                         <div class="item-inner">
                                             与评课无关
@@ -163,11 +163,11 @@
                                 </li>
                             </ul>
                             <div>
-                                <input type="text" placeholder="其他举报原因" style="border: 1px solid; border-color: #5A5A5A; margin-left:1rem; margin-top:0.5rem; width: 14rem">
+                                <input type="text" placeholder="其他举报原因" style="border: 1px solid; border-color: #5A5A5A; margin-left:1rem; margin-top:0.5rem; width: 14rem" name="check">
                             </div>
                         </div>
                         <button type="submit" style="padding: 0.5rem 3rem; width: 100%">确认举报</button>
-                    </from>
+                    </form>
                 </div>
             </div>
         </div>
@@ -181,11 +181,14 @@
         function postInfo()
         {
             var comm = $("#myComText").attr("value");
-            $.post("/course_evaluation/{{ request.user.username }}/{{ courseBind.course.id }}/",
+            $.post("/report/",
                     { score: mypoint, com: comm },
                     function(data){
                         window.location.href="/my_class/{{ request.user.username }}/";
                     });
+        }
+        function test() {
+            alert(1)
         }
     </script>
   </body>

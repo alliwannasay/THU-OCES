@@ -131,7 +131,7 @@
                 <div class="tabs">
                     <div class="tab active" id="tab1">
                         {% for likepB in likepBs %}
-                            <div class="postInfo" style="background-color: white; padding: 0.5rem 1rem; margin:0.5rem; text-align: center" onclick="window.location.href='/course/{{ course.id }}/post/{{ likepB.post.id }}'">
+                            <div class="postInfo" style="background-color: white; padding: 0.5rem 1rem; margin:0.5rem; text-align: center" >
                                 <div class="row">
                                     <div class="col-20">
                                         <div class="item-media">
@@ -154,13 +154,27 @@
                                                 </div>
                                             </div>
                                         {% endif %}
-                                        <div style="font-size: 0.7rem; text-align: left; padding: 0 0.5rem;">
+                                        <div onclick="window.location.href='/course/{{ course.id }}/post/{{ likepB.post.id }}'" style="font-size: 0.7rem; text-align: left; padding: 0 0.5rem;">
                                             <p style="margin-top: 0">{{ likepB.post.P_Content }}</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div style="font-size: 0.7rem; text-align: right; padding-right: 4rem; color: #5A5A5A">
-                                            互动 {{ likepB.post.P_ReplyNum }} · 赞 {{ likepB.post.P_LikeNum }} · 踩 {{ likepB.post.P_DislikeNum }}  · <a href="/report/{{ likepB.post.id }}/" external>举报</a>
+                                            互动 {{ likepB.post.P_ReplyNum }}
+                                    ·
+                                    {% if likepB.isLike == 0 %}
+                                    <a id="jz{{ likepB.post.id }}" style="color: #41C7DB" href="javascript:likechild({{ likepB.post.id }})">赞 {{ likepB.post.P_LikeNum }}</a>
+                                    {% else %}
+                                    <a id="jz{{ likepB.post.id }}" style="color: #000000" href="javascript:likechild({{ likepB.post.id }})">赞 {{ likepB.post.P_LikeNum }}</a>
+                                    {% endif %}
+                                    ·
+                                    {% if likepB.isDislike == 0 %}
+                                    <a id="jc{{ likepB.post.id }}" style="color: #41C7DB" href="javascript:dislikechild({{ likepB.post.id }})">踩 {{ likepB.post.P_DislikeNum }}</a>
+                                    {% else %}
+                                    <a id="jc{{ likepB.post.id }}" style="color: #000000" href="javascript:dislikechild({{ likepB.post.id }})">踩 {{ likepB.post.P_DislikeNum }}</a>
+                                    {% endif %}
+
+                                    · <a href="/report/{{ likepB.post.id }}/" external>举报</a>
                                     </div>
                             </div>
                         {% endfor %}
@@ -168,7 +182,7 @@
 
                     <div class="tab" id="tab2">
                         {% for timepB in timepBs %}
-                            <div class="postInfo" style="background-color: white; padding: 0.5rem 1rem; margin:0.5rem; text-align: center" onclick="window.location.href='/course/{{ course.id }}/post/{{ timepB.post.id }}'">
+                            <div class="postInfo" style="background-color: white; padding: 0.5rem 1rem; margin:0.5rem; text-align: center" >
                                 <div class="row">
                                     <div class="col-20">
                                         <div class="item-media">
@@ -191,13 +205,29 @@
                                                 </div>
                                             </div>
                                         {% endif %}
-                                        <div style="font-size: 0.7rem; text-align: left; padding: 0 0.5rem">
+                                        <div onclick="window.location.href='/course/{{ course.id }}/post/{{ timepB.post.id }}'" style="font-size: 0.7rem; text-align: left; padding: 0 0.5rem">
                                             <p style="margin-top: 0">{{ timepB.post.P_Content }}</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div style="font-size: 0.7rem; text-align: right; padding-right: 4rem; color: #5A5A5A">
-                                            互动 {{ timepB.post.P_ReplyNum }} · 赞 {{ timepB.post.P_LikeNum }} · 踩 {{ timepB.post.P_DislikeNum }}  · <a href="/report/{{ timepB.post.id }}/" external>举报</a>
+                                             
+                                    互动 {{ timepB.post.P_ReplyNum }}
+                                    ·
+                                    {% if timepB.isLike == 0 %}
+                                    <a id="zz{{ timepB.post.id }}" style="color: #41C7DB" href="javascript:likechild({{ timepB.post.id }})">赞 {{ timepB.post.P_LikeNum }}</a>
+                                    {% else %}
+                                    <a id="zz{{ timepB.post.id }}" style="color: #000000" href="javascript:likechild({{ timepB.post.id }})">赞 {{ timepB.post.P_LikeNum }}</a>
+                                    {% endif %}
+                                    ·
+                                    {% if timepB.isDislike == 0 %}
+                                    <a id="zc{{ timepB.post.id }}" style="color: #41C7DB" href="javascript:dislikechild({{ timepB.post.id }})">踩 {{ timepB.post.P_DislikeNum }}</a>
+                                    {% else %}
+                                    <a id="zc{{ timepB.post.id }}" style="color: #000000" href="javascript:dislikechild({{ timepB.post.id }})">踩 {{ timepB.post.P_DislikeNum }}</a>
+                                    {% endif %}
+                                
+                                    · <a href="/report/{{ timepB.post.id }}/" external>举报</a>
+
                                     </div>
                             </div>
                         {% endfor %}
@@ -212,6 +242,69 @@
     <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
     <script type="text/javascript">
         $.init();
+        function likechild(childid) {
+            $.ajax
+            ({
+                url: '/like_child_post/',
+                type: 'POST',
+                data: {'postID': childid},
+                success: function(likenum) {
+                    objdom1 = document.getElementById("jz"+(childid))
+                    objdom2 = document.getElementById("zz"+(childid))
+                    obj1 = $('#jz'+(childid))
+                    obj2 = $('#zz'+(childid))
+
+                    newContent = "赞 "+(likenum)
+                    objdom1.innerHTML = newContent
+                    objdom2.innerHTML = newContent
+
+                    if(obj1.attr('style')=="color: #000000")
+                    {
+                        obj1.attr('style',"color: #41C7DB")
+                        obj2.attr('style',"color: #41C7DB")
+                    }
+                    else if(obj1.attr('style')=="color: #41C7DB")
+                    {
+                        obj1.attr('style',"color: #000000")
+                        obj2.attr('style',"color: #000000")
+                    }
+
+                }
+            })
+        }
+
+        function dislikechild(childid) {
+            $.ajax
+            ({
+                url: '/dislike_child_post/',
+                type: 'POST',
+                data: {'postID': childid},
+                success: function(dislikenum) {
+                    objdom1 = document.getElementById("jc"+(childid))
+                    objdom2 = document.getElementById("zc"+(childid))
+                    obj1 = $('#jc'+(childid))
+                    obj2 = $('#zc'+(childid))
+
+                    newContent = "踩 "+(dislikenum)
+                    objdom1.innerHTML = newContent
+                    objdom2.innerHTML = newContent
+
+                    if(obj1.attr('style')=="color: #000000")
+                    {
+                        obj1.attr('style',"color: #41C7DB")
+                        obj2.attr('style',"color: #41C7DB")
+                    }
+                    else if(obj1.attr('style')=="color: #41C7DB")
+                    {
+                        obj1.attr('style',"color: #000000")
+                        obj2.attr('style',"color: #000000")
+                    }
+
+                }
+            })
+        }
+
+
     </script>
   </body>
 </html>

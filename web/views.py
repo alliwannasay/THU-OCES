@@ -129,7 +129,7 @@ class newBind:
     def __init__(self,c,s):
         self.course = c
         self.shortmsg = s
-        self.hyaku = self.course.C_Rank * 100 / 5.0
+        self.hyaku = float(self.course.C_Rank) * 100 / 5.0
 
     def __iter__(self):
         print("__iter__ called")
@@ -291,10 +291,18 @@ class postBind:
     post = BBSPost()
     rank = 0
     hyaku = 0
-    def __init__(self,c,r):
-        self.post = c
+    isLike = 0
+    isDislike = 0
+    def __init__(self,user,thispost,r):
+        self.post = thispost
         self.rank = r
         self.hyaku = self.rank * 100 / 5.0
+        self.isLike = 1
+        self.isDislike = 1
+        if len(UserLikePost.objects.filter(UserID=user, PostID=thispost)) == 0:
+            self.isLike = 0
+        if len(UserDislikePost.objects.filter(UserID=user, PostID=thispost)) == 0:
+            self.isDislike = 0
 
     def __iter__(self):
         print("__iter__ called")
@@ -316,7 +324,7 @@ def course_posts(request,courseid):
     timepBlist = []
     for tp in timeposts:
         re = UserHasCourse.objects.get(UserID=tp.P_User,CourseID=mycourse)
-        pB = postBind(tp,re.Score)
+        pB = postBind(myuser,tp,re.Score)
         timepBlist.append(pB)
     timepBlist.reverse()
 
@@ -328,9 +336,24 @@ def course_posts(request,courseid):
     context['user'] = myuser
     return render(request, 'web/course_posts.html', context)
 
+class likeBind:
+    post = BBSPost()
+    isLike = 0
+    isDislike = 0
+    def __init__(self,user,thispost):
+        self.post = thispost
+        self.isLike = 1
+        self.isDislike = 1
+        if len(UserLikePost.objects.filter(UserID=user,PostID=thispost)) == 0:
+            self.isLike = 0
+        if len(UserDislikePost.objects.filter(UserID=user,PostID=thispost)) == 0:
+            self.isDislike = 0
 
+    def __iter__(self):
+        print("__iter__ called")
+        return iter(self.isLike)
 
-
+@csrf_exempt
 def course_post_detail(request,courseid,postid):
     thiscourse = BBSCourse.objects.get(id=courseid)
     if not request.user.is_authenticated():
@@ -340,54 +363,28 @@ def course_post_detail(request,courseid,postid):
 
     myuser = BBSUser.objects.get(user=request.user)
     bigpost = BBSPost.objects.get(id=postid, P_Course=thiscourse)
-    if bigpost.P_Type == type_dic['笔记贴'] and len(UserHasNode.objects.filter(UserID=myuser,PostID=bigpost))==0:
-        return HttpResponseRedirect('/login/')
 
-    params = request.POST if request.method == 'POST' else None
-
-    form = ReplyForm(params,instance=None)
-    if form.is_valid():
-        reply_get = form.save(commit=False)
-        reply = BBSPost()
-        reply.P_User = myuser
-        reply.P_Title = '回复'
-        reply.P_Content = reply_get.P_Content
-        reply.P_Course = thiscourse
-        reply.P_Type = type_dic['回答贴']
-        reply.P_Parent = bigpost
-        reply.save()
+    if request.method == 'POST':
+        newContent = request.POST['com']
+        newPost = BBSPost(P_User=myuser,P_Course=thiscourse,P_Parent=bigpost,P_Content=newContent)
+        newPost.save()
         bigpost.P_ReplyNum += 1
         bigpost.save()
-        myuser.U_GPB += gpb_amount['reply']
-        raiseLevel(myuser)
-        myuser.save()
-        form = ReplyForm(params,instance=None)
+        return HttpResponseRedirect("/course/"+str(thiscourse.id)+"/post/"+str(bigpost.id)+"/")
+
 
     childrenpostsq = BBSPost.objects.filter(P_Parent=bigpost)
-    childrenposts=[]
-    bestchild = None
-    for child in childrenpostsq:
-        if child != bigpost.P_BestChild:
-            childrenposts.append(child)
-        else :
-            bestchild = child
-    childrenposts.reverse()
-    if bestchild != None:
-        childrenposts.append(bestchild)
-    childrenposts.reverse()
-    #childrenposts.reverse()
+    bindChildrenPosts=[]
 
-    likefilter = UserLikePost.objects.filter(UserID=myuser, PostID=bigpost)
-    islike = 0
-    if len(likefilter) != 0:
-        islike = 1
+    for child in childrenpostsq:
+        bindChildrenPosts.append(likeBind(myuser,child))
+    bindChildrenPosts.reverse()
+
     context = {}
     context['bigpost'] = bigpost
     context['course'] = thiscourse
     context['user'] = myuser
-    context['childrenposts'] = childrenposts
-    context['islike'] = islike
-    context['form'] = form
+    context['childrenposts'] = bindChildrenPosts
 
     context['courses'] = courses
     return render(request,'web/course_bbs_detail.html',context)
@@ -611,7 +608,7 @@ def course_evaluation(request, param, courseid):
     myuser = BBSUser.objects.get(user=request.user)
     if request.method == "POST":
         print(request.POST)
-        oriposts = BBSPost.objects.filter(P_User=myuser,P_Course=course)
+        oriposts = BBSPost.objects.filter(P_User=myuser,P_Course=course,P_Parent=None)
         if request.POST['com'] == "":
             oriposts.delete()
             myuser.U_GPB -= gpb_amount['post']
@@ -641,6 +638,7 @@ def course_evaluation(request, param, courseid):
             oriScore = re.Score
             re.Score = request.POST['score']
             course.C_Rank = (course.C_Rank * (course.C_Ranknum) + int(request.POST['score']) - oriScore) / course.C_Ranknum
+            course.save()
         re.save()
     re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
     nB = myRankBind(course,re.Score,get_my_comment(myuser,course))
@@ -726,6 +724,56 @@ def post_course_post(request,courseid):
         return HttpResponseRedirect(reverse('course',args=[courseid]))
     return render(request, 'web/post_post.html', {'user':myuser,'course':course, 'courses':courses})
 
+@csrf_exempt
+def like_child_post(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    myuser = BBSUser.objects.get(user=request.user)
+    if request.method == 'POST':
+        print(request.POST)
+        postid = request.POST['postID']
+        newpost = BBSPost.objects.get(id=postid)
+        testhave = UserLikePost.objects.filter(UserID=myuser,PostID=newpost)
+        if len(testhave) == 0:
+            newre = UserLikePost(UserID=myuser,PostID=newpost)
+            newre.save()
+            newpost.P_LikeNum += 1
+            newpost.save()
+            return HttpResponse(newpost.P_LikeNum)
+        else:
+            oldre = UserLikePost.objects.get(UserID=myuser, PostID=newpost)
+            oldre.delete()
+            newpost.P_LikeNum -= 1
+            newpost.save()
+            return HttpResponse(newpost.P_LikeNum)
+    return HttpResponseRedirect("/")
+
+@csrf_exempt
+def dislike_child_post(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login/')
+    myuser = BBSUser.objects.get(user=request.user)
+    if request.method == 'POST':
+        print(request.POST)
+        postid = request.POST['postID']
+        newpost = BBSPost.objects.get(id=postid)
+        testhave = UserDislikePost.objects.filter(UserID=myuser,PostID=newpost)
+        if len(testhave) == 0:
+            newre = UserDislikePost(UserID=myuser,PostID=newpost)
+            newre.save()
+            newpost.P_DislikeNum += 1
+            newpost.save()
+            return HttpResponse(newpost.P_DislikeNum)
+        else:
+            oldre = UserDislikePost.objects.get(UserID=myuser, PostID=newpost)
+            oldre.delete()
+            newpost.P_DislikeNum -= 1
+            newpost.save()
+            return HttpResponse(newpost.P_DislikeNum)
+    return HttpResponseRedirect("/")
+
+
+
 
 
 def delete_post(request,courseid,postid,parentid):
@@ -793,7 +841,7 @@ def my_like_courses(request):
     for i in mylikecoursesre:
         mylikecourses.append(i.CourseID)
     mylikecourses = bindHyaku(mylikecourses)
-    return render(request, 'web/my_like_courses.html', {'user':myuser,'courses':mylikecourses})
+    return render(request, 'web/my_like_courses.html', {'user':myuser,'hotBind':mylikecourses})
 
 
 @csrf_exempt
@@ -884,14 +932,21 @@ def search_course_by_name(coursesall,searchcontent):
     rescourse.reverse()
     return rescourse
 
+
+@csrf_exempt
 def report(request,postid):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login/')
     post = BBSPost.objects.get(id=postid)
     myuser = BBSUser.objects.get(user=request.user)
+
     if request.method == 'POST':
-        newReport = UserReportPost(UserID=myuser,PostID=post,Reason="不知道写写啥")
-        newReport.save()
+        reportlist = request.POST.getlist("check")
+        for rp in reportlist:
+            newReport = UserReportPost(UserID=myuser,PostID=post,Reason=rp)
+            newReport.save()
+        thiscourseid = post.P_Course.id
+        return HttpResponseRedirect('/course_posts/'+str(thiscourseid))
     return render(request, 'web/report.html', {'user': myuser, 'post': post})
 
 def about(request):

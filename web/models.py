@@ -33,7 +33,7 @@ class BBSCourse(models.Model):
     C_Name = models.CharField(max_length=100)
     C_SeqNum = models.CharField(blank=True,max_length=50)
     C_Ranknum = models.IntegerField(default=0)
-    C_Rank = models.FloatField(default=0)
+    C_Rank = models.DecimalField(default=0,max_digits=2,decimal_places=1)
     C_Comnum = models.IntegerField(default=0)
 
     def __str__(self):
@@ -58,7 +58,7 @@ class BBSPost(models.Model):
     P_Level = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.P_Title
+        return self.P_Content
 
 
 
@@ -98,6 +98,10 @@ class UserFollowLabel(models.Model):
 class UserDislikeCourse(models.Model):
     UserID = models.ForeignKey(BBSUser)
     CourseID = models.ForeignKey(BBSCourse)
+
+class UserDislikePost(models.Model):
+    UserID = models.ForeignKey(BBSUser)
+    PostID = models.ForeignKey(BBSPost)
 
 class UserLikeCourse(models.Model):
     UserID = models.ForeignKey(BBSUser)

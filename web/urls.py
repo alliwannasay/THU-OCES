@@ -31,6 +31,8 @@ urlpatterns = [
     url(r'^my_like_courses/$',views.my_like_courses),
     url(r'^report/(\d+)/$',views.report),
     url(r'^about/',views.about),
-    url(r'^my_gpb/',views.my_gpb)
+    url(r'^my_gpb/',views.my_gpb),
+    url(r'^like_child_post/',views.like_child_post),
+    url(r'^dislike_child_post/',views.dislike_child_post),
     
 ]

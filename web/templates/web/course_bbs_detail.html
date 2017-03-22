@@ -144,25 +144,38 @@
                         互动 {{ bigpost.P_ReplyNum }} · 赞 {{ bigpost.P_LikeNum }} · 踩 {{ bigpost.P_DislikeNum }}  · <a href="/report/{{ bigpost.id }}/" external>举报</a>
                     </div>
                 </div>
-                {% for post in childrenposts %}
+                {% for postBind in childrenposts %}
                 <div class="postInfo" style="background-color: white; padding: 0.5rem 1rem; margin:0.5rem; text-align: center">
                     <div class="row">
                         <div class="col-20">
                             <div class="item-media">
-                                <img src="{{ BASE_DIR }}/media/{{ post.P_User.U_Image }}" style='width: 3rem;'>
+                                <img src="{{ BASE_DIR }}/media/{{ postBind.post.P_User.U_Image }}" style='width: 3rem;'>
                             </div>
                             <div style="font-size: 0.6rem; color: #41C7DB">
-                                {{ post.P_User.user.username}}
+                                {{ postBind.post.P_User.user.username}}
                             </div>
                         </div>
                         <div class="col-80" style="height: 100%">
                             <div style="font-size: 0.7rem; text-align: left; padding: 0 0.5rem;">
-                                <p style="margin-top: 0">回复@{{ bigpost.P_User.user.username }}: {{ post.P_Content }}</p>
+                                <p style="margin-top: 0">回复@{{ bigpost.P_User.user.username }}: {{ postBind.post.P_Content }}</p>
                             </div>
                         </div>
                     </div>
                     <div style="font-size: 0.7rem; text-align: right; padding-right: 6rem; color: #5A5A5A">
-                        赞 {{ post.P_LikeNum }} · 踩 {{ post.P_DislikeNum }}  · <a href="/report/{{ post.id }}/" external>举报</a>
+                        {% if postBind.isLike == 0 %}
+                        <a id="child{{ postBind.post.id }}" style="color: #41C7DB" href="javascript:likechild({{ postBind.post.id }})">赞 {{ postBind.post.P_LikeNum }}</a>
+                        {% else %}
+                        <a id="child{{ postBind.post.id }}" style="color: #000000" href="javascript:likechild({{ postBind.post.id }})">赞 {{ postBind.post.P_LikeNum }}</a>
+                        {% endif %}
+                        ·
+                        {% if postBind.isDislike == 0 %}
+                        <a id="dischild{{ postBind.post.id }}" style="color: #41C7DB" href="javascript:dislikechild({{ postBind.post.id }})">踩 {{ postBind.post.P_DislikeNum }}</a>
+                        {% else %}
+                        <a id="dischild{{ postBind.post.id }}" style="color: #000000" href="javascript:dislikechild({{ postBind.post.id }})">踩 {{ postBind.post.P_DislikeNum }}</a>
+                        {% endif %}
+
+
+                        · <a href="/report/{{ postBind.post.id }}/" external>举报</a>
                     </div>
                 </div>
                 {% endfor %}
@@ -193,6 +206,70 @@
                         window.location.href="/course/{{ course.id }}/post/{{ bigpost.id }}/";
                     });
         }
+        function likechild(childid) {
+            $.ajax
+            ({
+                url: '/like_child_post/',
+                type: 'POST',
+                data: {'postID': childid},
+                success: function(likenum) {
+                    objdom = document.getElementById("child"+(childid))
+                    obj = $('#child'+(childid))
+                    newContent = "赞 "+(likenum)
+                    objdom.innerHTML = newContent
+
+                    if(obj.attr('style')=="color: #000000")
+                    {
+                        obj.attr('style',"color: #41C7DB")
+                    }
+                    else if(obj.attr('style')=="color: #41C7DB")
+                    {
+                        obj.attr('style',"color: #000000")
+                    }
+
+                }
+            })
+        }
+
+        function dislikechild(childid) {
+            $.ajax
+            ({
+                url: '/dislike_child_post/',
+                type: 'POST',
+                data: {'postID': childid},
+                success: function(dislikenum) {
+                    objdom = document.getElementById("dischild"+(childid))
+                    obj = $('#dischild'+(childid))
+                    newContent = "踩 "+(dislikenum)
+                    objdom.innerHTML = newContent
+
+                    if(obj.attr('style')=="color: #000000")
+                    {
+                        obj.attr('style',"color: #41C7DB")
+                    }
+                    else if(obj.attr('style')=="color: #41C7DB")
+                    {
+                        obj.attr('style',"color: #000000")
+                    }
+
+                }
+            })
+        }
+{#        function cancellikechild(childid) {#}
+{#            $.ajax#}
+{#            ({#}
+{#                url: '/like_child_post/',#}
+{#                type: 'POST',#}
+{#                data: {'postID': childid,'isCancel':true},#}
+{#                success: function(likenum) {#}
+{#                    obj = document.getElementById("child"+(childid))#}
+{#                    newContent = "赞 "+(likenum)#}
+{#                    obj.innerHTML = newContent#}
+{#                    obj.style = "color: #41C7DB "#}
+{#                }#}
+{#            })#}
+{#        }#}
+
     </script>
   </body>
 </html>
