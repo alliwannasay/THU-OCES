@@ -73,9 +73,13 @@
     <div class="page-group">
         <!-- 你的html代码 -->
         <div class="page">
+            <header class="bar bar-nav">
+                <a class="icon icon-left pull-left" href="javascript: history.back(-1);" external></a>
+                <h1 class="title">我的课程</h1>
+            </header>
             <div class="content">
-                <div class="buttons-tab">
-                    <a href="/my_class/{{ request.user.username }}/" external class="active button">我的课程</a>
+                <div style="padding: 0.5rem 0; color: white; background-color: #41C7DB; text-align: center">
+                    请选择一门已上过的课程，完成第一次评课
                 </div>
                 <div class="content-padded">
                     <form role="search" action="/search_post_my/" method="post">

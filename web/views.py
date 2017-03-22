@@ -229,6 +229,7 @@ def login(request):
 
             return HttpResponseRedirect('/')
         else:
+            print(user)
             user = validate_user_bymyself(request,studentid=studentidin, password=passwordin)
             if user is not None:
                 return HttpResponseRedirect("/instruction/")

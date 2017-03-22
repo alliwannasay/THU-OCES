@@ -23,7 +23,7 @@ class BBSUser(models.Model):
     U_PostNum = models.IntegerField(default=0)
     U_QuestionNum = models.IntegerField(default=0)
     U_AnswerNum = models.IntegerField(default=0)
-    U_NewUser = models.IntegerField(default = 1)
+    U_NewUser = models.IntegerField(default = 0)
 
     def __str__(self):
         return self.U_studentid
