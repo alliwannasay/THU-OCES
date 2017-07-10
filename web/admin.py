@@ -14,4 +14,5 @@ admin.site.register(UserFollowLabel)
 admin.site.register(UserLikeCourse)
 admin.site.register(Honor)
 admin.site.register(UserReportPost)
+admin.site.register(BBSDept)
 # Register your models here.
