@@ -46,6 +46,58 @@ type_dic = {
     '大讨论区':4,
 }
 
+def modifyUsers():
+    users = BBSUser.objects.all()
+    for u in users:
+        u.U_NewUser = 1
+        u.save()
+
+
+def createUsers():
+    # for i in range(0,150):
+    #     tmpStudentid = "user"+str(i)
+    #     tmpPassword = "pwd"+str(i)
+    #     newUserSys = User.objects.create_user(username=tmpStudentid, password=tmpPassword)
+    #     newUserSys.save()
+    #     # newUserSys = auth.authenticate(username=tmpStudentid, password=password)
+    #     # auth.login(request, newUserSys)
+    #     newUser = BBSUser()
+    #     newUser.U_studentid = tmpStudentid
+    #     newUser.user = newUserSys
+    #     newUser.save()
+
+    users = BBSUser.objects.all()
+    course1 = BBSCourse.objects.get(C_Name="概率论")
+    course2 = BBSCourse.objects.get(C_Name="建模与仿真")
+    course3 = BBSCourse.objects.filter(C_Name="工程经济学")[0]
+    for i in range(60, 150):
+        tmpStudentid = "user" + str(i)
+        thisuser = BBSUser.objects.get(U_studentid=tmpStudentid)
+        newrela = UserHasCourse()
+        newrela.UserID = thisuser
+        newrela.CourseID = course1
+        newrela.save()
+        newrela = UserHasCourse()
+        newrela.UserID = thisuser
+        newrela.CourseID = course2
+        newrela.save()
+        newrela = UserHasCourse()
+        newrela.UserID = thisuser
+        newrela.CourseID = course3
+        newrela.save()
+    for i in range(0, 60):
+        tmpStudentid = "user" + str(i)
+        thisuser = BBSUser.objects.get(U_studentid=tmpStudentid)
+        newrela = UserHasCourse()
+        newrela.UserID = thisuser
+        newrela.CourseID = course1
+        newrela.save()
+
+    # relas = UserHasCourse.objects.all()
+    # relas.delete()
+
+
+
 def readFile():
     importlib.reload(sys)
     f = open("info.txt", 'r', encoding='gbk')
@@ -167,6 +219,16 @@ def get_my_comment(myuser,course):
         return "尚未点评"
     return myposts[0].P_Content
 
+def getAssignedCourses():
+    courses = []
+    course1 = BBSCourse.objects.get(C_Name="概率论")
+    course2 = BBSCourse.objects.get(C_Name="建模与仿真")
+    course3 = BBSCourse.objects.filter(C_Name="工程经济学")[0]
+    courses.append(course1)
+    courses.append(course2)
+    courses.append(course3)
+    return courses
+
 
 def bbs_list(request):
     if not request.user.is_authenticated():
@@ -176,8 +238,10 @@ def bbs_list(request):
     if myuser.U_NewUser == 0:
         logout(request)
         return HttpResponseRedirect('/login/')
-    recCourses = get_recommended_courses(myuser,courses)
-    hotCourses = get_hot_courses(myuser)
+    # recCourses = get_recommended_courses(myuser,courses)
+    # hotCourses = get_hot_courses(myuser)
+    recCourses = getAssignedCourses()
+    hotCourses = getAssignedCourses()
     recBind = bind_course_comment(recCourses)
     hotBind = bind_course_comment(hotCourses)
     labelstr = get_label_str(request.user)
@@ -223,13 +287,12 @@ def login(request):
 
         if user is not None:
             auth.login(request, user)
-
+            print(user)
             if(request.user.username == "test"):
                 return HttpResponseRedirect("/instruction/")
-
             return HttpResponseRedirect('/')
         else:
-            print(user)
+
             user = validate_user_bymyself(request,studentid=studentidin, password=passwordin)
             if user is not None:
                 return HttpResponseRedirect("/instruction/")
@@ -552,7 +615,7 @@ class signBind:
         return iter(self.sign)
 
 def hasEva(myuser,course):
-    re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
+    re = UserHasCourse.objects.filter(UserID=myuser,CourseID=course)[0]
     if re.Score == -1:
         return False
     return True
@@ -564,7 +627,7 @@ def hasCom(myuser,course):
     return True
 
 def getScore(myuser,course):
-    re = UserHasCourse.objects.get(UserID=myuser,CourseID=course)
+    re = UserHasCourse.objects.filter(UserID=myuser,CourseID=course)[0]
     return re.Score
 
 
